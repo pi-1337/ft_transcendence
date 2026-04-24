@@ -5,48 +5,65 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
+	provider = "prisma-client"
+	output   = "../app/generated/prisma"
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+	provider = "mysql"
+	url      = env("DATABASE_URL")
 }
 
 
-model Teacher {
-	id	Int	@id @default(autoincrement())
+model Admin {
+	id					Int		@id @default(autoincrement())
 
-  firstname String
-  lastname String
-  phoneNumber String
-  username String
-  email String
+	firstname		String
+	lastname		String
+	phoneNumber	String?
+	username		String
+	email				String
 
-  students Student[]
+	users 			User[]
+	apiURL			String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime
+	createdAt		DateTime @default(now())
+	updatedAt		DateTime
 
 }
 
-model Student {
-	id	Int	@id @default(autoincrement())
+model User {
+	id					Int			@id @default(autoincrement())
 
-  firstname String
-  lastname String
-  phoneNumber String
-  username String
-  email String
+	firstname		String
+	lastname		String
+	phoneNumber	String?
+	username		String
+	email				String
 
-  badge String
-  teacher Teacher @relation(fields: [teacherId], references: [id])
+	badge				String?
+	admin				Admin	@relation(fields: [adminId], references: [id])
+	adminId			Int?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime
+	createdAt 	DateTime 	@default(now())
+	updatedAt 	DateTime
 }
 
 
 
+model Organization {
+	id					Int			@id @default(autoincrement())
+
+
+
+
+}
+
+
+model BadgeHistory {
+
+
+
+
+}
 

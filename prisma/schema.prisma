@@ -15,7 +15,38 @@ datasource db {
 }
 
 
-model user {
+model Teacher {
 	id	Int	@id @default(autoincrement())
+
+  firstname String
+  lastname String
+  phoneNumber String
+  username String
+  email String
+
+  students Student[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+
 }
+
+model Student {
+	id	Int	@id @default(autoincrement())
+
+  firstname String
+  lastname String
+  phoneNumber String
+  username String
+  email String
+
+  badge String
+  teacher Teacher @relation(fields: [teacherId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+}
+
+
+
 

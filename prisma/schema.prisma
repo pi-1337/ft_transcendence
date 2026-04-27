@@ -14,37 +14,17 @@ datasource db {
 	url      = env("DATABASE_URL")
 }
 
-
-model Admin {
-	id						Int		@id @default(autoincrement())
-
-	firstname				String
-	lastname				String
-	phoneNumber				String?
-	username				String
-	email					String
-
-	users	 				User[]
-	orgs					Organization[]
-
-	createdAt			DateTime @default(now())
-	updatedAt			DateTime
-
-}
-
 model User {
 	id					Int			@id @default(autoincrement())
 
 	firstname			String
 	lastname			String
 	phoneNumber			String?
-	username			String
-	email				String
+	email				String		@unique
+	password			String
 
-	badge				Badge[]
-
-	admins				Admin[]
-	orgs				Organization[]
+//	badge				Badge[]
+//	orgs				Organization[]
 
 	createdAt 			DateTime 	@default(now())
 	updatedAt 			DateTime
@@ -55,18 +35,18 @@ model User {
 model Organization {
 	id				Int			@id @default(autoincrement())
 
-	admin			Admin	@relation(fields: [adminId], references: [id])
-	adminId			Int
+//	admin			User		@relation(fields: [adminId], references: [id])
+//	adminId			Int
 
 	apiURL			String
 }
 
 
 model Badge {
-	id			Int		@id @default(uuid())
+	id			String	@id @default(uuid())
 
-	user		User	@relation(fields: [userId], references: [id])
-	userId		String
+//	user		User	@relation(fields: [userId], references: [id])
+//	userId		String
 
 }
 

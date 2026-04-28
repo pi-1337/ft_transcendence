@@ -22,8 +22,9 @@ model User {
 	email				String		@unique
 	password			String
 
-//	badge				Badge[]
-//	orgs				Organization[]
+	badge				Badge[]
+	orgs				Organization[]
+	owned_orgs			Organization[]
 
 	createdAt 			DateTime 	@default(now())
 	updatedAt 			DateTime?
@@ -34,29 +35,50 @@ model User {
 model Organization {
 	id				Int			@id @default(autoincrement())
 
-//	admin			User		@relation(fields: [adminId], references: [id])
-//	adminId			Int
+	name			String
+	type			String
+	badgeTimes		Int
+	active			Bool		@default(false)
 
-	apiURL			String
+	users			User[]
+
+	admin			User		@relation(fields: [adminId], references: [id])
+	adminId			String
+
+	callBackURL		String // post req sending the data using a jwt
 }
 
 
 model Badge {
-	id			String	@id @default(uuid())
+	id			Int		@id @default(autoincrement())
 
-//	user		User	@relation(fields: [userId], references: [id])
-//	userId		String
+	number		Int	
 
+	user		User	@relation(fields: [userId], references: [id])
+	userId		String
+
+	txs			BadgeTX[]
+
+	createdAt	DateTime	@default(now())
 }
 
-model BadgeHistory {
-	id					Int			@id @default(autoincrement())
-}
+model BadgeTX {
+	id			Int			@id @default(autoincrement())
 
+	badge		Badge		@relation(fields: [badgeId], references: [id])
+	badgeId		Int
+
+	createdAt	DateTime	@default(now())
+}
 
 
 // many to many relations
-//model AdminsOnUsers {
-//
-//}
+// users and orgs
+model UsersOnOrganizations {
+	user	User			@relation(fields: [userId], references: [id])
+	userId	Int
+	org		Organization	@relation(fields: [orgId], references: [id])
+	orgId	Int
+	@@id([userId, orgId]) // pair (id, id) is uniq in IR^2
+}
 

@@ -1,11 +1,11 @@
 'use server'
 
-import { User } from "@/app/generated/prisma/client";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt"
 import { cookies } from "next/headers";
 import { ft_sign } from "@/lib/jwtHelper";
+import { User } from "@prisma/client";
 
 const validateEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -44,9 +44,9 @@ export async function POST(req: NextRequest) {
                 { status: 404 });
         }
 
-        const validPassword = bcrypt.compare(password, user.password);
+        const validPassword = await bcrypt.compare(password, user.password);
 
-        if (!validPassword) {
+        if (validPassword !== true) {
             return NextResponse.json({
                 success: false,
                 error: "Incorrect password !!"

@@ -1,11 +1,12 @@
 'use server'
 
-import { User } from "@/app/generated/prisma/client";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt"
 import { cookies } from "next/headers";
 import { ft_sign } from "@/lib/jwtHelper";
+import { User } from "@prisma/client";
+import { updateTag } from "next/cache";
 
 const validateEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -55,9 +56,9 @@ export async function POST(req: NextRequest) {
                 { status: 500 });
         }
 
-        const hashedPassword = bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-        await prisma.user.create({ data: {
+        const createdUser = await prisma.user.create({ data: {
             firstname,
             lastname,
             phoneNumber,
@@ -69,10 +70,10 @@ export async function POST(req: NextRequest) {
             {
                 success: true,
                 user: {
-                    id: user.id,
-                    email: user.email,
-                    firstname: user.firstname,
-                    lastname: user.lastname,
+                    id: createdUser.id,
+                    email: createdUser.email,
+                    firstname: createdUser.firstname,
+                    lastname: createdUser.lastname,
                 }
             },
             { status: 200 }

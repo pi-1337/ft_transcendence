@@ -5,7 +5,8 @@ import jwt from "jsonwebtoken"
 const secret = process.env.JWT_SECRET_KEY || "super-secure-jwt-secret";
 
 function ft_sign(data: any) {
-    const token = jwt.sign(JSON.stringify(data), secret, { expiresIn: "7d" });
+    // const token = jwt.sign(JSON.stringify(data), secret, { expiresIn: '7d' });
+    const token = jwt.sign(JSON.stringify(data), secret);
     return token;
 }
 

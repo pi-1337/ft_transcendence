@@ -14,7 +14,6 @@ function ft_verify(token: string) {
     try {
         return jwt.verify(token, secret);
     } catch (error) {
-        console.error(error);
         return null;
     }
 }

@@ -13,20 +13,28 @@ generator client {
 	provider = "prisma-client-js"
 }
 
+enum ACTIVE {
+	TRUE
+	FALSE
+}
+
 model User {
-	id					Int			@id @default(autoincrement())
+	id					Int				@id @default(autoincrement())
 
 	firstname			String
 	lastname			String
 	phoneNumber			String
-	email				String		@unique
+	email				String			@unique
 	password			String
 
 	badge				Badge[]
-	orgs				Organization[]
-	owned_orgs			Organization[]
+	orgs				Organization[]	@relation("membership")
+	owned_orgs			Organization[]	@relation("administration")
 
-	createdAt 			DateTime 	@default(now())
+	// not used by dev
+	membership			UsersOnOrganizations[]
+
+	createdAt 			DateTime 		@default(now())
 	updatedAt 			DateTime?
 }
 
@@ -38,12 +46,13 @@ model Organization {
 	name			String
 	type			String
 	badgeTimes		Int
-	active			Bool		@default(false)
+	active			ACTIVE		@default(FALSE)
 
-	users			User[]
+	users			User[]		@relation("membership")
+	admin			User		@relation("administration", fields: [adminId], references: [id])
+	adminId			Int
 
-	admin			User		@relation(fields: [adminId], references: [id])
-	adminId			String
+	membership		UsersOnOrganizations[]
 
 	callBackURL		String // post req sending the data using a jwt
 }
@@ -55,7 +64,7 @@ model Badge {
 	number		Int	
 
 	user		User	@relation(fields: [userId], references: [id])
-	userId		String
+	userId		Int
 
 	txs			BadgeTX[]
 
@@ -75,7 +84,7 @@ model BadgeTX {
 // many to many relations
 // users and orgs
 model UsersOnOrganizations {
-	user	User			@relation(fields: [userId], references: [id])
+	user	User?			@relation(fields: [userId], references: [id])
 	userId	Int
 	org		Organization	@relation(fields: [orgId], references: [id])
 	orgId	Int

@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
 
         const createdBadge = await prisma.badge.create({
             data: {
-                number: Math.floor(Math.random() * 1_000_000_000_000),
+                number: Math.floor(Math.random() * 1_000_000_000_000).toString(),
                 user: { connect: { email } },
                 org: { connect: { id: orgId } },
             }
@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
             {
                 success: true,
                 data: {
-                    badgeNumber: createdBadge.number.toString(),
+                    badgeNumber: createdBadge.number,
                 }
             },
             { status: 200 }

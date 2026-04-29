@@ -27,6 +27,8 @@ model User {
 	email				String			@unique
 	password			String
 
+	avatar				String?
+
 	badge				Badge[]
 	orgs				Organization[]	@relation("membership")
 	owned_orgs			Organization[]	@relation("administration")

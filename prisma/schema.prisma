@@ -55,6 +55,8 @@ model Organization {
 
 	membership		UsersOnOrganizations[]
 
+	badges			Badge[] // badges of users in the org
+
 	callBackURL		String? // post req sending the data using a jwt
 
 	createdAt 		DateTime 	@default(now())
@@ -63,25 +65,27 @@ model Organization {
 
 
 model Badge {
-	id			Int		@id @default(autoincrement())
+	number		BigInt			@unique
 
-	number		Int	
-
-	user		User	@relation(fields: [userId], references: [id])
+	user		User			@relation(fields: [userId], references: [id])
 	userId		Int
+
+	org			Organization	@relation(fields: [orgId], references: [id])
+	orgId		Int
 
 	txs			BadgeTX[]
 
-	createdAt	DateTime	@default(now())
+	createdAt	DateTime		@default(now())
+	@@id([userId, orgId])
 }
 
 model BadgeTX {
-	id			Int			@id @default(autoincrement())
+	id				Int			@id @default(autoincrement())
 
-	badge		Badge		@relation(fields: [badgeId], references: [id])
-	badgeId		Int
+	badge			Badge		@relation(fields: [badgeNumber], references: [number])
+	badgeNumber		BigInt
 
-	createdAt	DateTime	@default(now())
+	createdAt		DateTime	@default(now())
 }
 
 

@@ -18,83 +18,89 @@ export async function POST(req: NextRequest) {
                 { status: 401 });
         }
 
+        if (!email) {
+            return NextResponse.json({
+                success: false,
+                error: "No email provided !!"
+            },
+                { status: 404 });
+        }
+
         if (!orgId) {
             return NextResponse.json({
                 success: false,
-                error: "Organization id is not provided !!"
+                error: "No organization provided !!"
             },
-                { status: 400 });
+                { status: 404 });
         }
 
-        const org: Organization | null = await prisma.organization.findUnique({ where: { id: orgId } });
+        const org: Organization | null = await prisma.organization.findUnique({
+            where: { id: orgId }
+        })
 
         if (!org) {
             return NextResponse.json({
                 success: false,
-                error: "No such organization with given ID !!"
+                error: "No such organization !!"
             },
                 { status: 404 });
         }
 
-        if (!email) {
+        const user: User | null = await prisma.user.findUnique({
+            where: { email }
+        })
+
+        if (!user) {
             return NextResponse.json({
                 success: false,
-                error: "Email is not valid !!"
-            },
-                { status: 400 });
-        }
-
-        const admin: User | null = await prisma.user.findUnique({ where: { id } });
-        const userToAdd: User | null = await prisma.user.findUnique({ where: { email } });
-
-        if (!admin) {
-            return NextResponse.json({
-                success: false,
-                error: "The current user is deleted or never existed !!"
+                error: "No such user !!"
             },
                 { status: 404 });
         }
 
-        if (!userToAdd) {
-            return NextResponse.json({
-                success: false,
-                error: "The email provided does not correspond to any of our users !!"
-            },
-                { status: 404 });
-        }
-
-        if (org.adminId !== admin.id) {
-            return NextResponse.json({
-                success: false,
-                error: "You are not the admin of the organization !!"
-            },
-                { status: 404 });
-        }
-
-        const userInOrg = await prisma.user.findUnique({
+        const userInOrg: User | null = await prisma.user.findUnique({
             where: { email, orgs: { some: { id: orgId } } }
-        });
+        })
 
-        if (userInOrg) {
+        if (!userInOrg) {
             return NextResponse.json({
                 success: false,
-                error: "User is already a member of the organization !!"
+                error: "No such user in organization !!"
             },
-                { status: 400 });
+                { status: 404 });
         }
 
-        await prisma.user.update({
+        const existingBadge = await prisma.badge.findUnique({
             where: {
-                email
-            },
-            data: {
-                orgs: { connect: { id: orgId } }
+                userId_orgId: {
+                    userId: user.id,
+                    orgId: orgId
+                }
             }
         });
 
+        if (existingBadge) {
+            return NextResponse.json({
+                success: false,
+                error: "User already has badge in this organization !!"
+            },
+                { status: 404 });
+        }
+
+        const createdBadge = await prisma.badge.create({
+            data: {
+                number: Math.floor(Math.random() * 1_000_000_000_000),
+                user: { connect: { email } },
+                org: { connect: { id: orgId } },
+            }
+        })
+
         return NextResponse.json(
             {
-                success: true
+                success: true,
+                data: {
+                    badgeNumber: createdBadge.number.toString(),
+                }
             },
             { status: 200 }
         );
@@ -104,7 +110,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(
             {
                 success: false,
-                error: "Something went wrong !!"
+                error: "Something went wrong, try again !!"
             },
             { status: 500 }
         );

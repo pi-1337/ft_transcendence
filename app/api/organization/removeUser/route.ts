@@ -75,22 +75,33 @@ export async function POST(req: NextRequest) {
             where: { email, orgs: { some: { id: orgId } } }
         });
 
-        if (userInOrg) {
+        if (!userInOrg) {
             return NextResponse.json({
                 success: false,
-                error: "User is already a member of the organization !!"
+                error: "User is not a member of the organization !!"
             },
                 { status: 400 });
         }
 
-        await prisma.user.update({
-            where: {
-                email
-            },
-            data: {
-                orgs: { connect: { id: orgId } }
-            }
-        });
+        await prisma.$transaction([
+            prisma.user.update({
+                where: {
+                    email
+                },
+                data: {
+                    orgs: { disconnect: { id: orgId } }
+                }
+            }),
+
+            prisma.badge.delete({
+                where: {
+                    userId_orgId: {
+                        userId: userInOrg.id,
+                        orgId
+                    }
+                }
+            })
+        ]);
 
         return NextResponse.json(
             {

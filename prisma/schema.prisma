@@ -45,6 +45,7 @@ model Organization {
 
 	name			String
 	type			String
+	service			String
 	badgeTimes		Int
 	active			ACTIVE		@default(FALSE)
 
@@ -54,7 +55,10 @@ model Organization {
 
 	membership		UsersOnOrganizations[]
 
-	callBackURL		String // post req sending the data using a jwt
+	callBackURL		String? // post req sending the data using a jwt
+
+	createdAt 		DateTime 	@default(now())
+	updatedAt 		DateTime?
 }
 
 

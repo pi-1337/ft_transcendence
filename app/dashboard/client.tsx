@@ -11,7 +11,7 @@ export default async function Client() {
     
     return (
     <div className="">
-        
+        test
     </div>
   );
 }

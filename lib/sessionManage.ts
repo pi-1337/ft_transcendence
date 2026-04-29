@@ -1,3 +1,5 @@
+'use server'
+
 import { cookies } from "next/headers";
 import { ft_verify } from "./jwtHelper";
 
@@ -12,7 +14,7 @@ export async function getSession() {
     if (!payload)
         return null;
 
-    return payload.id;
+    return payload.id as number;
 }
 
 export async function removeSession() {

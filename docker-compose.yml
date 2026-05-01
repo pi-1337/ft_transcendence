@@ -22,6 +22,7 @@ services:
     container_name: mariadb
     networks:
       - my_network
+    restart: always
 
 
 networks:

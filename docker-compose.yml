@@ -1,0 +1,28 @@
+
+services:
+  main_app:
+    build: ./services/main_app
+    image: main_app
+    container_name: main_app
+    ports:
+      - 3000:3000
+    networks:
+      - my_network
+
+  badge_manager:
+    build: ./services/badge_manager
+    image: badge_manager
+    container_name: badge_manager
+    networks:
+      - my_network
+
+  database:
+    build: ./services/mariadb # for now
+    image: mariadb
+    container_name: mariadb
+    networks:
+      - my_network
+
+
+networks:
+  my_network

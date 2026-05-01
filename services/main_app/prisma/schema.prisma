@@ -13,9 +13,14 @@ generator client {
 	provider = "prisma-client-js"
 }
 
-enum ACTIVE {
+enum Active {
 	TRUE
 	FALSE
+}
+
+enum Role {
+	ADMIN
+	USER
 }
 
 model User {
@@ -26,6 +31,7 @@ model User {
 	phoneNumber			String
 	email				String			@unique
 	password			String
+	role				Role			@default(USER)
 
 	badge				Badge[]
 	orgs				Organization[]	@relation("membership")
@@ -47,7 +53,7 @@ model Organization {
 	type			String
 	service			String
 	badgeTimes		Int
-	active			ACTIVE		@default(FALSE)
+	active			Active		@default(FALSE)
 
 	users			User[]		@relation("membership")
 	admin			User		@relation("administration", fields: [adminId], references: [id])

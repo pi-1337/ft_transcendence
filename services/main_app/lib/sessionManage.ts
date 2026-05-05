@@ -19,6 +19,6 @@ export async function getSession() {
 
 export async function removeSession() {
     const cookieStorage = await cookies();
-    cookieStorage.delete('token');
+    cookieStorage.delete('session');
 }
 

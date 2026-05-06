@@ -6,10 +6,12 @@ import { prisma } from "@/lib/prisma";
 import Dashboard from "./client";
 
 export default async function Home() {
-    const id = await getSession();
+    const session = await getSession();
 
-    if (!id)
+    if (!session)
         redirect('/auth/login');
+
+    const { id } = session;
 
     const user = await prisma.user.findUnique({
         where: { id },

@@ -14,7 +14,7 @@ export async function getSession() {
     if (!payload)
         return null;
 
-    return payload.id as number;
+    return { id: payload.id as number, role: payload.role as string };
 }
 
 export async function removeSession() {

@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 type Props = {
     firstname: string;
@@ -63,7 +64,9 @@ export default function AdminDashboard({ firstname, lastname, email, totalUsers,
                     <div className="flex flex-col gap-3">
                         <div className="flex items-center justify-between py-2">
                             <span className="text-sm text-gray-300">Manage users</span>
-                            <span className="text-xs text-gray-600 italic">Coming soon</span>
+                            <Link href="/admin/users" className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
+                                View all →
+                            </Link>
                         </div>
                         <div className="h-px bg-[#1f1f1f]" />
                         <div className="flex items-center justify-between py-2">

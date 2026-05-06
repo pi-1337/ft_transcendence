@@ -45,7 +45,10 @@ export default function LoginForm() {
                 return;
             }
 
-            router.push('/dashboard');
+            if (data.user?.role === 'ADMIN')
+                router.push('/admin/dashboard');
+            else
+                router.push('/dashboard');
         } catch {
             setServerError("Network error. Please try again.");
         } finally {

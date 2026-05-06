@@ -71,6 +71,7 @@ export async function POST(req: NextRequest) {
                     email: user.email,
                     firstname: user.firstname,
                     lastname: user.lastname,
+                    role: user.role,
                 }
             },
             { status: 200 }

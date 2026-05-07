@@ -9,9 +9,10 @@ type Props = {
     email: string;
     totalUsers: number;
     totalOrgs: number;
+    totalReaders: number;
 };
 
-export default function AdminDashboard({ firstname, lastname, email, totalUsers, totalOrgs }: Props) {
+export default function AdminDashboard({ firstname, lastname, email, totalUsers, totalOrgs, totalReaders }: Props) {
     const router = useRouter();
 
     const handleLogout = async () => {
@@ -47,7 +48,7 @@ export default function AdminDashboard({ firstname, lastname, email, totalUsers,
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-2 gap-4 mb-10">
+                <div className="grid grid-cols-3 gap-4 mb-10">
                     <div className="bg-[#111] border border-[#1f1f1f] rounded-2xl p-6">
                         <p className="text-gray-500 text-xs uppercase tracking-widest mb-2">Total users</p>
                         <p className="text-4xl font-bold text-white">{totalUsers}</p>
@@ -55,6 +56,10 @@ export default function AdminDashboard({ firstname, lastname, email, totalUsers,
                     <div className="bg-[#111] border border-[#1f1f1f] rounded-2xl p-6">
                         <p className="text-gray-500 text-xs uppercase tracking-widest mb-2">Total organizations</p>
                         <p className="text-4xl font-bold text-white">{totalOrgs}</p>
+                    </div>
+                    <div className="bg-[#111] border border-[#1f1f1f] rounded-2xl p-6">
+                        <p className="text-gray-500 text-xs uppercase tracking-widest mb-2">Total RFC readers</p>
+                        <p className="text-4xl font-bold text-white">{totalReaders}</p>
                     </div>
                 </div>
 
@@ -68,11 +73,21 @@ export default function AdminDashboard({ firstname, lastname, email, totalUsers,
                                 View all →
                             </Link>
                         </div>
+
                         <div className="h-px bg-[#1f1f1f]" />
                         <div className="flex items-center justify-between py-2">
                             <span className="text-sm text-gray-300">Manage organizations</span>
                             <span className="text-xs text-gray-600 italic">Coming soon</span>
                         </div>
+
+                        <div className="h-px bg-[#1f1f1f]" />
+                        <div className="flex items-center justify-between py-2">
+                            <span className="text-sm text-gray-300">Manage RFC Readers</span>
+                            <Link href="/admin/rfcReaders" className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
+                                View all →
+                            </Link>
+                        </div>
+                        
                     </div>
                 </div>
             </main>

@@ -1,0 +1,2 @@
+- a table of all rfid_readers, which store {reader_id, location, organization_id, name, ip, ...}
+- 

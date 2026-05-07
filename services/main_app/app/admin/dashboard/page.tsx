@@ -14,13 +14,11 @@ export default async function AdminDashboardPage() {
 
     const { id } = session;
 
-    const [admin, totalUsers, totalOrgs] = await Promise.all([
-        prisma.user.findUnique({
-            where: { id },
-            select: { firstname: true, lastname: true, email: true },
-        }),
+    const [admin, totalUsers, totalOrgs, totalReaders] = await Promise.all([
+        prisma.user.findUnique({ where: { id }, select: { firstname: true, lastname: true, email: true } }),
         prisma.user.count(),
         prisma.organization.count(),
+        prisma.rfidReaders.count(),
     ]);
 
     if (!admin)
@@ -33,6 +31,7 @@ export default async function AdminDashboardPage() {
             email={admin.email}
             totalUsers={totalUsers}
             totalOrgs={totalOrgs}
+            totalReaders={totalReaders}
         />
     );
 }

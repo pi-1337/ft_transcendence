@@ -84,6 +84,12 @@ export default function ReadersTable({ readers: initialReaders }: Props) {
                                     <td className="px-5 py-3 text-gray-400">{reader.organization.name}</td>
                                     <td className="px-5 py-3">
                                         <div className="flex items-center justify-end gap-2">
+                                            <Link
+                                                href={`/admin/rfcReaders/${reader.id}`}
+                                                className="text-xs text-gray-400 hover:text-white border border-[#333] hover:border-[#555] rounded-md px-3 py-1 transition-colors"
+                                            >
+                                                Edit
+                                            </Link>
                                             <button
                                                 onClick={() => handleDelete(reader.id)}
                                                 disabled={deletingId === reader.id}

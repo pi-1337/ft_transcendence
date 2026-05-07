@@ -54,8 +54,7 @@ model Organization {
 	active			Active		@default(FALSE)
 
 	users			User[]		@relation("membership")
-	admins			User		@relation("administration", fields: [adminId], references: [id])
-	adminId			Int
+	admins			User[]		@relation("administration")
 
 	membership		UsersOnOrganizations[]
 

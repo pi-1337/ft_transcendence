@@ -32,16 +32,20 @@ export async function POST(req: NextRequest, { params }: Params) {
         if (!user)
             return NextResponse.json({ error: "No user found with that email" }, { status: 404 });
 
-        const alreadyMember = await prisma.organization.findFirst({
-            where: { id: orgId, users: { some: { email } } },
+        const alreadyAdmin = await prisma.organization.findFirst({
+            where: { id: orgId, admins: { some: { email } } },
         });
 
-        if (alreadyMember)
-            return NextResponse.json({ error: "User is already a member of this organization" }, { status: 409 });
+        if (alreadyAdmin)
+            return NextResponse.json({ error: "User is already an admin of this organization" }, { status: 409 });
 
-        await prisma.user.update({
-            where: { email },
-            data: { orgs: { connect: { id: orgId } } },
+        // Add as admin + connect as member if not already one
+        await prisma.organization.update({
+            where: { id: orgId },
+            data: {
+                admins: { connect: { email } },
+                users: { connect: { email } },
+            },
         });
 
         return NextResponse.json({
@@ -83,28 +87,17 @@ export async function DELETE(req: NextRequest, { params }: Params) {
         if (!user)
             return NextResponse.json({ error: "No user found with that email" }, { status: 404 });
 
-        const isMember = await prisma.organization.findFirst({
-            where: { id: orgId, users: { some: { email } } },
+        const isAdmin = await prisma.organization.findFirst({
+            where: { id: orgId, admins: { some: { email } } },
         });
 
-        if (!isMember)
-            return NextResponse.json({ error: "User is not a member of this organization" }, { status: 404 });
+        if (!isAdmin)
+            return NextResponse.json({ error: "User is not an admin of this organization" }, { status: 404 });
 
-        await prisma.$transaction([
-            prisma.organization.update({
-                where: { id: orgId },
-                data: {
-                    users: { disconnect: { email } },
-                    admins: { disconnect: { email } },
-                },
-            }),
-            prisma.badgeTX.deleteMany({
-                where: { badge: { userId: user.id, orgId } },
-            }),
-            prisma.badge.deleteMany({
-                where: { userId: user.id, orgId },
-            }),
-        ]);
+        await prisma.organization.update({
+            where: { id: orgId },
+            data: { admins: { disconnect: { email } } },
+        });
 
         return NextResponse.json({ success: true }, { status: 200 });
 

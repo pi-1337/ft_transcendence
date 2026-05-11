@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        const token = ft_sign({ id: user.id });
+        const token = ft_sign({ id: user.id, role: user.role });
 
         const cookieStorage = await cookies();
         cookieStorage.set('session', token, {
@@ -71,6 +71,7 @@ export async function POST(req: NextRequest) {
                     email: user.email,
                     firstname: user.firstname,
                     lastname: user.lastname,
+                    role: user.role,
                 }
             },
             { status: 200 }

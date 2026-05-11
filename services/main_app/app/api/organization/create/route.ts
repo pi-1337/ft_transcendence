@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
                 type,
                 service,
                 badgeTimes,
-                admin: { connect: { id } },
+                admins: { connect: { id } },
                 users: { connect: { id } }
             }
         });

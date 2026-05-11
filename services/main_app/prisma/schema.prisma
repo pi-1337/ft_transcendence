@@ -33,7 +33,7 @@ model User {
 	password			String
 	role				Role			@default(USER)
 
-	badge				Badge[]
+	badge				Badge
 	orgs				Organization[]	@relation("membership")
 	owned_orgs			Organization[]	@relation("administration")
 
@@ -43,8 +43,6 @@ model User {
 	createdAt 			DateTime 		@default(now())
 	updatedAt 			DateTime?
 }
-
-
 
 model Organization {
 	id				Int			@id @default(autoincrement())
@@ -56,8 +54,7 @@ model Organization {
 	active			Active		@default(FALSE)
 
 	users			User[]		@relation("membership")
-	admin			User		@relation("administration", fields: [adminId], references: [id])
-	adminId			Int
+	admins			User[]		@relation("administration")
 
 	membership		UsersOnOrganizations[]
 
@@ -67,6 +64,8 @@ model Organization {
 
 	createdAt 		DateTime 	@default(now())
 	updatedAt 		DateTime?
+
+	readers    RfidReaders[]
 }
 
 
@@ -105,3 +104,9 @@ model UsersOnOrganizations {
 	@@id([userId, orgId]) // pair (id, id) is uniq in IR^2
 }
 
+model RfidReaders {
+	id Int @id @default(autoincrement())
+	location String
+	organization    Organization @relation(fields: [organizationId], references: [id])
+    organizationId  Int
+}

@@ -34,14 +34,32 @@ model User {
 	role				Role			@default(USER)
 
 	badge				Badge[]
+	unreadNotifications	Notifications[]	@relation("unread")
+	readNotifications	Notifications[]	@relation("read")
 	orgs				Organization[]	@relation("membership")
 	owned_orgs			Organization[]	@relation("administration")
 
 	// not used by dev
 	membership			UsersOnOrganizations[]
+	read				UsersOnNotificationsRead[]
+	unread				UsersOnNotifications[]
 
 	createdAt 			DateTime 		@default(now())
 	updatedAt 			DateTime?
+}
+
+model Notifications {
+	id				Int			@id @default(autoincrement())
+
+	unreadUsers		User[]		@relation("unread")
+	readUsers		User[]		@relation("read")
+
+	message			String
+
+	read			UsersOnNotificationsRead[]
+	unread			UsersOnNotifications[]
+
+	createdAt 		DateTime 	@default(now())
 }
 
 model Organization {
@@ -102,6 +120,22 @@ model UsersOnOrganizations {
 	org		Organization	@relation(fields: [orgId], references: [id])
 	orgId	Int
 	@@id([userId, orgId]) // pair (id, id) is uniq in IR^2
+}
+
+model UsersOnNotifications {
+	user	User?			@relation(fields: [userId], references: [id])
+	userId	Int
+	notif	Notifications	@relation(fields: [notifId], references: [id])
+	notifId	Int
+	@@id([userId, notifId])
+}
+
+model UsersOnNotificationsRead {
+	user	User?			@relation(fields: [userId], references: [id])
+	userId	Int
+	notif	Notifications	@relation(fields: [notifId], references: [id])
+	notifId	Int
+	@@id([userId, notifId])
 }
 
 model RfidReaders {

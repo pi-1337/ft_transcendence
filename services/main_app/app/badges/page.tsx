@@ -4,7 +4,7 @@ import { getSession } from "@/lib/sessionManage";
 import { redirect } from "next/navigation";
 import Client from "./client";
 
-export default async function UserEditPage() {
+export default async function BadgesPage() {
     const id = await getSession();
 
     if (!id) {

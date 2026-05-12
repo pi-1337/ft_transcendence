@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Award, Mail, CheckCircle } from 'lucide-react';
 
-export default function AwardBadgeClient({ orgId }: { orgId: string }) {
+export default function AwardBadgeClient({ orgId }: { orgId: number }) {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -13,7 +13,7 @@ export default function AwardBadgeClient({ orgId }: { orgId: string }) {
   const [error, setError] = useState('');
 
   const [organization] = useState({
-    id: parseInt(orgId),
+    id: orgId,
     name: 'Tech Startup',
     type: 'Company',
   });

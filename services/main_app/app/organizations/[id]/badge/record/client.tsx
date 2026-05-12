@@ -7,7 +7,7 @@ import { ArrowLeft, Award, CheckCircle, AlertCircle } from 'lucide-react';
 
 interface BadgeRecordClientProps {
   organizationId: number;
-  userId: string;
+  userId: number;
 }
 
 export default function BadgeRecordClient({ organizationId, userId }: BadgeRecordClientProps) {

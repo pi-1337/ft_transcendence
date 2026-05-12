@@ -140,15 +140,9 @@ export default function UserDashboard({ userId }: { userId: string }) {
         <div className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-white">Recent Badges</h2>
-            <div className="flex items-center gap-3">
-              <Link href="/badges/claim" className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded-lg transition flex items-center gap-2">
-                <Award size={18} />
-                Claim Badge
-              </Link>
-              <Link href="/badges" className="text-blue-400 hover:text-blue-300 flex items-center gap-1">
-                View all <ArrowRight size={16} />
-              </Link>
-            </div>
+            <Link href="/badges" className="text-blue-400 hover:text-blue-300 flex items-center gap-1">
+              View all <ArrowRight size={16} />
+            </Link>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">

@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Edit2, Building2, Award, LogOut, ArrowRight } from 'lucide-react';
+import { Edit2, Building2, Award, LogOut, ArrowRight, Bell } from 'lucide-react';
 
 interface Organization {
   id: number;
@@ -64,13 +64,19 @@ export default function UserDashboard({ userId }: { userId: string }) {
       <header className="bg-slate-950 border-b border-slate-700 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <h1 className="text-xl font-bold text-white">Transcendence</h1>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 text-slate-400 hover:text-white transition"
-          >
-            <LogOut size={20} />
-            <span className="hidden sm:inline">Logout</span>
-          </button>
+          <div className="flex items-center gap-3">
+            <Link href="/notifications" className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition relative">
+              <Bell size={20} />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 text-slate-400 hover:text-white transition"
+            >
+              <LogOut size={20} />
+              <span className="hidden sm:inline">Logout</span>
+            </button>
+          </div>
         </div>
       </header>
 

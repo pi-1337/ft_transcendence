@@ -36,6 +36,7 @@ model User {
 	badge				Badge[]
 	orgs				Organization[]	@relation("membership")
 	owned_orgs			Organization[]	@relation("administration")
+	notifications		Notification[]
 
 	// not used by dev
 	membership			UsersOnOrganizations[]
@@ -94,6 +95,25 @@ model BadgeTX {
 	createdAt		DateTime	@default(now())
 }
 
+
+model Notification {
+	id				Int			@id @default(autoincrement())
+
+	user			User		@relation(fields: [userId], references: [id], onDelete: Cascade)
+	userId			Int
+
+	type			String		// "badge_awarded", "user_added", "badge_recorded"
+	title			String
+	message			String
+	read			Boolean		@default(false)
+
+	relatedOrgId	Int?		// reference to organization
+	relatedBadgeId	String?		// reference to badge number
+	relatedUserId	Int?		// reference to user who triggered notification
+
+	createdAt		DateTime	@default(now())
+	updatedAt		DateTime?
+}
 
 // many to many relations
 // users and orgs

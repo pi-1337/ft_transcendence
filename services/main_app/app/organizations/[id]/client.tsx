@@ -100,9 +100,17 @@ export default function OrganizationDetailClient({ orgId, userId }: { orgId: str
               <h1 className="text-3xl font-bold mb-2">{org.name}</h1>
               <p className="text-blue-100">{org.type} • {org.service}</p>
             </div>
-            {org.isAdmin && (
-              <span className="bg-white text-blue-600 font-semibold px-4 py-2 rounded-lg">Admin</span>
-            )}
+            <div className="flex items-center gap-3">
+              {org.isAdmin && (
+                <Link href={`/organizations/${orgId}/badge`} className="bg-white text-blue-600 font-semibold px-4 py-2 rounded-lg hover:bg-blue-50 transition flex items-center gap-2">
+                  <Award size={18} />
+                  Award Badge
+                </Link>
+              )}
+              {org.isAdmin && (
+                <span className="bg-white/20 text-white font-semibold px-4 py-2 rounded-lg">Admin</span>
+              )}
+            </div>
           </div>
         </div>
 

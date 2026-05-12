@@ -13,7 +13,7 @@ type Props = {
 export default function CreateReaderForm({ organizations }: Props) {
     const router = useRouter();
     const [location, setLocation] = useState('');
-    const [organizationId, setOrganizationId] = useState<number | ''>(organizations[0]?.id ?? '');
+    const [organizationId, setorganizationId] = useState<number | ''>(organizations[0]?.id ?? '');
     const [serverError, setServerError] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -77,7 +77,7 @@ export default function CreateReaderForm({ organizations }: Props) {
                         <label className="text-gray-400 text-sm">Organization</label>
                         <select
                             value={organizationId}
-                            onChange={(e) => setOrganizationId(Number(e.target.value))}
+                            onChange={(e) => setorganizationId(Number(e.target.value))}
                             className="bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
                         >
                             {organizations.map((org) => (

@@ -20,14 +20,14 @@ interface Badge {
 }
 
 interface User {
-  id: string;
+  id: number;
   firstname: string;
   lastname: string;
   email: string;
   phoneNumber?: string;
 }
 
-export default function UserDashboard({ userId }: { userId: string }) {
+export default function UserDashboard({ userId }: { userId: number }) {
   const router = useRouter();
 
   const user: User = {

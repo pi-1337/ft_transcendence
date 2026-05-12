@@ -12,7 +12,7 @@ interface Badge {
   transactionCount: number;
 }
 
-export default function BadgesClient({ userId }: { userId: string }) {
+export default function BadgesClient({ userId }: { userId: number }) {
   const router = useRouter();
 
   const badges: Badge[] = [

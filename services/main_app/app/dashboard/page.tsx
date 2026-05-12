@@ -12,7 +12,7 @@ export default async function Home() {
 
     return (
         <>
-            <Client userId={data.role} />
+            <Client userId={data.id} />
         </>
     );
 }

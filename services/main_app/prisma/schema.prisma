@@ -33,7 +33,7 @@ model User {
 	password			String
 	role				Role			@default(USER)
 
-	badge				Badge
+	badge				Badge[]
 	orgs				Organization[]	@relation("membership")
 	owned_orgs			Organization[]	@relation("administration")
 
@@ -73,18 +73,18 @@ model Badge {
 	number		String			@unique
 
 	user		User			@relation(fields: [userId], references: [id])
-	userId		Int
+	userId		Int				@unique
 
 	org			Organization	@relation(fields: [orgId], references: [id])
-	orgId		Int
+	orgId		Int				@unique
 
-	txs			BadgeTX[]
+	records		BadgeRecord[]
 
 	createdAt	DateTime		@default(now())
 	@@id([userId, orgId])
 }
 
-model BadgeTX {
+model BadgeRecord {
 	id				Int			@id @default(autoincrement())
 
 	badge			Badge		@relation(fields: [badgeNumber], references: [number])

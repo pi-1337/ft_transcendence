@@ -6,11 +6,11 @@ import { ArrowLeft, LogOut, Copy, Check } from 'lucide-react';
 import { useState } from 'react';
 
 interface RecordDetail {
-  id: string;
+  id: number;
   badgeNumber: string;
   organizationName: string;
-  organizationId: string;
-  userId: string;
+  organizationId: number;
+  userId: number;
   userName: string;
   createdAt: string;
   status: 'confirmed' | 'pending';
@@ -26,8 +26,8 @@ export default function RecordDetailPage({
   recordId,
   userId,
 }: {
-  recordId: string;
-  userId: string;
+  recordId: number;
+  userId: number;
 }) {
   const router = useRouter();
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -37,7 +37,7 @@ export default function RecordDetailPage({
     id: recordId,
     badgeNumber: '#12',
     organizationName: 'Tech Startup',
-    organizationId: '1',
+    organizationId: 1,
     userId: userId,
     userName: 'John Developer',
     createdAt: 'May 10, 2025 - 14:32:45 UTC',

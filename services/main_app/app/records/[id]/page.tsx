@@ -2,13 +2,18 @@
 
 import { getSession } from "@/lib/sessionManage";
 import { redirect } from "next/navigation";
+import Client from "./client";
 
-export default async function Home() {
+export default async function RecordDetailPage({
+    params,
+}: {
+    params: { id: string };
+}) {
     const id = await getSession();
 
     if (!id) {
         redirect('/auth/login');
     }
 
-    redirect('/user/dashboard');
+    return <Client recordId={params.id} userId={id} />;
 }

@@ -4,9 +4,9 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, LogOut, Award, Building2 } from 'lucide-react';
 
-interface BadgeTransaction {
+interface BadgeRecord {
   id: number;
-  transactionHash: string;
+  recordHash: string;
   timestamp: string;
 }
 
@@ -16,7 +16,7 @@ interface Badge {
   organizationId: number;
   awardedDate: string;
   description: string;
-  transactions: BadgeTransaction[];
+  records: BadgeRecord[];
 }
 
 export default function BadgeDetailClient({ badgeId, userId }: { badgeId: string; userId: string }) {
@@ -28,10 +28,10 @@ export default function BadgeDetailClient({ badgeId, userId }: { badgeId: string
     organizationId: 1,
     awardedDate: 'May 10, 2025',
     description: 'Outstanding contribution to the development team',
-    transactions: [
-      { id: 1, transactionHash: '0x1234...5678', timestamp: 'May 10, 2025 10:30 AM' },
-      { id: 2, transactionHash: '0x9abc...def0', timestamp: 'May 10, 2025 10:31 AM' },
-      { id: 3, transactionHash: '0x5678...9abc', timestamp: 'May 10, 2025 10:32 AM' },
+    records: [
+      { id: 1, recordHash: '0x1234...5678', timestamp: 'May 10, 2025 10:30 AM' },
+      { id: 2, recordHash: '0x9abc...def0', timestamp: 'May 10, 2025 10:31 AM' },
+      { id: 3, recordHash: '0x5678...9abc', timestamp: 'May 10, 2025 10:32 AM' },
     ],
   };
 
@@ -100,17 +100,17 @@ export default function BadgeDetailClient({ badgeId, userId }: { badgeId: string
           </div>
         </div>
 
-        {/* Transactions */}
+        {/* Records */}
         <div className="bg-slate-800 border border-slate-700 rounded-lg p-8">
-          <h2 className="text-2xl font-bold text-white mb-6">Badge Transactions ({badge.transactions.length})</h2>
+          <h2 className="text-2xl font-bold text-white mb-6">Badge Records ({badge.records.length})</h2>
 
           <div className="space-y-3">
-            {badge.transactions.map((tx) => (
-              <Link key={tx.id} href={`/transactions/${tx.id}`}>
+            {badge.records.map((record) => (
+              <Link key={record.id} href={`/records/${record.id}`}>
                 <div className="flex items-center justify-between p-4 bg-slate-700 rounded-lg hover:bg-slate-600 transition cursor-pointer">
                   <div>
-                    <p className="text-white font-semibold font-mono text-sm">{tx.transactionHash}</p>
-                    <p className="text-slate-400 text-sm">{tx.timestamp}</p>
+                    <p className="text-white font-semibold font-mono text-sm">{record.recordHash}</p>
+                    <p className="text-slate-400 text-sm">{record.timestamp}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-blue-400 text-sm font-semibold">View →</p>

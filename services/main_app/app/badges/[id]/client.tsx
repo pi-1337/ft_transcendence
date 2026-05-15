@@ -4,10 +4,9 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, LogOut, Award, Building2 } from 'lucide-react';
 
-interface BadgeRecord {
+interface BadgeTX {
   id: number;
-  recordHash: string;
-  timestamp: string;
+  createdAt: Date;
 }
 
 interface Badge {
@@ -16,7 +15,7 @@ interface Badge {
   organizationId: number;
   awardedDate: string;
   description: string;
-  records: BadgeRecord[];
+  txs: BadgeTX[];
 }
 
 export default function BadgeDetailClient({ badgeId, userId }: { badgeId: string; userId: string }) {
@@ -28,10 +27,10 @@ export default function BadgeDetailClient({ badgeId, userId }: { badgeId: string
     organizationId: 1,
     awardedDate: 'May 10, 2025',
     description: 'Outstanding contribution to the development team',
-    records: [
-      { id: 1, recordHash: '0x1234...5678', timestamp: 'May 10, 2025 10:30 AM' },
-      { id: 2, recordHash: '0x9abc...def0', timestamp: 'May 10, 2025 10:31 AM' },
-      { id: 3, recordHash: '0x5678...9abc', timestamp: 'May 10, 2025 10:32 AM' },
+    txs: [
+      { id: 1, createdAt: new Date('2025-05-10T10:30:00') },
+      { id: 2, createdAt: new Date('2025-05-10T10:31:00') },
+      { id: 3, createdAt: new Date('2025-05-10T10:32:00') },
     ],
   };
 
@@ -102,15 +101,15 @@ export default function BadgeDetailClient({ badgeId, userId }: { badgeId: string
 
         {/* Records */}
         <div className="bg-slate-800 border border-slate-700 rounded-lg p-8">
-          <h2 className="text-2xl font-bold text-white mb-6">Badge Records ({badge.records.length})</h2>
+          <h2 className="text-2xl font-bold text-white mb-6">Badge Records ({badge.txs.length})</h2>
 
           <div className="space-y-3">
-            {badge.records.map((record) => (
-              <Link key={record.id} href={`/records/${record.id}`}>
+            {badge.txs.map((tx) => (
+              <Link key={tx.id} href={`/records/${tx.id}`}>
                 <div className="flex items-center justify-between p-4 bg-slate-700 rounded-lg hover:bg-slate-600 transition cursor-pointer">
                   <div>
-                    <p className="text-white font-semibold font-mono text-sm">{record.recordHash}</p>
-                    <p className="text-slate-400 text-sm">{record.timestamp}</p>
+                    <p className="text-white font-semibold font-mono text-sm">Record #{tx.id}</p>
+                    <p className="text-slate-400 text-sm">{new Date(tx.createdAt).toLocaleDateString()}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-blue-400 text-sm font-semibold">View →</p>

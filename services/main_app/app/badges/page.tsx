@@ -11,14 +11,17 @@ export default async function BadgesPage() {
     if (!session)
         redirect('/auth/login');
 
-    const badge = await prisma.badge.findUnique({
+    const badges = await prisma.badge.findMany({
         where: { userId: session },
         select: {
             number: true,
             org: { select: { id: true, name: true } },
             createdAt: true,
-        }
+        },
+        take: 1,
     });
+
+    const badge = badges.length > 0 ? badges[0] : null;
 
     return <Client badge={badge} />;
 }

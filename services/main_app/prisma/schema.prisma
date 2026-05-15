@@ -28,13 +28,16 @@ model User {
 
 	firstname			String
 	lastname			String
-	phoneNumber			String
+	phoneNumber			String?
 	email				String			@unique
-	password			String
+	login				String?			@unique
+	password			String?
 	role				Role			@default(USER)
 
-	badge				Badge			@relation(fields: [badgeId], references: [id])
-	badgeId				Int
+	badge				Badge?
+
+	unreadNotifications	Notifications[]	@relation("unread")
+	readNotifications	Notifications[]	@relation("read")
 	orgs				Organization[]	@relation("membership")
 	owned_orgs			Organization[]	@relation("administration")
 

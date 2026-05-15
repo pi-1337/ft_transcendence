@@ -44,6 +44,14 @@ export async function POST(req: NextRequest) {
                 { status: 404 });
         }
 
+        if (!user.password) {
+            return NextResponse.json({
+                success: false,
+                error: "User does not have a password, use Oauth to authenticate !!"
+            },
+                { status: 404 });
+        }
+
         const validPassword = await bcrypt.compare(password, user.password);
 
         if (validPassword !== true) {

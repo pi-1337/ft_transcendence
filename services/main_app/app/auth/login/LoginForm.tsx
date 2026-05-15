@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-export default function LoginForm() {
+export default function LoginForm({ ft_auth_url }: { ft_auth_url: string }) {
     const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -107,6 +108,9 @@ export default function LoginForm() {
                         Register
                     </a>
                 </p>
+
+                <Link href={ft_auth_url}>Authenticate using 42 Oauth</Link>
+
             </div>
         </div>
     );

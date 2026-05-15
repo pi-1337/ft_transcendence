@@ -1,22 +1,23 @@
 'use server'
 
 import { NextRequest, NextResponse } from "next/server";
-import { User, Organization } from "@prisma/client";
+import { Organization } from "@prisma/client";
 import { getSession } from "@/lib/sessionManage";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
     try {
         const { name, type, service, badgeTimes, orgId } = await req.json();
-        const id: number | null = await getSession();
+        const sessionData = await getSession();
 
-        if (id === null) {
+        if (sessionData === null) {
             return NextResponse.json({
                 success: false,
                 error: "You are not logged in !!"
             },
                 { status: 401 });
         }
+        const id: number = sessionData.id;
 
         if (!orgId) {
             return NextResponse.json({
@@ -36,22 +37,16 @@ export async function POST(req: NextRequest) {
                 { status: 404 });
         }
 
-        const admin: User | null = await prisma.user.findUnique({ where: { id } });
+        const isOrgAdmin = await prisma.organization.findFirst({
+            where: { id: orgId, admins: { some: { id } } }
+        });
 
-        if (!admin) {
-            return NextResponse.json({
-                success: false,
-                error: "The current user is deleted or never existed !!"
-            },
-                { status: 404 });
-        }
-
-        if (org.adminId !== admin.id) {
+        if (!isOrgAdmin) {
             return NextResponse.json({
                 success: false,
                 error: "You are not the admin of the organization !!"
             },
-                { status: 404 });
+                { status: 403 });
         }
 
         if (!name && !type && !service && !badgeTimes) {

@@ -6,49 +6,49 @@ import Link from 'next/link';
 import { LogOut, ArrowRight, Search, Filter } from 'lucide-react';
 
 interface BadgeRecord {
-  id: string;
+  id: number;
   badgeNumber: string;
   organizationName: string;
   createdAt: string;
   status: 'confirmed' | 'pending';
 }
 
-export default function RecordsPage({ userId }: { userId: string }) {
+export default function RecordsPage({ userId }: { userId: number }) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'confirmed' | 'pending'>('all');
 
   const [records] = useState<BadgeRecord[]>([
     {
-      id: '1',
+      id: 1,
       badgeNumber: '#12',
       organizationName: 'Tech Startup',
       createdAt: 'May 10, 2025 - 14:32 UTC',
       status: 'confirmed',
     },
     {
-      id: '2',
+      id: 2,
       badgeNumber: '#11',
       organizationName: 'Design Team',
       createdAt: 'May 8, 2025 - 10:15 UTC',
       status: 'confirmed',
     },
     {
-      id: '3',
+      id: 3,
       badgeNumber: '#10',
       organizationName: 'Tech Startup',
       createdAt: 'May 5, 2025 - 09:47 UTC',
       status: 'pending',
     },
     {
-      id: '4',
+      id: 4,
       badgeNumber: '#9',
       organizationName: 'Tech Startup',
       createdAt: 'April 28, 2025 - 16:22 UTC',
       status: 'confirmed',
     },
     {
-      id: '5',
+      id: 5,
       badgeNumber: '#8',
       organizationName: 'Marketing Guild',
       createdAt: 'April 20, 2025 - 11:05 UTC',

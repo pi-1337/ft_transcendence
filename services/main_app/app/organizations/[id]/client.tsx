@@ -14,7 +14,7 @@ interface Member {
 }
 
 interface Organization {
-  id: string;
+  id: number;
   name: string;
   type: string;
   service: string;
@@ -23,7 +23,7 @@ interface Organization {
   isAdmin: boolean;
 }
 
-export default function OrganizationDetailClient({ orgId, userId }: { orgId: string; userId: string }) {
+export default function OrganizationDetailClient({ orgId, userId }: { orgId: number; userId: number }) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddMember, setShowAddMember] = useState(false);

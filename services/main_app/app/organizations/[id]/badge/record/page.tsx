@@ -2,14 +2,14 @@
 
 import { getSession } from "@/lib/sessionManage";
 import { redirect } from "next/navigation";
-import Client from "./client";
+import BadgeRecordClient from "./client";
 
-export default async function BadgeRecordPage({ params }: { params: { id: string } }) {
-    const userId = await getSession();
+export default async function BadgeRecordPage({ params }: { params: { id: number } }) {
+    const sessionData = await getSession();
 
-    if (!userId) {
+    if (!sessionData) {
         redirect('/auth/login');
     }
 
-    return <Client organizationId={parseInt(params.id)} userId={userId} />;
+    return <BadgeRecordClient organizationId={params.id} userId={sessionData.id} />;
 }

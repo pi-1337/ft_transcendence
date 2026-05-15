@@ -13,7 +13,7 @@ interface Organization {
   isAdmin: boolean;
 }
 
-export default function OrganizationsClient({ userId }: { userId: string }) {
+export default function OrganizationsClient({ userId }: { userId: number }) {
   const router = useRouter();
 
   const organizations: Organization[] = [

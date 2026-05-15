@@ -1,0 +1,12 @@
+- a table of all rfid_readers, which store {reader_id, location, organization_id, name, ip, ...}
+- 
+
+- we need a name for our platfrom
+
+pages:
+	user:
+		home
+		profile
+		organizations
+	about
+	

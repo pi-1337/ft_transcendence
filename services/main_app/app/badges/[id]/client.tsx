@@ -19,7 +19,7 @@ interface Badge {
   records: BadgeRecord[];
 }
 
-export default function BadgeDetailClient({ badgeId, userId }: { badgeId: string; userId: string }) {
+export default function BadgeDetailClient({ badgeId, userId }: { badgeId: number; userId: number }) {
   const router = useRouter();
 
   const badge: Badge = {

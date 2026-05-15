@@ -5,11 +5,12 @@ import { redirect } from "next/navigation";
 import Client from "./client";
 
 export default async function BadgesPage() {
-    const id = await getSession();
+    const sessionData = await getSession();
 
-    if (!id) {
+    if (!sessionData) {
         redirect('/auth/login');
     }
+    const { id } = sessionData;
 
     return <Client userId={id} />;
 }

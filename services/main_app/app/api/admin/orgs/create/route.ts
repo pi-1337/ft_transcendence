@@ -4,11 +4,17 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
     try {
-        const session = await getSession();
+        const userId = await getSession();
 
-        if (!session)
+        if (!userId)
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        if (session.role !== 'ADMIN')
+
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { role: true }
+        });
+
+        if (!user || user.role !== 'ADMIN')
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
         const { name, type, service, badgeTimes, active, callBackURL } = await req.json();

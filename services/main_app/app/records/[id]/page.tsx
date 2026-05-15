@@ -15,5 +15,5 @@ export default async function RecordDetailPage({
         redirect('/auth/login');
     }
 
-    return <Client recordId={params.id} userId={id} />;
+    return <Client recordId={params.id} userId={id.toString()} />;
 }

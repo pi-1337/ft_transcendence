@@ -6,11 +6,17 @@ import EditUserForm from "./EditUserForm";
 type Params = { params: Promise<{ id: string }> };
 
 export default async function EditUserPage({ params }: Params) {
-    const session = await getSession();
+    const adminId = await getSession();
 
-    if (!session)
+    if (!adminId)
         redirect('/auth/login');
-    if (session.role !== 'ADMIN')
+
+    const adminUser = await prisma.user.findUnique({
+        where: { id: adminId },
+        select: { role: true }
+    });
+
+    if (!adminUser || adminUser.role !== 'ADMIN')
         redirect('/dashboard');
 
     const { id: rawId } = await params;
@@ -26,5 +32,5 @@ export default async function EditUserPage({ params }: Params) {
     if (!user)
         redirect('/admin/users');
 
-    return <EditUserForm user={user} isSelf={userId === session.id} />;
+    return <EditUserForm user={user} isSelf={userId === adminId} />;
 }

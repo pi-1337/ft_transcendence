@@ -4,11 +4,17 @@ import { prisma } from "@/lib/prisma";
 import UsersTable from "./UsersTable";
 
 export default async function AdminUsersPage() {
-    const session = await getSession();
+    const userId = await getSession();
 
-    if (!session)
+    if (!userId)
         redirect('/auth/login');
-    if (session.role !== 'ADMIN')
+
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { role: true }
+    });
+
+    if (!user || user.role !== 'ADMIN')
         redirect('/dashboard');
 
     const users = await prisma.user.findMany({
@@ -23,5 +29,5 @@ export default async function AdminUsersPage() {
         orderBy: { createdAt: 'desc' },
     });
 
-    return <UsersTable users={users} currentAdminId={session.id} />;
+    return <UsersTable users={users} currentAdminId={userId} />;
 }

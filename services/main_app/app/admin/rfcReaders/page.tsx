@@ -4,11 +4,17 @@ import { prisma } from "@/lib/prisma";
 import ReadersTable from "./ReadersTable";
 
 export default async function AdminRfcReadersPage() {
-    const session = await getSession();
+    const userId = await getSession();
 
-    if (!session)
+    if (!userId)
         redirect('/auth/login');
-    if (session.role !== 'ADMIN')
+
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { role: true }
+    });
+
+    if (!user || user.role !== 'ADMIN')
         redirect('/dashboard');
 
     const readers = await prisma.rfidReaders.findMany({

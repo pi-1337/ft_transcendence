@@ -1,13 +1,20 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/sessionManage";
+import { prisma } from "@/lib/prisma";
 import CreateOrgForm from "./CreateOrgForm";
 
 export default async function CreateOrgPage() {
-    const session = await getSession();
+    const userId = await getSession();
 
-    if (!session)
+    if (!userId)
         redirect('/auth/login');
-    if (session.role !== 'ADMIN')
+
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { role: true }
+    });
+
+    if (!user || user.role !== 'ADMIN')
         redirect('/dashboard');
 
     return <CreateOrgForm />;

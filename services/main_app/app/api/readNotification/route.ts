@@ -6,18 +6,17 @@ export async function POST(req: NextRequest) {
     try {
 
         const { notificationIds } = await req.json();
-        const sessionData = await getSession();
+        const userId = await getSession();
 
-        if (sessionData === null) {
+        if (!userId) {
             return NextResponse.json({
                 success: false,
                 error: "You are not logged in !!"
             },
                 { status: 401 });
         }
-        const id: number = sessionData.id;
 
-        await readNotification(id, notificationIds);
+        await readNotification(userId, notificationIds);
         
         return NextResponse.json(
             {

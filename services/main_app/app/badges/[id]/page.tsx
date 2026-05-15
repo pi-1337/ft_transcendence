@@ -11,5 +11,5 @@ export default async function BadgeDetailPage({ params }: { params: { id: string
         redirect('/auth/login');
     }
 
-    return <Client badgeId={params.id} userId={id} />;
+    return <Client badgeId={params.id} userId={id.toString()} />;
 }

@@ -4,24 +4,22 @@ import { prisma } from "@/lib/prisma";
 import AdminDashboard from "./client";
 
 export default async function AdminDashboardPage() {
-    const session = await getSession();
+    const userId = await getSession();
 
-    if (!session)
+    if (!userId)
         redirect('/auth/login');
 
-    if (session.role !== 'ADMIN')
-        redirect('/dashboard');
-
-    const { id } = session;
-
     const [admin, totalUsers, totalOrgs, totalReaders] = await Promise.all([
-        prisma.user.findUnique({ where: { id }, select: { firstname: true, lastname: true, email: true } }),
+        prisma.user.findUnique({ 
+            where: { id: userId }, 
+            select: { role: true, firstname: true, lastname: true, email: true } 
+        }),
         prisma.user.count(),
         prisma.organization.count(),
         prisma.rfidReaders.count(),
     ]);
 
-    if (!admin)
+    if (!admin || admin.role !== 'ADMIN')
         redirect('/auth/login');
 
     return (

@@ -6,11 +6,17 @@ import EditOrgForm from "./EditOrgForm";
 type Params = { params: Promise<{ id: string }> };
 
 export default async function EditOrgPage({ params }: Params) {
-    const session = await getSession();
+    const userId = await getSession();
 
-    if (!session)
+    if (!userId)
         redirect('/auth/login');
-    if (session.role !== 'ADMIN')
+
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { role: true }
+    });
+
+    if (!user || user.role !== 'ADMIN')
         redirect('/dashboard');
 
     const { id: rawId } = await params;
@@ -22,7 +28,7 @@ export default async function EditOrgPage({ params }: Params) {
         where: { id: orgId },
         include: {
             users: { select: { id: true, firstname: true, lastname: true, email: true } },
-            admins: { select: { id: true, firstname: true, lastname: true, email: true } },
+            admin: { select: { id: true, firstname: true, lastname: true, email: true } },
         },
     });
 

@@ -6,11 +6,17 @@ type Params = { params: Promise<{ id: string }> };
 
 export async function POST(req: NextRequest, { params }: Params) {
     try {
-        const session = await getSession();
+        const userId = await getSession();
 
-        if (!session)
+        if (!userId)
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        if (session.role !== 'ADMIN')
+
+        const adminUser = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { role: true }
+        });
+
+        if (!adminUser || adminUser.role !== 'ADMIN')
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
         const { id: rawId } = await params;
@@ -22,14 +28,14 @@ export async function POST(req: NextRequest, { params }: Params) {
         if (!email)
             return NextResponse.json({ error: "Email is required" }, { status: 400 });
 
-        const [org, user] = await Promise.all([
+        const [org, targetUser] = await Promise.all([
             prisma.organization.findUnique({ where: { id: orgId } }),
             prisma.user.findUnique({ where: { email } }),
         ]);
 
         if (!org)
             return NextResponse.json({ error: "Organization not found" }, { status: 404 });
-        if (!user)
+        if (!targetUser)
             return NextResponse.json({ error: "No user found with that email" }, { status: 404 });
 
         const alreadyMember = await prisma.organization.findFirst({
@@ -46,7 +52,7 @@ export async function POST(req: NextRequest, { params }: Params) {
 
         return NextResponse.json({
             success: true,
-            user: { id: user.id, firstname: user.firstname, lastname: user.lastname, email: user.email },
+            user: { id: targetUser.id, firstname: targetUser.firstname, lastname: targetUser.lastname, email: targetUser.email },
         }, { status: 200 });
 
     } catch (error) {
@@ -57,11 +63,17 @@ export async function POST(req: NextRequest, { params }: Params) {
 
 export async function DELETE(req: NextRequest, { params }: Params) {
     try {
-        const session = await getSession();
+        const userId = await getSession();
 
-        if (!session)
+        if (!userId)
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        if (session.role !== 'ADMIN')
+
+        const adminUser = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { role: true }
+        });
+
+        if (!adminUser || adminUser.role !== 'ADMIN')
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
         const { id: rawId } = await params;
@@ -73,14 +85,14 @@ export async function DELETE(req: NextRequest, { params }: Params) {
         if (!email)
             return NextResponse.json({ error: "Email is required" }, { status: 400 });
 
-        const [org, user] = await Promise.all([
+        const [org, targetUser] = await Promise.all([
             prisma.organization.findUnique({ where: { id: orgId } }),
             prisma.user.findUnique({ where: { email } }),
         ]);
 
         if (!org)
             return NextResponse.json({ error: "Organization not found" }, { status: 404 });
-        if (!user)
+        if (!targetUser)
             return NextResponse.json({ error: "No user found with that email" }, { status: 404 });
 
         const isMember = await prisma.organization.findFirst({
@@ -99,10 +111,10 @@ export async function DELETE(req: NextRequest, { params }: Params) {
                 },
             }),
             prisma.badgeTX.deleteMany({
-                where: { badge: { userId: user.id, orgId } },
+                where: { badge: { userId: targetUser.id, orgId } },
             }),
             prisma.badge.deleteMany({
-                where: { userId: user.id, orgId },
+                where: { userId: targetUser.id, orgId },
             }),
         ]);
 

@@ -3,8 +3,16 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/sessionManage";
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-    const session = await getSession();
-    if (!session || session.role !== 'ADMIN')
+    const userId = await getSession();
+    if (!userId)
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { role: true }
+    });
+
+    if (!user || user.role !== 'ADMIN')
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { id: rawId } = await params;
@@ -18,8 +26,16 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-    const session = await getSession();
-    if (!session || session.role !== 'ADMIN')
+    const userId = await getSession();
+    if (!userId)
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { role: true }
+    });
+
+    if (!user || user.role !== 'ADMIN')
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { id: rawId } = await params;

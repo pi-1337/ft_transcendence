@@ -8,8 +8,16 @@ const validatePhone = (phone: string) => /^\+[1-9]\d{7,14}$/.test(phone);
 type Params = { params: Promise<{ id: string }> };
 
 export async function PATCH(req: NextRequest, { params }: Params) {
-    const session = await getSession();
-    if (!session || session.role !== 'ADMIN')
+    const userId = await getSession();
+    if (!userId)
+        return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { role: true }
+    });
+
+    if (!user || user.role !== 'ADMIN')
         return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
 
     const { id: rawId } = await params;
@@ -54,8 +62,16 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 }
 
 export async function DELETE(_req: NextRequest, { params }: Params) {
-    const session = await getSession();
-    if (!session || session.role !== 'ADMIN')
+    const userId = await getSession();
+    if (!userId)
+        return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { role: true }
+    });
+
+    if (!user || user.role !== 'ADMIN')
         return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
 
     const { id: rawId } = await params;
@@ -63,7 +79,7 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
     if (isNaN(targetId))
         return NextResponse.json({ success: false, error: "Invalid user ID." }, { status: 400 });
 
-    if (targetId === session.id)
+    if (targetId === userId)
         return NextResponse.json({ success: false, error: "You cannot delete your own account." }, { status: 400 });
 
     try {

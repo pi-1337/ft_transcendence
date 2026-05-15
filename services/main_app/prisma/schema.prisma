@@ -33,9 +33,8 @@ model User {
 	password			String
 	role				Role			@default(USER)
 
-	badge				Badge[]
-	unreadNotifications	Notifications[]	@relation("unread")
-	readNotifications	Notifications[]	@relation("read")
+	badge				Badge			@relation(fields: [badgeId], references: [id])
+	badgeId				Int
 	orgs				Organization[]	@relation("membership")
 	owned_orgs			Organization[]	@relation("administration")
 

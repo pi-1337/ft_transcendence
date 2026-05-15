@@ -14,11 +14,11 @@ export async function getSession() {
     if (!payload)
         return null;
 
-    return { id: payload.id as number, role: payload.role as string };
+    return payload.id as number;
 }
 
 export async function removeSession() {
     const cookieStorage = await cookies();
-    cookieStorage.delete('session');
+    cookieStorage.delete('token');
 }
 

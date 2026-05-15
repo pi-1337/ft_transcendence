@@ -2,15 +2,26 @@
 
 import { getSession } from "@/lib/sessionManage";
 import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 import Client from "./client";
 
 export default async function RecordsPage() {
-    const sessionData = await getSession();
+    const session = await getSession();
 
-    if (!sessionData) {
+    if (!session)
         redirect('/auth/login');
-    }
-    const { id } = sessionData;
 
-    return <Client userId={id} />;
+    const records = await prisma.badgeTX.findMany({
+        where: {
+            badge: { userId: session }
+        },
+        select: {
+            id: true,
+            badge: { select: { number: true, org: { select: { name: true } } } },
+            createdAt: true,
+        },
+        orderBy: { createdAt: 'desc' }
+    });
+
+    return <Client records={records} />;
 }

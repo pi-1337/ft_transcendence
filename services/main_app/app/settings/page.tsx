@@ -5,12 +5,11 @@ import { redirect } from "next/navigation";
 import Client from "./client";
 
 export default async function UserEditPage() {
-    const sessionData = await getSession();
+    const id = await getSession();
 
-    if (!sessionData) {
+    if (!id) {
         redirect('/auth/login');
     }
-    const { id } = sessionData;
 
     return <Client userId={id} />;
 }

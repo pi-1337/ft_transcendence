@@ -4,14 +4,15 @@ import { getSession } from "@/lib/sessionManage";
 import Client from "./client";
 
 export default async function Home() {
-    const sessionData = await getSession();
+    const id = await getSession();
 
-    if (!sessionData)
+
+    if (!id)
         return "not logged in";
 
     return (
         <>
-            <Client userId={sessionData.id} />
+        <Client />
         </>
     );
 }

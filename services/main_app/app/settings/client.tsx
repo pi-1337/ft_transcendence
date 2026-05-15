@@ -12,7 +12,7 @@ interface User {
   phoneNumber: string;
 }
 
-export default function UserEditClient({ userId }: { userId: number }) {
+export default function UserEditClient({ userId }: { userId: string }) {
   const router = useRouter();
   const [formData, setFormData] = useState<User>({
     firstname: 'John',

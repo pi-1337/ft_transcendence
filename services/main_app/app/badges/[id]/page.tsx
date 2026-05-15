@@ -4,13 +4,12 @@ import { getSession } from "@/lib/sessionManage";
 import { redirect } from "next/navigation";
 import Client from "./client";
 
-export default async function BadgeDetailPage({ params }: { params: { id: number } }) {
-    const sessionData = await getSession();
+export default async function BadgeDetailPage({ params }: { params: { id: string } }) {
+    const id = await getSession();
 
-    if (!sessionData) {
+    if (!id) {
         redirect('/auth/login');
     }
-    const { id } = sessionData;
 
     return <Client badgeId={params.id} userId={id} />;
 }

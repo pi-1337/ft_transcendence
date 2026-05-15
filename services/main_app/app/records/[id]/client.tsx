@@ -6,11 +6,11 @@ import { ArrowLeft, LogOut, Copy, Check } from 'lucide-react';
 import { useState } from 'react';
 
 interface RecordDetail {
-  id: number;
+  id: string;
   badgeNumber: string;
   organizationName: string;
-  organizationId: number;
-  userId: number;
+  organizationId: string;
+  userId: string;
   userName: string;
   createdAt: string;
   status: 'confirmed' | 'pending';
@@ -26,8 +26,8 @@ export default function RecordDetailPage({
   recordId,
   userId,
 }: {
-  recordId: number;
-  userId: number;
+  recordId: string;
+  userId: string;
 }) {
   const router = useRouter();
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -37,7 +37,7 @@ export default function RecordDetailPage({
     id: recordId,
     badgeNumber: '#12',
     organizationName: 'Tech Startup',
-    organizationId: 1,
+    organizationId: '1',
     userId: userId,
     userName: 'John Developer',
     createdAt: 'May 10, 2025 - 14:32:45 UTC',
@@ -148,6 +148,78 @@ export default function RecordDetailPage({
             </div>
           </div>
         </div>
+
+        {/* Blockchain Details */}
+        {record.status === 'confirmed' && (
+          <div className="bg-slate-800 border border-slate-700 rounded-lg p-6 mb-8">
+            <h2 className="text-2xl font-bold text-white mb-6">Blockchain Details</h2>
+            <div className="space-y-4">
+              <div className="bg-slate-700 rounded-lg p-4">
+                <p className="text-slate-400 text-sm font-semibold mb-2">Transaction Hash</p>
+                <div className="flex items-center justify-between gap-2">
+                  <code className="text-blue-400 text-sm break-all">{record.transactionHash}</code>
+                  <button
+                    onClick={() => copyToClipboard(record.transactionHash || '', 'tx')}
+                    className="text-slate-400 hover:text-white transition flex-shrink-0"
+                  >
+                    {copiedField === 'tx' ? <Check size={18} className="text-green-400" /> : <Copy size={18} />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="bg-slate-700 rounded-lg p-4">
+                  <p className="text-slate-400 text-sm font-semibold mb-2">Block Hash</p>
+                  <div className="flex items-center justify-between gap-2">
+                    <code className="text-slate-300 text-sm break-all">{record.blockHash}</code>
+                    <button
+                      onClick={() => copyToClipboard(record.blockHash || '', 'block')}
+                      className="text-slate-400 hover:text-white transition flex-shrink-0"
+                    >
+                      {copiedField === 'block' ? <Check size={18} className="text-green-400" /> : <Copy size={18} />}
+                    </button>
+                  </div>
+                </div>
+                <div className="bg-slate-700 rounded-lg p-4">
+                  <p className="text-slate-400 text-sm font-semibold mb-2">Block Number</p>
+                  <p className="text-white font-mono">{record.blockNumber}</p>
+                </div>
+              </div>
+
+              <div className="bg-slate-700 rounded-lg p-4">
+                <p className="text-slate-400 text-sm font-semibold mb-2">Gas Used</p>
+                <p className="text-white font-mono">{record.gasUsed}</p>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="bg-slate-700 rounded-lg p-4">
+                  <p className="text-slate-400 text-sm font-semibold mb-2">From Address</p>
+                  <div className="flex items-center justify-between gap-2">
+                    <code className="text-cyan-400 text-sm break-all">{record.fromAddress}</code>
+                    <button
+                      onClick={() => copyToClipboard(record.fromAddress || '', 'from')}
+                      className="text-slate-400 hover:text-white transition flex-shrink-0"
+                    >
+                      {copiedField === 'from' ? <Check size={18} className="text-green-400" /> : <Copy size={18} />}
+                    </button>
+                  </div>
+                </div>
+                <div className="bg-slate-700 rounded-lg p-4">
+                  <p className="text-slate-400 text-sm font-semibold mb-2">To Address</p>
+                  <div className="flex items-center justify-between gap-2">
+                    <code className="text-cyan-400 text-sm break-all">{record.toAddress}</code>
+                    <button
+                      onClick={() => copyToClipboard(record.toAddress || '', 'to')}
+                      className="text-slate-400 hover:text-white transition flex-shrink-0"
+                    >
+                      {copiedField === 'to' ? <Check size={18} className="text-green-400" /> : <Copy size={18} />}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Related Badges */}
         <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">

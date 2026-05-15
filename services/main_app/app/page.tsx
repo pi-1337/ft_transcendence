@@ -4,12 +4,11 @@ import { getSession } from "@/lib/sessionManage";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
-    const sessionData = await getSession();
+    const id = await getSession();
 
-    if (!sessionData) {
+    if (!id) {
         redirect('/auth/login');
     }
-    const { id } = sessionData;
 
     redirect('/user/dashboard');
 }

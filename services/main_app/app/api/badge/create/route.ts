@@ -8,16 +8,15 @@ import { prisma } from "@/lib/prisma";
 export async function POST(req: NextRequest) {
     try {
         const { email, orgId } = await req.json();
-        const sessionData = await getSession();
+        const id: number | null = await getSession();
 
-        if (sessionData === null) {
+        if (id === null) {
             return NextResponse.json({
                 success: false,
                 error: "You are not logged in !!"
             },
                 { status: 401 });
         }
-        const id: number = sessionData.id;
 
         if (!email) {
             return NextResponse.json({

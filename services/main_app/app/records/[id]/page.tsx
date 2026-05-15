@@ -7,14 +7,13 @@ import Client from "./client";
 export default async function RecordDetailPage({
     params,
 }: {
-    params: { id: number };
+    params: { id: string };
 }) {
-    const sessionData = await getSession();
+    const id = await getSession();
 
-    if (!sessionData) {
+    if (!id) {
         redirect('/auth/login');
     }
-    const { id } = sessionData;
 
     return <Client recordId={params.id} userId={id} />;
 }

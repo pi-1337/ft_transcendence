@@ -7,9 +7,9 @@ import LandingPageClient from "@/components/LandingPageClient";
 export default async function Home() {
     const sessionData = await getSession();
 
-    if (sessionData) {
-        redirect('/dashboard');
-    }
+    // if (sessionData) {
+    //     redirect('/dashboard');
+    // }
 
     return <LandingPageClient />;
 }

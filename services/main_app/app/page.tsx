@@ -2,14 +2,14 @@
 
 import { getSession } from "@/lib/sessionManage";
 import { redirect } from "next/navigation";
+import LandingPageClient from "@/components/LandingPageClient";
 
 export default async function Home() {
     const sessionData = await getSession();
 
-    if (!sessionData) {
-        redirect('/auth/login');
+    if (sessionData) {
+        redirect('/dashboard');
     }
-    const { id } = sessionData;
 
-    redirect('/user/dashboard');
+    return <LandingPageClient />;
 }

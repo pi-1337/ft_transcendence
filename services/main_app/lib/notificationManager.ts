@@ -15,12 +15,23 @@ export async function sendNotification(userIds: number[], message: string) {
 
 export async function readNotification(userId: number, notifIds: number[]) {
     notifIds.forEach(async notifId => {
-        await prisma.notification.update({
-            where: { id: notifId },
-            data: {
-                readUsers: { connect: { id: userId } },
-                unreadUsers: { disconnect: { id: userId } }
+        const can_see_notification = await prisma.notification.count({
+            where: {
+                id: notifId,
+                OR: [
+                    { unreadUsers: { some: { id: userId } } },
+                    { readUsers: { some: { id: userId } } }
+                ]
             }
         });
+        if (can_see_notification > 0) {
+            await prisma.notification.update({
+                where: { id: notifId },
+                data: {
+                    readUsers: { connect: { id: userId } },
+                    unreadUsers: { disconnect: { id: userId } }
+                }
+            });
+        }
     });
 }

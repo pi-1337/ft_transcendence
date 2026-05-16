@@ -49,12 +49,19 @@ export default async function ServerSide() {
         }
     });
 
+    const unreadCount = await prisma.notification.count({
+        where: {
+            unreadUsers: { some: { id } }
+        }
+    });
+
     return (
         <Dashboard
             user={user}
             totalOrganizations={totalOrganizations}
             totalBadges={badges.length}
             totalRecords={totalRecords}
+            unreadCount={unreadCount}
         />
     );
 }

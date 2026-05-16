@@ -3,17 +3,20 @@
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { UserFrontend } from '@/lib/types';
+import { Bell } from '@/components/notifications/bell';
 
 export default function Dashboard(
     { user,
         totalOrganizations,
         totalBadges,
-        totalRecords
+        totalRecords,
+        unreadCount
     }: {
         user: UserFrontend,
         totalOrganizations: number,
         totalBadges: number,
-        totalRecords: number
+        totalRecords: number,
+        unreadCount: number
     }) {
     const router = useRouter();
 
@@ -45,6 +48,7 @@ export default function Dashboard(
                     >
                         Settings
                     </Link>
+                    <Bell unreadCount={unreadCount} />
                     <button
                         onClick={handleLogout}
                         className="text-sm text-gray-400 hover:text-red-400 border border-[#333] hover:border-red-600 rounded-lg px-4 py-1.5 transition-colors"

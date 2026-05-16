@@ -1,10 +1,9 @@
-import { readNotification } from "@/lib/notificationManager";
+import { unreadNotification } from "@/lib/notificationManager";
 import { getSession } from "@/lib/sessionManage";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
     try {
-
         const { notificationIds } = await req.json();
         const sessionData = await getSession();
 
@@ -17,7 +16,7 @@ export async function POST(req: NextRequest) {
         }
         const id: number = sessionData.id;
 
-        await readNotification(id, notificationIds);
+        await unreadNotification(id, notificationIds);
         
         return NextResponse.json(
             {

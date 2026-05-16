@@ -90,7 +90,7 @@ export async function GET(req: NextRequest) {
             httpOnly: true,
         });
 
-        return NextResponse.redirect(`${process.env.BASE_URL as string}/dashboard`);
+        return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL as string}/dashboard`);
 
     } catch (error) {
         console.log(error)

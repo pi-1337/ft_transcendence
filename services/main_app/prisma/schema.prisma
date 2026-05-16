@@ -36,8 +36,8 @@ model User {
 
 	badge				Badge?
 
-	unreadNotifications	Notifications[]	@relation("unread")
-	readNotifications	Notifications[]	@relation("read")
+	unreadNotifications	Notification[]	@relation("unread")
+	readNotifications	Notification[]	@relation("read")
 	orgs				Organization[]	@relation("membership")
 	owned_orgs			Organization[]	@relation("administration")
 
@@ -50,7 +50,7 @@ model User {
 	updatedAt 			DateTime?
 }
 
-model Notifications {
+model Notification {
 	id				Int			@id @default(autoincrement())
 
 	unreadUsers		User[]		@relation("unread")
@@ -127,7 +127,7 @@ model UsersOnOrganizations {
 model UsersOnNotifications {
 	user	User?			@relation(fields: [userId], references: [id])
 	userId	Int
-	notif	Notifications	@relation(fields: [notifId], references: [id])
+	notif	Notification	@relation(fields: [notifId], references: [id])
 	notifId	Int
 	@@id([userId, notifId])
 }
@@ -135,7 +135,7 @@ model UsersOnNotifications {
 model UsersOnNotificationsRead {
 	user	User?			@relation(fields: [userId], references: [id])
 	userId	Int
-	notif	Notifications	@relation(fields: [notifId], references: [id])
+	notif	Notification	@relation(fields: [notifId], references: [id])
 	notifId	Int
 	@@id([userId, notifId])
 }

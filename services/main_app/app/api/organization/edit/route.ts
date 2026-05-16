@@ -49,19 +49,19 @@ export async function POST(req: NextRequest) {
                 { status: 403 });
         }
 
-        if (!name && !type && !service && !badgeTimes) {
+        if (!name || !type || !service || !badgeTimes) {
             return NextResponse.json({
                 success: false,
-                error: "No input provided !!"
+                error: "One of the inputs is not provided !!"
             },
                 { status: 400 });
         }
 
         const data = {
-            name: name || org.name,
-            type: type || org.type,
-            service: service || org.service,
-            badgeTimes: badgeTimes || org.badgeTimes,
+            name: name,
+            type: type,
+            service: service,
+            badgeTimes: badgeTimes,
         };
 
         await prisma.organization.update({

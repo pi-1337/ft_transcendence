@@ -98,7 +98,7 @@ export async function DELETE(req: NextRequest, { params }: Params) {
                     admins: { disconnect: { email } },
                 },
             }),
-            prisma.badgeTX.deleteMany({
+            prisma.badgeRecord.deleteMany({
                 where: { badge: { userId: user.id, orgId } },
             }),
             prisma.badge.deleteMany({

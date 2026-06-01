@@ -28,6 +28,7 @@ model User {
 
 	firstname			String
 	lastname			String
+	avatar				String			@default("/avatars/default-avatar.png")
 	phoneNumber			String?
 	email				String			@unique
 	login				String?			@unique

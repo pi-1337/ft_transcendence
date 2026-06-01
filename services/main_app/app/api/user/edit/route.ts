@@ -1,7 +1,6 @@
 'use server'
 
 import { NextRequest, NextResponse } from "next/server";
-import { Organization } from "@prisma/client";
 import { getSession } from "@/lib/sessionManage";
 import { prisma } from "@/lib/prisma";
 

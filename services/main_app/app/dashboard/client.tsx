@@ -27,7 +27,7 @@ export default function Dashboard(
     };
 
     const handleLogout = async () => {
-        cookieStore.delete("session");
+        await fetch('/api/auth/logout', { method: 'POST' });
         router.push('/auth/login');
     };
 

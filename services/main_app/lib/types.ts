@@ -7,6 +7,7 @@ export type UserFrontend = {
     email: string,
     phoneNumber: string,
     role: string,
+    avatar: string
 };
 
 

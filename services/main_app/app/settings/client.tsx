@@ -2,7 +2,9 @@
 
 'use client'
 
+import { changeAvatar } from '@/lib/changeAvatar';
 import { UserFrontend } from '@/lib/types';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -13,6 +15,7 @@ export default function Settings({ user }: { user: UserFrontend }) {
     const phoneNumber =  user.phoneNumber;
 
     const [saved, setSaved] = useState(false);
+    const [error, setError] = useState("");
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -21,6 +24,17 @@ export default function Settings({ user }: { user: UserFrontend }) {
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
     };
+
+    const changeAvatarWrapper = async (formdata: FormData) => {
+        const {success, error, avatarLink}: {
+            success: boolean,
+            error: string,
+            avatarLink: string | null
+        } = await changeAvatar(formdata);
+
+        setSaved(success);
+        setError(error);
+    }
 
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-white">
@@ -41,6 +55,11 @@ export default function Settings({ user }: { user: UserFrontend }) {
                 {saved && (
                     <div className="mb-6 rounded-lg bg-green-900/40 border border-green-600 text-green-400 text-sm px-4 py-3">
                         Settings saved successfully!
+                    </div>
+                )}
+                {error !== "" && (
+                    <div className="mb-6 rounded-lg bg-red-900/40 border border-red-600 text-red-400 text-sm px-4 py-3">
+                        {error}
                     </div>
                 )}
 
@@ -105,6 +124,39 @@ export default function Settings({ user }: { user: UserFrontend }) {
                         </Link>
                     </div>
                 </form>
+                <form action={changeAvatarWrapper} className="space-y-6">
+                    <div className="bg-[#111] border border-[#1f1f1f] rounded-2xl p-6">
+                        <h2 className="text-gray-400 text-xs uppercase tracking-widest mb-6">Avatar</h2>
+                        <Image
+                            src={user.avatar}
+                            alt='avatar'
+                        />
+                        <div>
+                            <label className="block text-sm text-gray-400 mb-2">Phone Number</label>
+                            <input
+                                type="file"
+                                name="file"
+                                className="w-full bg-[#0a0a0a] border border-[#1f1f1f] rounded-lg px-4 py-2 text-white placeholder-gray-600 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600/50 transition-colors"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex gap-4">
+                        <button
+                            type="submit"
+                            className="bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg px-6 py-2.5 transition-colors"
+                        >
+                            Change Avatar
+                        </button>
+                        <Link
+                            href="/dashboard"
+                            className="text-gray-400 hover:text-white border border-[#333] hover:border-gray-500 rounded-lg px-6 py-2.5 transition-colors"
+                        >
+                            Cancel
+                        </Link>
+                    </div>
+                </form>
+
             </main>
         </div>
     );

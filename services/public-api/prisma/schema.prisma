@@ -1,0 +1,149 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+	provider = "mysql"
+	url      = env("DATABASE_URL")
+}
+
+generator client {
+	provider = "prisma-client-js"
+}
+
+enum Active {
+	TRUE
+	FALSE
+}
+
+enum Role {
+	ADMIN
+	USER
+}
+
+model User {
+	id					Int				@id @default(autoincrement())
+
+	firstname			String
+	lastname			String
+	avatar				String			@default("/avatars/default-avatar.png")
+	phoneNumber			String?
+	email				String			@unique
+	login				String?			@unique
+	password			String?
+	role				Role			@default(USER)
+
+	badge				Badge?
+
+	unreadNotifications	Notification[]	@relation("unread")
+	readNotifications	Notification[]	@relation("read")
+	orgs				Organization[]	@relation("membership")
+	owned_orgs			Organization[]	@relation("administration")
+
+	// not used by dev
+	membership			UsersOnOrganizations[]
+	read				UsersOnNotificationsRead[]
+	unread				UsersOnNotifications[]
+
+	createdAt 			DateTime 		@default(now())
+	updatedAt 			DateTime?
+}
+
+model Notification {
+	id				Int			@id @default(autoincrement())
+
+	unreadUsers		User[]		@relation("unread")
+	readUsers		User[]		@relation("read")
+
+	message			String
+
+	read			UsersOnNotificationsRead[]
+	unread			UsersOnNotifications[]
+
+	createdAt 		DateTime 	@default(now())
+}
+
+model Organization {
+	id				Int			@id @default(autoincrement())
+
+	name			String
+	type			String
+	service			String
+	badgeTimes		Int
+	active			Active		@default(FALSE)
+
+	users			User[]		@relation("membership")
+	admins			User[]		@relation("administration")
+
+	membership		UsersOnOrganizations[]
+
+	badges			Badge[] // badges of users in the org
+
+	callBackURL		String? // post req sending the data using a jwt
+
+	createdAt 		DateTime 	@default(now())
+	updatedAt 		DateTime?
+
+	readers    RfidReaders[]
+}
+
+
+model Badge {
+	number		String			@unique
+
+	user		User			@relation(fields: [userId], references: [id])
+	userId		Int				@unique
+
+	org			Organization	@relation(fields: [orgId], references: [id])
+	orgId		Int				@unique
+
+	records		BadgeRecord[]
+
+	createdAt	DateTime		@default(now())
+	@@id([userId, orgId])
+}
+
+model BadgeRecord {
+	id				Int			@id @default(autoincrement())
+
+	badge			Badge		@relation(fields: [badgeNumber], references: [number])
+	badgeNumber		String
+
+	createdAt		DateTime	@default(now())
+}
+
+
+// many to many relations
+// users and orgs
+model UsersOnOrganizations {
+	user	User?			@relation(fields: [userId], references: [id])
+	userId	Int
+	org		Organization	@relation(fields: [orgId], references: [id])
+	orgId	Int
+	@@id([userId, orgId]) // pair (id, id) is uniq in IR^2
+}
+
+model UsersOnNotifications {
+	user	User?			@relation(fields: [userId], references: [id])
+	userId	Int
+	notif	Notification	@relation(fields: [notifId], references: [id])
+	notifId	Int
+	@@id([userId, notifId])
+}
+
+model UsersOnNotificationsRead {
+	user	User?			@relation(fields: [userId], references: [id])
+	userId	Int
+	notif	Notification	@relation(fields: [notifId], references: [id])
+	notifId	Int
+	@@id([userId, notifId])
+}
+
+model RfidReaders {
+	id Int @id @default(autoincrement())
+	location String
+	organization    Organization @relation(fields: [organizationId], references: [id])
+    organizationId  Int
+}

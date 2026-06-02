@@ -5,7 +5,7 @@ export async function Bell(
 ) {
     return (
         <Link
-            href={`${process.env.NEXT_PUBLIC_BASE_URL}/notifications`}            
+            href={`/notifications`}            
             className="relative p-2 rounded-lg bg-[#111] border border-[#1f1f1f] hover:bg-[#161616] transition"
         >
             🔔

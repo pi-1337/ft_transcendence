@@ -10,6 +10,8 @@ services:
       - my_network
     depends_on:
       - mariadb
+    volumes:
+      - avatar:/app/public/avatars
 
   public-api:
     build: ./services/public-api
@@ -28,7 +30,23 @@ services:
     container_name: mariadb
     networks:
       - my_network
-    restart: always
+    volumes:
+      - db:/var/lib/mysql
+
+  avatar_server:
+    build: ./services/avatar_server
+    image: avatar_server:ft_transcendence
+    container_name: avatar_server
+    ports:
+      - 3002:80
+    networks:
+      - my_network
+    volumes:
+      - avatar:/avatars
 
 networks:
   my_network: 
+
+volumes:
+  avatar: 
+  db: 

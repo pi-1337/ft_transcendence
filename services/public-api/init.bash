@@ -1,6 +1,9 @@
 #!/bin/bash
 
-until ss -tln | grep -q ':3306'; do sleep 1; done;
+echo "waiting for mariadb ..."
+
+# until ss -tln | grep -q ':3306'; do sleep 1; done;
+sleep 10;
 
 echo "lets gooo, mariadb is alive and listening"
 

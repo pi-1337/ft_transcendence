@@ -8,8 +8,6 @@ RUN apt-get update && \
 COPY ./db-init.bash /tmp/db-init.bash
 RUN chmod +x /tmp/db-init.bash
 
-EXPOSE 3306
-
 ENTRYPOINT ["/tmp/db-init.bash"]
 
 

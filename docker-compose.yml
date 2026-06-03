@@ -8,10 +8,21 @@ services:
       - 3000:3000
     networks:
       - my_network
-    env_file:
-      - ./services/main_app/.env
+    depends_on:
+      - mariadb
 
-  database:
+  public-api:
+    build: ./services/public-api
+    image: public-api:ft_transcendence
+    container_name: public-api
+    ports:
+      - 3001:3001
+    networks:
+      - my_network
+    depends_on:
+      - mariadb
+
+  mariadb:
     build: ./services/mariadb
     image: mariadb:ft_transcendence
     container_name: mariadb

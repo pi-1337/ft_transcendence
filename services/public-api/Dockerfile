@@ -1,11 +1,11 @@
 FROM node:latest
 
+RUN apt-get update && apt-get install -y iproute2
+
 WORKDIR /app
 COPY . .
 
 RUN npm i
-RUN npx prisma db push
-RUN npx prisma generate
-RUN npm run build
+RUN chmod +x init.bash
 
-ENTRYPOINT ["npm", "start"]
+ENTRYPOINT ["./init.bash"]

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { Shield, ChevronLeft, ClipboardList, Filter, Calendar, Building2, Tag, ArrowRight, ExternalLink } from 'lucide-react';
 
 // Mock data for records
 const mockRecords = [
@@ -74,92 +75,144 @@ export default function Records() {
     const uniqueBadges = Array.from(new Set(records.map(r => r.badgeNumber)));
 
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white">
+        <div className="min-h-screen bg-[#030712] text-white font-sans">
             {/* Top bar */}
-            <header className="border-b border-[#1f1f1f] px-8 py-4 flex items-center justify-between">
+            <header className="border-b border-gray-800 bg-[#030712]/80 backdrop-blur-md sticky top-0 z-50 px-8 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                    <Link href="/dashboard" className="text-gray-500 hover:text-white text-sm transition-colors">
-                        ← Dashboard
+                    <Link href="/dashboard" className="flex items-center gap-2 text-gray-400 hover:text-white text-sm font-medium transition-all group">
+                        <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                        Dashboard
                     </Link>
-                    <span className="text-[#333]">/</span>
-                    <span className="text-white font-semibold">Records</span>
+                    <div className="w-px h-4 bg-gray-800" />
+                    <div className="flex items-center gap-2">
+                        <Shield className="w-4 h-4 text-indigo-500" />
+                        <span className="text-white font-bold tracking-tight">Records</span>
+                    </div>
                 </div>
             </header>
 
-            <main className="max-w-5xl mx-auto px-8 py-12">
-                <h1 className="text-2xl font-semibold mb-8">Your Records ({filteredRecords.length})</h1>
+            <main className="max-w-6xl mx-auto px-8 py-12">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+                    <div className="flex items-center gap-4">
+                        <div className="bg-indigo-500/10 p-3 rounded-2xl border border-indigo-500/20">
+                            <ClipboardList className="w-8 h-8 text-indigo-500" />
+                        </div>
+                        <div>
+                            <h1 className="text-3xl font-bold tracking-tight">Your Records</h1>
+                            <p className="text-gray-500 mt-1 flex items-center gap-2">
+                                <Tag className="w-3.5 h-3.5" />
+                                {filteredRecords.length} entries found
+                            </p>
+                        </div>
+                    </div>
 
-                {/* Filter */}
-                <div className="mb-6 flex gap-3">
-                    <button
-                        onClick={() => setFilterBadge('')}
-                        className={`text-sm px-4 py-2 rounded-lg transition-colors ${
-                            filterBadge === ''
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-[#111] text-gray-400 border border-[#1f1f1f] hover:border-[#333]'
-                        }`}
-                    >
-                        All Badges
-                    </button>
-                    {uniqueBadges.map(badge => (
+                    {/* Filter UI */}
+                    <div className="flex flex-wrap gap-2 items-center bg-gray-900/30 p-1.5 rounded-2xl border border-gray-800/50">
+                        <div className="px-3 text-gray-500 flex items-center gap-2">
+                            <Filter className="w-3.5 h-3.5" />
+                            <span className="text-xs font-bold uppercase tracking-wider">Filter:</span>
+                        </div>
                         <button
-                            key={badge}
-                            onClick={() => setFilterBadge(badge)}
-                            className={`text-sm px-4 py-2 rounded-lg transition-colors font-mono ${
-                                filterBadge === badge
-                                    ? 'bg-blue-600 text-white'
-                                    : 'bg-[#111] text-gray-400 border border-[#1f1f1f] hover:border-[#333]'
+                            onClick={() => setFilterBadge('')}
+                            className={`text-[12px] font-bold px-4 py-2 rounded-xl transition-all ${
+                                filterBadge === ''
+                                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
+                                    : 'text-gray-400 hover:text-white hover:bg-gray-800'
                             }`}
                         >
-                            {badge}
+                            All Badges
                         </button>
-                    ))}
+                        {uniqueBadges.map(badge => (
+                            <button
+                                key={badge}
+                                onClick={() => setFilterBadge(badge)}
+                                className={`text-[12px] font-mono font-bold px-4 py-2 rounded-xl transition-all ${
+                                    filterBadge === badge
+                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
+                                        : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                                }`}
+                            >
+                                {badge}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Records Table */}
-                <div className="bg-[#111] border border-[#1f1f1f] rounded-2xl overflow-hidden">
-                    <table className="w-full text-sm">
-                        <thead>
-                            <tr className="border-b border-[#1f1f1f]">
-                                <th className="text-left text-gray-500 font-medium px-5 py-3">Badge</th>
-                                <th className="text-left text-gray-500 font-medium px-5 py-3">Organization</th>
-                                <th className="text-left text-gray-500 font-medium px-5 py-3">Action</th>
-                                <th className="text-left text-gray-500 font-medium px-5 py-3">Timestamp</th>
-                                <th className="px-5 py-3" />
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredRecords.map((record, i) => (
-                                <tr
-                                    key={record.id}
-                                    className={i !== filteredRecords.length - 1 ? 'border-b border-[#1a1a1a]' : ''}
-                                >
-                                    <td className="px-5 py-3 text-white font-mono text-sm">{record.badgeNumber}</td>
-                                    <td className="px-5 py-3 text-gray-400">{record.orgName}</td>
-                                    <td className="px-5 py-3">
-                                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                                            record.action === 'Entry'
-                                                ? 'bg-green-600/20 text-green-400 border border-green-600/30'
-                                                : 'bg-orange-600/20 text-orange-400 border border-orange-600/30'
-                                        }`}>
-                                            {record.action}
-                                        </span>
-                                    </td>
-                                    <td className="px-5 py-3 text-gray-400 text-sm">
-                                        {record.timestamp.toLocaleString()}
-                                    </td>
-                                    <td className="px-5 py-3 text-right">
-                                        <Link
-                                            href={`/records/${record.id}`}
-                                            className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
-                                        >
-                                            View →
-                                        </Link>
-                                    </td>
+                <div className="bg-[#0b1120]/50 border border-gray-800 rounded-[2rem] overflow-hidden relative group">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 blur-[100px] rounded-full pointer-events-none" />
+                    
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                            <thead>
+                                <tr className="border-b border-gray-800 bg-gray-900/20">
+                                    <th className="text-left text-gray-500 font-bold uppercase tracking-widest text-[10px] px-8 py-5">Badge ID</th>
+                                    <th className="text-left text-gray-500 font-bold uppercase tracking-widest text-[10px] px-8 py-5">Organization</th>
+                                    <th className="text-left text-gray-500 font-bold uppercase tracking-widest text-[10px] px-8 py-5">Action</th>
+                                    <th className="text-left text-gray-500 font-bold uppercase tracking-widest text-[10px] px-8 py-5">Timestamp</th>
+                                    <th className="px-8 py-5" />
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody className="divide-y divide-gray-800/50">
+                                {filteredRecords.map((record) => (
+                                    <tr
+                                        key={record.id}
+                                        className="hover:bg-white/5 transition-all group/row"
+                                    >
+                                        <td className="px-8 py-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 bg-indigo-500/10 rounded-lg flex items-center justify-center border border-indigo-500/20">
+                                                    <Tag className="w-4 h-4 text-indigo-400" />
+                                                </div>
+                                                <span className="text-white font-mono font-bold">{record.badgeNumber}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-4">
+                                            <div className="flex items-center gap-2 text-gray-300">
+                                                <Building2 className="w-4 h-4 text-gray-500" />
+                                                {record.orgName}
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-4">
+                                            <span className={`inline-flex items-center gap-1.5 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider ${
+                                                record.action === 'Entry'
+                                                    ? 'bg-green-500/10 text-green-400 border border-green-500/20'
+                                                    : 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
+                                            }`}>
+                                                <span className={`w-1 h-1 rounded-full ${record.action === 'Entry' ? 'bg-green-400' : 'bg-orange-400'}`} />
+                                                {record.action}
+                                            </span>
+                                        </td>
+                                        <td className="px-8 py-4">
+                                            <div className="flex items-center gap-2 text-gray-400">
+                                                <Calendar className="w-4 h-4 text-gray-600" />
+                                                {record.timestamp.toLocaleString()}
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-4 text-right">
+                                            <Link
+                                                href={`/records/${record.id}`}
+                                                className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors group/link"
+                                            >
+                                                Details
+                                                <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform" />
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {filteredRecords.length === 0 && (
+                        <div className="py-20 text-center">
+                            <div className="bg-gray-800/50 w-16 h-16 rounded-3xl flex items-center justify-center mx-auto mb-4 border border-gray-700">
+                                <ClipboardList className="w-8 h-8 text-gray-500" />
+                            </div>
+                            <h3 className="text-white font-bold text-lg">No records found</h3>
+                            <p className="text-gray-500">Try adjusting your filters to see more entries.</p>
+                        </div>
+                    )}
                 </div>
             </main>
         </div>

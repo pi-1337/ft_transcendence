@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Shield, Mail, Lock, ArrowRight } from "lucide-react";
 
 export default function LoginForm({ ft_auth_url }: { ft_auth_url: string }) {
     const router = useRouter();
@@ -58,59 +59,93 @@ export default function LoginForm({ ft_auth_url }: { ft_auth_url: string }) {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a]">
-            <div className="bg-[#111] rounded-2xl p-8 w-full max-w-sm shadow-lg">
-                <h1 className="text-white text-2xl font-semibold mb-6 text-center">Login</h1>
+        <div className="min-h-screen flex items-center justify-center bg-[#030712] p-4">
+            <div className="bg-[#0b1120]/50 border border-gray-800 rounded-3xl p-10 w-full max-w-md shadow-2xl relative overflow-hidden group">
+                {/* Decorative background blur */}
+                <div className="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500/10 blur-[80px] rounded-full pointer-events-none" />
+                <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-500/10 blur-[80px] rounded-full pointer-events-none" />
 
-                {serverError && (
-                    <div className="mb-4 rounded-lg bg-red-900/40 border border-red-600 text-red-400 text-sm px-4 py-3">
-                        {serverError}
-                    </div>
-                )}
-
-                <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
-                    <div className="flex flex-col gap-1">
-                        <label className="text-gray-400 text-sm">Email</label>
-                        <input
-                            type="email"
-                            placeholder="you@example.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-600"
-                        />
-                        {errors.email && <span className="text-red-400 text-xs">{errors.email}</span>}
+                <div className="relative z-10">
+                    <div className="flex flex-col items-center mb-10">
+                        <div className="bg-indigo-500/10 p-3 rounded-2xl border border-indigo-500/20 mb-4 group-hover:scale-110 transition-transform">
+                            <Shield className="w-8 h-8 text-indigo-500" />
+                        </div>
+                        <h1 className="text-white text-3xl font-bold tracking-tight">Welcome back</h1>
+                        <p className="text-gray-400 mt-2">Sign in to your account to continue</p>
                     </div>
 
-                    <div className="flex flex-col gap-1">
-                        <label className="text-gray-400 text-sm">Password</label>
-                        <input
-                            type="password"
-                            placeholder="••••••••"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-600"
-                        />
-                        {errors.password && <span className="text-red-400 text-xs">{errors.password}</span>}
+                    {serverError && (
+                        <div className="mb-6 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm px-4 py-3 text-center">
+                            {serverError}
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} className="flex flex-col gap-6" noValidate>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-gray-400 text-sm font-medium ml-1">Email address</label>
+                            <div className="relative group">
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-indigo-400 transition-colors" />
+                                <input
+                                    type="email"
+                                    placeholder="name@example.com"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="w-full bg-gray-900/50 border border-gray-800 text-white rounded-xl pl-12 pr-4 py-3.5 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder-gray-600"
+                                />
+                            </div>
+                            {errors.email && <span className="text-red-400 text-xs ml-1">{errors.email}</span>}
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <label className="text-gray-400 text-sm font-medium ml-1">Password</label>
+                            <div className="relative group">
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-indigo-400 transition-colors" />
+                                <input
+                                    type="password"
+                                    placeholder="••••••••"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="w-full bg-gray-900/50 border border-gray-800 text-white rounded-xl pl-12 pr-4 py-3.5 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder-gray-600"
+                                />
+                            </div>
+                            {errors.password && <span className="text-red-400 text-xs ml-1">{errors.password}</span>}
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="mt-2 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-800 disabled:cursor-not-allowed text-white rounded-xl py-4 text-sm font-bold transition-all shadow-xl shadow-indigo-500/20 group"
+                        >
+                            {loading ? "Signing in..." : "Sign in"}
+                            {!loading && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
+                        </button>
+                    </form>
+
+                    <div className="mt-8 flex flex-col items-center gap-4">
+                        <div className="flex items-center gap-4 w-full">
+                            <div className="h-px bg-gray-800 flex-1" />
+                            <span className="text-gray-500 text-xs font-medium uppercase tracking-wider">or</span>
+                            <div className="h-px bg-gray-800 flex-1" />
+                        </div>
+                        
+                        <Link 
+                            href={ft_auth_url}
+                            className="w-full flex items-center justify-center gap-3 bg-gray-800/50 hover:bg-gray-800 text-white font-semibold rounded-xl py-4 border border-gray-700 transition-all text-sm"
+                        >
+                            <div className="w-5 h-5 bg-white rounded-full flex items-center justify-center p-1">
+                                <span className="text-[10px] font-black text-black">42</span>
+                            </div>
+                            Continue with 42 Network
+                        </Link>
+                        
+                        <p className="text-gray-500 text-sm text-center mt-4">
+                            Don&apos;t have an account?{" "}
+                            <Link href="/auth/register" className="text-indigo-400 hover:text-indigo-300 font-semibold transition-colors">
+                                Register
+                            </Link>
+                        </p>
                     </div>
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="mt-2 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 disabled:cursor-not-allowed text-white rounded-lg py-2.5 text-sm font-medium transition-colors"
-                    >
-                        {loading ? "Logging in…" : "Login"}
-                    </button>
-                </form>
-
-                <p className="text-gray-500 text-sm text-center mt-6">
-                    Don&apos;t have an account?{" "}
-                    <a href="/auth/register" className="text-blue-400 hover:text-blue-300 transition-colors">
-                        Register
-                    </a>
-                </p>
-
-                <Link href={ft_auth_url}>Authenticate using 42 Oauth</Link>
-
+                </div>
             </div>
         </div>
     );

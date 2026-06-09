@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
+import { Shield, ChevronLeft, ClipboardList, Building2, Tag, Calendar, MapPin, Radio, CheckCircle2, ArrowRight, Activity, Award } from 'lucide-react';
 
 // Mock data for records
 const mockRecordsData: Record<string, any> = {
@@ -103,20 +104,25 @@ export default function RecordDetails() {
 
     if (!record) {
         return (
-            <div className="min-h-screen bg-[#0a0a0a] text-white">
+            <div className="min-h-screen bg-[#030712] text-white font-sans">
                 {/* Top bar */}
-                <header className="border-b border-[#1f1f1f] px-8 py-4 flex items-center justify-between">
+                <header className="border-b border-gray-800 bg-[#030712]/80 backdrop-blur-md sticky top-0 z-50 px-8 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <Link href="/records" className="text-gray-500 hover:text-white text-sm transition-colors">
-                            ← Records
+                        <Link href="/records" className="flex items-center gap-2 text-gray-400 hover:text-white text-sm font-medium transition-all group">
+                            <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                            Records
                         </Link>
                     </div>
                 </header>
 
-                <main className="max-w-4xl mx-auto px-8 py-12 flex items-center justify-center min-h-[60vh]">
+                <main className="max-w-4xl mx-auto px-8 py-24 flex items-center justify-center min-h-[60vh]">
                     <div className="text-center">
-                        <h1 className="text-2xl font-semibold mb-2">Record not found</h1>
-                        <Link href="/records" className="text-blue-400 hover:text-blue-300">
+                        <div className="bg-red-500/10 p-4 rounded-3xl border border-red-500/20 inline-block mb-6">
+                            <Shield className="w-12 h-12 text-red-500" />
+                        </div>
+                        <h1 className="text-3xl font-bold tracking-tight mb-4">Record not found</h1>
+                        <p className="text-gray-500 mb-8">The access record you are looking for does not exist or has been removed.</p>
+                        <Link href="/records" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl px-8 py-3.5 transition-all shadow-xl shadow-indigo-500/20">
                             Back to Records
                         </Link>
                     </div>
@@ -126,107 +132,153 @@ export default function RecordDetails() {
     }
 
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white">
+        <div className="min-h-screen bg-[#030712] text-white font-sans">
             {/* Top bar */}
-            <header className="border-b border-[#1f1f1f] px-8 py-4 flex items-center justify-between">
+            <header className="border-b border-gray-800 bg-[#030712]/80 backdrop-blur-md sticky top-0 z-50 px-8 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                    <Link href="/records" className="text-gray-500 hover:text-white text-sm transition-colors">
-                        ← Records
+                    <Link href="/records" className="flex items-center gap-2 text-gray-400 hover:text-white text-sm font-medium transition-all group">
+                        <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                        Records
                     </Link>
-                    <span className="text-[#333]">/</span>
-                    <span className="text-white font-semibold">Record #{record.id}</span>
+                    <div className="w-px h-4 bg-gray-800" />
+                    <div className="flex items-center gap-2">
+                        <Shield className="w-4 h-4 text-indigo-500" />
+                        <span className="text-white font-bold tracking-tight text-sm uppercase">Record #{record.id}</span>
+                    </div>
                 </div>
             </header>
 
-            <main className="max-w-4xl mx-auto px-8 py-12">
-                {/* Header */}
-                <div className="mb-10">
-                    <div className="flex items-center gap-4 mb-4">
-                        <h1 className="text-3xl font-bold">Record #{record.id}</h1>
-                        <span className={`text-sm font-medium px-3 py-1 rounded-full ${
-                            record.action === 'Entry'
-                                ? 'bg-green-600/20 text-green-400 border border-green-600/30'
-                                : 'bg-orange-600/20 text-orange-400 border border-orange-600/30'
-                        }`}>
-                            {record.action}
-                        </span>
-                    </div>
-                    <p className="text-gray-400">{record.badgeNumber} • {record.orgName}</p>
-                </div>
-
-                {/* Status */}
-                <div className="bg-[#111] border border-[#1f1f1f] rounded-2xl p-6 mb-8">
-                    <h2 className="text-gray-400 text-xs uppercase tracking-widest mb-6">Status</h2>
-                    <div className="flex items-center gap-3">
-                        <div className="w-3 h-3 bg-green-500 rounded-full" />
-                        <span className="text-lg font-semibold">{record.status}</span>
-                    </div>
-                </div>
-
-                {/* Details */}
-                <div className="bg-[#111] border border-[#1f1f1f] rounded-2xl p-6 mb-8">
-                    <h2 className="text-gray-400 text-xs uppercase tracking-widest mb-6">Record Details</h2>
-                    <div className="space-y-4">
-                        <div className="flex justify-between">
-                            <span className="text-gray-400">Record ID</span>
-                            <span className="text-white font-mono">#{record.id}</span>
+            <main className="max-w-3xl mx-auto px-8 py-12">
+                {/* Header Section */}
+                <div className="mb-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                    <div className="flex items-center gap-4">
+                        <div className="bg-indigo-500/10 p-3 rounded-2xl border border-indigo-500/20">
+                            <ClipboardList className="w-8 h-8 text-indigo-500" />
                         </div>
-                        <div className="h-px bg-[#1f1f1f]" />
-                        <div className="flex justify-between">
-                            <span className="text-gray-400">Badge Number</span>
-                            <span className="text-white font-mono">{record.badgeNumber}</span>
-                        </div>
-                        <div className="h-px bg-[#1f1f1f]" />
-                        <div className="flex justify-between">
-                            <span className="text-gray-400">Organization</span>
-                            <span className="text-white">
-                                <Link href={`/organizations/${record.orgId}`} className="hover:text-blue-400 transition-colors">
-                                    {record.orgName} →
-                                </Link>
-                            </span>
-                        </div>
-                        <div className="h-px bg-[#1f1f1f]" />
-                        <div className="flex justify-between">
-                            <span className="text-gray-400">Action Type</span>
-                            <span className="text-white">{record.action}</span>
-                        </div>
-                        <div className="h-px bg-[#1f1f1f]" />
-                        <div className="flex justify-between">
-                            <span className="text-gray-400">Timestamp</span>
-                            <span className="text-white">{record.timestamp.toLocaleString()}</span>
+                        <div>
+                            <div className="flex items-center gap-3">
+                                <h1 className="text-4xl font-black tracking-tight">Record #{record.id}</h1>
+                                <span className={`inline-flex items-center gap-1.5 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider ${
+                                    record.action === 'Entry'
+                                        ? 'bg-green-500/10 text-green-400 border border-green-500/20'
+                                        : 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
+                                }`}>
+                                    <span className={`w-1 h-1 rounded-full ${record.action === 'Entry' ? 'bg-green-400' : 'bg-orange-400'}`} />
+                                    {record.action}
+                                </span>
+                            </div>
+                            <p className="text-gray-500 mt-1 font-mono text-sm tracking-wide">{record.badgeNumber} • {record.orgName}</p>
                         </div>
                     </div>
                 </div>
 
-                {/* Location & Device Info */}
-                <div className="bg-[#111] border border-[#1f1f1f] rounded-2xl p-6">
-                    <h2 className="text-gray-400 text-xs uppercase tracking-widest mb-6">Access Point Information</h2>
-                    <div className="space-y-4">
-                        <div className="flex justify-between">
-                            <span className="text-gray-400">Location</span>
-                            <span className="text-white">{record.location}</span>
+                <div className="grid gap-8">
+                    {/* Status Card */}
+                    <div className="bg-[#0b1120]/50 border border-gray-800 rounded-[2.5rem] p-8 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/5 blur-[60px] rounded-full pointer-events-none" />
+                        
+                        <h2 className="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                            <span className="w-1 h-3 bg-green-500 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
+                            System Status
+                        </h2>
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-green-500/10 rounded-2xl flex items-center justify-center border border-green-500/20">
+                                <CheckCircle2 className="w-6 h-6 text-green-500" />
+                            </div>
+                            <div>
+                                <span className="text-2xl font-black text-white tracking-tight">{record.status}</span>
+                                <p className="text-xs text-gray-500 mt-0.5">Authentication verified by secure gateway</p>
+                            </div>
                         </div>
-                        <div className="h-px bg-[#1f1f1f]" />
-                        <div className="flex justify-between">
-                            <span className="text-gray-400">RFID Reader</span>
-                            <span className="text-white font-mono">{record.reader}</span>
+                    </div>
+
+                    {/* Details Card */}
+                    <div className="bg-[#0b1120]/50 border border-gray-800 rounded-[2.5rem] p-8 relative overflow-hidden group">
+                        <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-indigo-500/5 blur-[80px] rounded-full pointer-events-none" />
+                        
+                        <h2 className="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-8 flex items-center gap-2">
+                            <span className="w-1 h-3 bg-indigo-500 rounded-full" />
+                            Record Details
+                        </h2>
+                        
+                        <div className="space-y-6">
+                            {[
+                                { label: 'Record ID', value: `#${record.id}`, icon: Tag, font: 'font-mono text-indigo-400' },
+                                { label: 'Badge Number', value: record.badgeNumber, icon: Tag, font: 'font-mono text-white font-bold' },
+                                { label: 'Organization', value: record.orgName, icon: Building2, font: 'text-white font-bold', link: `/organizations/${record.orgId}` },
+                                { label: 'Action Type', value: record.action, icon: Activity, font: 'text-white font-bold' },
+                                { label: 'Timestamp', value: record.timestamp.toLocaleString(), icon: Calendar, font: 'text-gray-300' }
+                            ].map((item, idx) => (
+                                <div key={item.label}>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 bg-gray-900/50 rounded-lg flex items-center justify-center border border-gray-800">
+                                                <item.icon className="w-4 h-4 text-gray-500" />
+                                            </div>
+                                            <span className="text-[11px] font-black text-gray-500 uppercase tracking-wider">{item.label}</span>
+                                        </div>
+                                        <div className={item.font}>
+                                            {item.link ? (
+                                                <Link href={item.link} className="hover:text-indigo-400 flex items-center gap-1.5 transition-colors group/link">
+                                                    {item.value}
+                                                    <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform" />
+                                                </Link>
+                                            ) : (
+                                                item.value
+                                            )}
+                                        </div>
+                                    </div>
+                                    {idx < 4 && <div className="h-px bg-gray-800/50 mt-6" />}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Access Point Info Card */}
+                    <div className="bg-[#0b1120]/50 border border-gray-800 rounded-[2.5rem] p-8 relative overflow-hidden group">
+                        <h2 className="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-8 flex items-center gap-2">
+                            <span className="w-1 h-3 bg-blue-500 rounded-full" />
+                            Access Point Information
+                        </h2>
+                        <div className="grid sm:grid-cols-2 gap-6">
+                            <div className="p-5 rounded-3xl bg-gray-900/30 border border-gray-800/50 hover:border-gray-700 transition-colors group/box">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center border border-blue-500/20 group-hover/box:scale-110 transition-transform">
+                                        <MapPin className="w-5 h-5 text-blue-400" />
+                                    </div>
+                                    <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Location</span>
+                                </div>
+                                <span className="text-lg font-bold text-white block ml-1">{record.location}</span>
+                            </div>
+                            
+                            <div className="p-5 rounded-3xl bg-gray-900/30 border border-gray-800/50 hover:border-gray-700 transition-colors group/box">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center border border-purple-500/20 group-hover/box:scale-110 transition-transform">
+                                        <Radio className="w-5 h-5 text-purple-400" />
+                                    </div>
+                                    <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">RFID Reader</span>
+                                </div>
+                                <span className="text-lg font-mono font-bold text-white block ml-1">{record.reader}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Actions */}
-                <div className="flex gap-4 mt-10">
+                {/* Footer Actions */}
+                <div className="flex flex-col sm:flex-row gap-4 mt-12">
                     <Link
                         href="/records"
-                        className="text-gray-400 hover:text-white border border-[#333] hover:border-gray-500 rounded-lg px-6 py-2.5 transition-colors"
+                        className="flex-1 flex items-center justify-center gap-2 bg-gray-800/50 hover:bg-gray-800 text-white font-bold rounded-2xl px-8 py-4 border border-gray-700 transition-all text-sm group"
                     >
+                        <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                         Back to Records
                     </Link>
                     <Link
                         href={`/badge`}
-                        className="text-gray-400 hover:text-white border border-[#333] hover:border-gray-500 rounded-lg px-6 py-2.5 transition-colors"
+                        className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl px-8 py-4 transition-all shadow-xl shadow-indigo-500/20 text-sm group"
                     >
-                        View Badge
+                        <Award className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                        View Associated Badge
                     </Link>
                 </div>
             </main>

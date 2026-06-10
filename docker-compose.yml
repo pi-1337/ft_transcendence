@@ -1,27 +1,4 @@
 services:
-<<<<<<< HEAD
-=======
-  main_app:
-    build: ./services/main_app
-    image: main_app:ft_transcendence
-    container_name: main_app
-    networks:
-      - my_network
-    depends_on:
-      - mariadb
-    volumes:
-      - avatar:/app/public/avatars
-
-  public_api:
-    build: ./services/public_api
-    image: public_api:ft_transcendence
-    container_name: public_api
-    networks:
-      - my_network
-    depends_on:
-      - mariadb
-
->>>>>>> b9245fd (added a reverse proxy for https)
   mariadb:
     build: ./services/mariadb
     image: mariadb:ft_transcendence
@@ -60,10 +37,25 @@ services:
     ports:
       - "3000:3000"
       - "3002:3002"
+    env_file: ./services/main_app/.env
+
+  public_api:
+    build: ./services/public_api
+    image: public_api:ft_transcendence
+    container_name: public_api
     networks:
       - my_network
     depends_on:
-      - main_app
+      - mariadb
+
+  mariadb:
+    build: ./services/mariadb
+    image: mariadb:ft_transcendence
+    container_name: mariadb
+    networks:
+      - my_network
+    volumes:
+      - db:/var/lib/mysql
 
   avatar_server:
     build: ./services/avatar_server
@@ -73,20 +65,6 @@ services:
       - my_network
     volumes:
       - avatar:/avatars
-
-<<<<<<< HEAD
-=======
-  reverse_proxy:
-    build: ./services/reverse_proxy
-    image: reverse_proxy:ft_transcendence
-    container_name: reverse_proxy
-    ports:
-      - 3000:3000
-      - 3001:3001
-      - 3002:3002
-    networks:
-      - my_network
->>>>>>> b9245fd (added a reverse proxy for https)
 
 networks:
   my_network:

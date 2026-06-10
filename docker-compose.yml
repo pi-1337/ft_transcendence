@@ -4,8 +4,6 @@ services:
     build: ./services/main_app
     image: main_app:ft_transcendence
     container_name: main_app
-    ports:
-      - 3000:3000
     networks:
       - my_network
     depends_on:
@@ -13,12 +11,10 @@ services:
     volumes:
       - avatar:/app/public/avatars
 
-  public-api:
-    build: ./services/public-api
-    image: public-api:ft_transcendence
-    container_name: public-api
-    ports:
-      - 3001:3001
+  public_api:
+    build: ./services/public_api
+    image: public_api:ft_transcendence
+    container_name: public_api
     networks:
       - my_network
     depends_on:
@@ -37,12 +33,21 @@ services:
     build: ./services/avatar_server
     image: avatar_server:ft_transcendence
     container_name: avatar_server
-    ports:
-      - 3002:80
     networks:
       - my_network
     volumes:
       - avatar:/avatars
+
+  reverse_proxy:
+    build: ./services/reverse_proxy
+    image: reverse_proxy:ft_transcendence
+    container_name: reverse_proxy
+    ports:
+      - 3000:3000
+      - 3001:3001
+      - 3002:3002
+    networks:
+      - my_network
 
 networks:
   my_network: 

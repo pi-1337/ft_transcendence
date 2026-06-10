@@ -10,6 +10,7 @@ services:
       - mariadb
     volumes:
       - avatar:/app/public/avatars
+    env_file: ./services/main_app/.env
 
   public_api:
     build: ./services/public_api
@@ -19,6 +20,7 @@ services:
       - my_network
     depends_on:
       - mariadb
+    env_file: ./services/public_api/.env
 
   mariadb:
     build: ./services/mariadb
@@ -48,6 +50,10 @@ services:
       - 3002:3002
     networks:
       - my_network
+    depends_on:
+      - main_app
+      - public_api
+      - avatar_server
 
 networks:
   my_network: 

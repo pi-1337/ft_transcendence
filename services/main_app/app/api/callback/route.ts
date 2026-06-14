@@ -93,7 +93,6 @@ export async function GET(req: NextRequest) {
         return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL as string}/dashboard`);
 
     } catch (error) {
-        console.log(error)
         return NextResponse.json({
             status: 500,
             error: "Something went wrong !"

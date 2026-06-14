@@ -50,7 +50,6 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     } catch (error: unknown) {
         if ((error as { code?: string }).code === 'P2025')
             return NextResponse.json({ error: "Organization not found" }, { status: 404 });
-        console.error(error);
         return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
     }
 }

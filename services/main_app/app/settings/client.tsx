@@ -175,7 +175,7 @@ export default function Settings({ user }: { user: UserFrontend }) {
                             <div className="flex flex-col sm:flex-row items-center gap-10">
                                 <div className="relative group">
                                     <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-gray-800 shadow-2xl relative">
-                                        <Image
+                                        <img
                                             src={user.avatar}
                                             alt='avatar'
                                             fill

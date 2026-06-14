@@ -38,7 +38,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         });
         return NextResponse.json({ success: true, reader });
     } catch (error) {
-        console.error(error);
+        // console.error(error);
         return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
     }
 }

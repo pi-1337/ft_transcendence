@@ -50,7 +50,7 @@ export async function POST(req: NextRequest, { params }: Params) {
         }, { status: 200 });
 
     } catch (error) {
-        console.error(error);
+        // console.error(error);
         return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
     }
 }
@@ -109,7 +109,7 @@ export async function DELETE(req: NextRequest, { params }: Params) {
         return NextResponse.json({ success: true }, { status: 200 });
 
     } catch (error) {
-        console.error(error);
+        // console.error(error);
         return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
     }
 }

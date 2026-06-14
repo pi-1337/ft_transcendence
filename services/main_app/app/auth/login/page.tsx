@@ -4,6 +4,12 @@ import LoginForm from "./LoginForm";
 import { get42OAuthURL } from "@/lib/42school_Oauth";
 
 export default async function LoginPage() {
+    
+    const session = await getSession();
+
+    if (session)
+        redirect('/dashboard');
+
     const ft_auth_url = get42OAuthURL();
 
     return (

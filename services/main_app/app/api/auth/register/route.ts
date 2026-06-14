@@ -58,11 +58,14 @@ export async function POST(req: NextRequest) {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
+	const avatar = `https://${process.env.NEXT_PUBLIC_AVATAR_LINK}/default-avatar.png`;
+
         const createdUser = await prisma.user.create({ data: {
             firstname,
             lastname,
             phoneNumber,
             email,
+	    avatar,
             password: hashedPassword,
         } });
 
@@ -80,7 +83,7 @@ export async function POST(req: NextRequest) {
         );
 
     } catch (error) {
-        console.error(error);
+        // console.error(error);
         return NextResponse.json(
             {
                 success: false,

@@ -178,7 +178,6 @@ export default function Settings({ user }: { user: UserFrontend }) {
                                         <img
                                             src={user.avatar}
                                             alt='avatar'
-                                            fill
                                             className="object-cover group-hover:scale-110 transition-transform duration-500"
                                         />
                                     </div>

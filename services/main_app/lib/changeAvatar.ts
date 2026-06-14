@@ -43,7 +43,7 @@ export const changeAvatar = async (formData: FormData) => {
 
     try {
         fs.writeFileSync(uploadPath, buffer);
-        const avatarLink = process.env.NEXT_PUBLIC_AVATAR_LINK as string + "/" + filename;
+        const avatarLink = "https://" + process.env.NEXT_PUBLIC_AVATAR_LINK as string + "/" + filename;
 
         await prisma.user.update({
             where: { id: session.id },

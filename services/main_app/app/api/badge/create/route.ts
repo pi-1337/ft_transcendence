@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
                 { status: 404 });
         }
 
-        const userInOrg: User | null = await prisma.user.findUnique({
+        const userInOrg: User | null = await prisma.user.findFirst({
             where: { email, orgs: { some: { id: orgId } } }
         })
 
@@ -72,18 +72,13 @@ export async function POST(req: NextRequest) {
         }
 
         const existingBadge = await prisma.badge.findUnique({
-            where: {
-                userId_orgId: {
-                    userId: user.id,
-                    orgId: orgId
-                }
-            }
+            where: { userId: user.id }
         });
 
         if (existingBadge) {
             return NextResponse.json({
                 success: false,
-                error: "User already has badge in this organization !!"
+                error: "User already has a badge !!"
             },
                 { status: 404 });
         }
@@ -92,7 +87,6 @@ export async function POST(req: NextRequest) {
             data: {
                 number: Math.floor(Math.random() * 1_000_000_000_000).toString(),
                 user: { connect: { email } },
-                org: { connect: { id: orgId } },
             }
         })
 

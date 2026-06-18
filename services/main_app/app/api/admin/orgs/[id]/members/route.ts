@@ -90,21 +90,13 @@ export async function DELETE(req: NextRequest, { params }: Params) {
         if (!isMember)
             return NextResponse.json({ error: "User is not a member of this organization" }, { status: 404 });
 
-        await prisma.$transaction([
-            prisma.organization.update({
-                where: { id: orgId },
-                data: {
-                    users: { disconnect: { email } },
-                    admins: { disconnect: { email } },
-                },
-            }),
-            prisma.badgeRecord.deleteMany({
-                where: { badge: { userId: user.id, orgId } },
-            }),
-            prisma.badge.deleteMany({
-                where: { userId: user.id, orgId },
-            }),
-        ]);
+        await prisma.organization.update({
+            where: { id: orgId },
+            data: {
+                users: { disconnect: { email } },
+                admins: { disconnect: { email } },
+            },
+        });
 
         return NextResponse.json({ success: true }, { status: 200 });
 

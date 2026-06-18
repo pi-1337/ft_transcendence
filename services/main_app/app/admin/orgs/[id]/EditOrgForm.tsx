@@ -10,6 +10,13 @@ type Member = {
     email: string;
 };
 
+type Meal = {
+    id: number;
+    name: string;
+    startTime: string | Date;
+    endTime: string | Date;
+};
+
 type Org = {
     id: number;
     name: string;
@@ -20,13 +27,81 @@ type Org = {
     callBackURL: string | null;
     users: Member[];
     admins: Member[];
+    meals: Meal[];
+};
+
+type FormConfig = {
+    backHref: string;
+    backLabel: string;
+    title: string;
+    saveFieldsUrl: string;
+    addMemberUrl: string;
+    removeMemberUrl: string;
+    mealsUrl: string;
+    addAdminUrl?: string;
+    removeAdminUrl?: string;
+    showAdminSection?: boolean;
+    blockAdminMemberRemoval?: boolean;
 };
 
 type Props = {
     org: Org;
+    config?: FormConfig;
 };
 
-export default function EditOrgForm({ org }: Props) {
+export default function EditOrgForm({ org, config }: Props) {
+    const resolvedConfig: Required<FormConfig> = {
+        backHref: config?.backHref ?? '/admin/orgs',
+        backLabel: config?.backLabel ?? 'Organizations',
+        title: config?.title ?? 'Edit org',
+        saveFieldsUrl: config?.saveFieldsUrl ?? `/api/admin/orgs/${org.id}`,
+        addMemberUrl: config?.addMemberUrl ?? `/api/admin/orgs/${org.id}/members`,
+        removeMemberUrl: config?.removeMemberUrl ?? `/api/admin/orgs/${org.id}/members`,
+        mealsUrl: config?.mealsUrl ?? `/api/admin/orgs/${org.id}/meals`,
+        addAdminUrl: config?.addAdminUrl ?? `/api/admin/orgs/${org.id}/admins`,
+        removeAdminUrl: config?.removeAdminUrl ?? `/api/admin/orgs/${org.id}/admins`,
+        showAdminSection: config?.showAdminSection ?? true,
+        blockAdminMemberRemoval: config?.blockAdminMemberRemoval ?? false,
+    };
+
+    const toTimeInput = (value: string | Date) => {
+        const date = value instanceof Date ? value : new Date(value);
+        if (isNaN(date.getTime())) {
+            return '';
+        }
+        const hh = String(date.getUTCHours()).padStart(2, '0');
+        const mm = String(date.getUTCMinutes()).padStart(2, '0');
+        return `${hh}:${mm}`;
+    };
+
+    const toMinutes = (value: string) => {
+        const [hh, mm] = value.split(':');
+        const hours = parseInt(hh, 10);
+        const minutes = parseInt(mm, 10);
+        if (isNaN(hours) || isNaN(minutes)) {
+            return null;
+        }
+        return (hours * 60) + minutes;
+    };
+
+    const validateMeal = (mealName: string, start: string, end: string) => {
+        if (!mealName.trim()) {
+            return 'Meal name is required.';
+        }
+        if (!start || !end) {
+            return 'Start and end times are required.';
+        }
+        const startMinutes = toMinutes(start);
+        const endMinutes = toMinutes(end);
+        if (startMinutes === null || endMinutes === null) {
+            return 'Invalid meal time format.';
+        }
+        if (endMinutes <= startMinutes) {
+            return 'End time must be after start time.';
+        }
+        return '';
+    };
+
     // Fields form state
     const [name, setName] = useState(org.name);
     const [type, setType] = useState(org.type);
@@ -54,6 +129,25 @@ export default function EditOrgForm({ org }: Props) {
     const [removingAdminId, setRemovingAdminId] = useState<number | null>(null);
     const [adminErrors, setAdminErrors] = useState<Record<number, string>>({});
 
+    // Meals state
+    const [meals, setMeals] = useState<Meal[]>(
+        [...org.meals]
+            .sort((a, b) => toTimeInput(a.startTime).localeCompare(toTimeInput(b.startTime)))
+    );
+    const [mealFormName, setMealFormName] = useState('');
+    const [mealFormStartTime, setMealFormStartTime] = useState('');
+    const [mealFormEndTime, setMealFormEndTime] = useState('');
+    const [mealError, setMealError] = useState('');
+    const [mealLoading, setMealLoading] = useState(false);
+    const [removingMealId, setRemovingMealId] = useState<number | null>(null);
+    const [savingMealId, setSavingMealId] = useState<number | null>(null);
+    const [mealRowErrors, setMealRowErrors] = useState<Record<number, string>>({});
+
+    const [editingMealId, setEditingMealId] = useState<number | null>(null);
+    const [editMealName, setEditMealName] = useState('');
+    const [editMealStartTime, setEditMealStartTime] = useState('');
+    const [editMealEndTime, setEditMealEndTime] = useState('');
+
     // ── Fields save ──────────────────────────────────────────────
     const handleFieldsSave = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -72,10 +166,10 @@ export default function EditOrgForm({ org }: Props) {
 
         setFieldLoading(true);
         try {
-            const res = await fetch(`/api/admin/orgs/${org.id}`, {
+            const res = await fetch(resolvedConfig.saveFieldsUrl, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, type, service, badgeTimes: bt, active, callBackURL: callBackURL || null }),
+                body: JSON.stringify({ orgId: org.id, name, type, service, badgeTimes: bt, active, callBackURL: callBackURL || null }),
             });
             const data = await res.json();
             if (!res.ok) {
@@ -100,10 +194,10 @@ export default function EditOrgForm({ org }: Props) {
         setAddMemberError('');
         setAddMemberLoading(true);
         try {
-            const res = await fetch(`/api/admin/orgs/${org.id}/members`, {
+            const res = await fetch(resolvedConfig.addMemberUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: addMemberEmail.trim() }),
+                body: JSON.stringify({ orgId: org.id, email: addMemberEmail.trim() }),
             });
             const data = await res.json();
             if (!res.ok) {
@@ -121,13 +215,18 @@ export default function EditOrgForm({ org }: Props) {
 
     // ── Remove member ────────────────────────────────────────────
     const handleRemoveMember = async (member: Member) => {
+        if (resolvedConfig.blockAdminMemberRemoval && isOrgAdmin(member)) {
+            setMemberErrors(prev => ({ ...prev, [member.id]: 'Org admins cannot be removed from this page.' }));
+            return;
+        }
+
         setRemovingMemberId(member.id);
         setMemberErrors(prev => ({ ...prev, [member.id]: '' }));
         try {
-            const res = await fetch(`/api/admin/orgs/${org.id}/members`, {
+            const res = await fetch(resolvedConfig.removeMemberUrl, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: member.email }),
+                body: JSON.stringify({ orgId: org.id, email: member.email }),
             });
             const data = await res.json();
             if (!res.ok) {
@@ -153,10 +252,10 @@ export default function EditOrgForm({ org }: Props) {
         setAddAdminError('');
         setAddAdminLoading(true);
         try {
-            const res = await fetch(`/api/admin/orgs/${org.id}/admins`, {
+            const res = await fetch(resolvedConfig.addAdminUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: addAdminEmail.trim() }),
+                body: JSON.stringify({ orgId: org.id, email: addAdminEmail.trim() }),
             });
             const data = await res.json();
             if (!res.ok) {
@@ -181,10 +280,10 @@ export default function EditOrgForm({ org }: Props) {
         setRemovingAdminId(admin.id);
         setAdminErrors(prev => ({ ...prev, [admin.id]: '' }));
         try {
-            const res = await fetch(`/api/admin/orgs/${org.id}/admins`, {
+            const res = await fetch(resolvedConfig.removeAdminUrl, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: admin.email }),
+                body: JSON.stringify({ orgId: org.id, email: admin.email }),
             });
             const data = await res.json();
             if (!res.ok) {
@@ -199,16 +298,135 @@ export default function EditOrgForm({ org }: Props) {
         }
     };
 
+    // ── Meals CRUD ───────────────────────────────────────────────
+    const handleAddMeal = async () => {
+        const validationError = validateMeal(mealFormName, mealFormStartTime, mealFormEndTime);
+        if (validationError) {
+            setMealError(validationError);
+            return;
+        }
+
+        setMealError('');
+        setMealLoading(true);
+        try {
+            const res = await fetch(resolvedConfig.mealsUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    orgId: org.id,
+                    name: mealFormName.trim(),
+                    startTime: mealFormStartTime,
+                    endTime: mealFormEndTime,
+                }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                setMealError(data.error || 'Failed to add meal.');
+                return;
+            }
+
+            setMeals(prev => [...prev, data.meal].sort((a, b) => toTimeInput(a.startTime).localeCompare(toTimeInput(b.startTime))));
+            setMealFormName('');
+            setMealFormStartTime('');
+            setMealFormEndTime('');
+        } catch {
+            setMealError('Network error. Please try again.');
+        } finally {
+            setMealLoading(false);
+        }
+    };
+
+    const handleStartEditMeal = (meal: Meal) => {
+        setEditingMealId(meal.id);
+        setEditMealName(meal.name);
+        setEditMealStartTime(toTimeInput(meal.startTime));
+        setEditMealEndTime(toTimeInput(meal.endTime));
+        setMealRowErrors(prev => ({ ...prev, [meal.id]: '' }));
+    };
+
+    const handleCancelEditMeal = () => {
+        setEditingMealId(null);
+        setEditMealName('');
+        setEditMealStartTime('');
+        setEditMealEndTime('');
+    };
+
+    const handleSaveMeal = async (mealId: number) => {
+        const validationError = validateMeal(editMealName, editMealStartTime, editMealEndTime);
+        if (validationError) {
+            setMealRowErrors(prev => ({ ...prev, [mealId]: validationError }));
+            return;
+        }
+
+        setSavingMealId(mealId);
+        setMealRowErrors(prev => ({ ...prev, [mealId]: '' }));
+        try {
+            const res = await fetch(resolvedConfig.mealsUrl, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    orgId: org.id,
+                    mealId,
+                    name: editMealName.trim(),
+                    startTime: editMealStartTime,
+                    endTime: editMealEndTime,
+                }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                setMealRowErrors(prev => ({ ...prev, [mealId]: data.error || 'Failed to save meal.' }));
+                return;
+            }
+
+            setMeals(prev =>
+                prev
+                    .map(m => (m.id === mealId ? data.meal : m))
+                    .sort((a, b) => toTimeInput(a.startTime).localeCompare(toTimeInput(b.startTime)))
+            );
+            handleCancelEditMeal();
+        } catch {
+            setMealRowErrors(prev => ({ ...prev, [mealId]: 'Network error.' }));
+        } finally {
+            setSavingMealId(null);
+        }
+    };
+
+    const handleRemoveMeal = async (mealId: number) => {
+        setRemovingMealId(mealId);
+        setMealRowErrors(prev => ({ ...prev, [mealId]: '' }));
+        try {
+            const res = await fetch(resolvedConfig.mealsUrl, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orgId: org.id, mealId }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                setMealRowErrors(prev => ({ ...prev, [mealId]: data.error || 'Failed to remove meal.' }));
+                return;
+            }
+
+            setMeals(prev => prev.filter(m => m.id !== mealId));
+            if (editingMealId === mealId) {
+                handleCancelEditMeal();
+            }
+        } catch {
+            setMealRowErrors(prev => ({ ...prev, [mealId]: 'Network error.' }));
+        } finally {
+            setRemovingMealId(null);
+        }
+    };
+
     const isOrgAdmin = (member: Member) => admins.some(a => a.id === member.id);
 
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-white">
             <header className="border-b border-[#1f1f1f] px-8 py-4 flex items-center gap-4">
-                <Link href="/admin/orgs" className="text-gray-500 hover:text-white text-sm transition-colors">
-                    ← Organizations
+                <Link href={resolvedConfig.backHref} className="text-gray-500 hover:text-white text-sm transition-colors">
+                    ← {resolvedConfig.backLabel}
                 </Link>
                 <span className="text-[#333]">/</span>
-                <span className="text-white font-semibold">Edit org</span>
+                <span className="text-white font-semibold">{resolvedConfig.title}</span>
             </header>
 
             <main className="max-w-2xl mx-auto px-8 py-12 flex flex-col gap-10">
@@ -336,7 +554,7 @@ export default function EditOrgForm({ org }: Props) {
                                         </div>
                                         <button
                                             onClick={() => handleRemoveMember(member)}
-                                            disabled={removingMemberId === member.id}
+                                            disabled={removingMemberId === member.id || (resolvedConfig.blockAdminMemberRemoval && isOrgAdmin(member))}
                                             className="text-xs text-red-500 hover:text-red-400 border border-red-900/50 hover:border-red-600/50 rounded-md px-3 py-1 transition-colors disabled:opacity-50"
                                         >
                                             {removingMemberId === member.id ? '…' : 'Remove'}
@@ -375,6 +593,7 @@ export default function EditOrgForm({ org }: Props) {
                 </section>
 
                 {/* ── Section 3: Org admins ─────────────────────────── */}
+                {resolvedConfig.showAdminSection && (
                 <section className="bg-[#111] border border-[#1f1f1f] rounded-2xl p-6">
                     <h2 className="text-gray-400 text-xs uppercase tracking-widest mb-5">
                         Org admins ({admins.length})
@@ -427,6 +646,135 @@ export default function EditOrgForm({ org }: Props) {
                             className="bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 disabled:cursor-not-allowed text-white rounded-lg px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap"
                         >
                             {addAdminLoading ? '…' : 'Add admin'}
+                        </button>
+                    </div>
+                </section>
+                )}
+
+                {/* ── Section 4: Meals ──────────────────────────────── */}
+                <section className="bg-[#111] border border-[#1f1f1f] rounded-2xl p-6">
+                    <h2 className="text-gray-400 text-xs uppercase tracking-widest mb-5">
+                        Meals ({meals.length})
+                    </h2>
+
+                    {meals.length > 0 && (
+                        <div className="flex flex-col mb-5">
+                            {meals.map(meal => {
+                                const isEditing = editingMealId === meal.id;
+                                const currentStart = toTimeInput(meal.startTime);
+                                const currentEnd = toTimeInput(meal.endTime);
+
+                                return (
+                                    <div key={meal.id}>
+                                        <div className="flex items-center justify-between py-2.5 border-b border-[#1a1a1a] last:border-0 gap-3">
+                                            {isEditing ? (
+                                                <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                                    <input
+                                                        type="text"
+                                                        value={editMealName}
+                                                        onChange={e => setEditMealName(e.target.value)}
+                                                        className="bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+                                                        placeholder="Meal name"
+                                                    />
+                                                    <input
+                                                        type="time"
+                                                        value={editMealStartTime}
+                                                        onChange={e => setEditMealStartTime(e.target.value)}
+                                                        className="bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+                                                    />
+                                                    <input
+                                                        type="time"
+                                                        value={editMealEndTime}
+                                                        onChange={e => setEditMealEndTime(e.target.value)}
+                                                        className="bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div className="flex-1">
+                                                    <span className="text-white text-sm">{meal.name}</span>
+                                                    <p className="text-gray-500 text-xs">{currentStart} - {currentEnd}</p>
+                                                </div>
+                                            )}
+
+                                            <div className="flex gap-2">
+                                                {isEditing ? (
+                                                    <>
+                                                        <button
+                                                            onClick={() => handleSaveMeal(meal.id)}
+                                                            disabled={savingMealId === meal.id}
+                                                            className="text-xs text-green-400 hover:text-green-300 border border-green-900/50 hover:border-green-600/50 rounded-md px-3 py-1 transition-colors disabled:opacity-50"
+                                                        >
+                                                            {savingMealId === meal.id ? '…' : 'Save'}
+                                                        </button>
+                                                        <button
+                                                            onClick={handleCancelEditMeal}
+                                                            disabled={savingMealId === meal.id}
+                                                            className="text-xs text-gray-300 hover:text-white border border-[#333] rounded-md px-3 py-1 transition-colors disabled:opacity-50"
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    </>
+                                                ) : (
+                                                    <button
+                                                        onClick={() => handleStartEditMeal(meal)}
+                                                        className="text-xs text-blue-400 hover:text-blue-300 border border-blue-900/50 hover:border-blue-600/50 rounded-md px-3 py-1 transition-colors"
+                                                    >
+                                                        Edit
+                                                    </button>
+                                                )}
+                                                <button
+                                                    onClick={() => handleRemoveMeal(meal.id)}
+                                                    disabled={removingMealId === meal.id || savingMealId === meal.id}
+                                                    className="text-xs text-red-500 hover:text-red-400 border border-red-900/50 hover:border-red-600/50 rounded-md px-3 py-1 transition-colors disabled:opacity-50"
+                                                >
+                                                    {removingMealId === meal.id ? '…' : 'Remove'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        {mealRowErrors[meal.id] && (
+                                            <p className="text-red-400 text-xs px-1 pb-1">{mealRowErrors[meal.id]}</p>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
+
+                    {mealError && (
+                        <div className="mb-3 rounded-lg bg-red-900/40 border border-red-600 text-red-400 text-sm px-4 py-2.5">
+                            {mealError}
+                        </div>
+                    )}
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <input
+                            type="text"
+                            value={mealFormName}
+                            onChange={e => setMealFormName(e.target.value)}
+                            placeholder="Meal name"
+                            className="bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-600"
+                        />
+                        <input
+                            type="time"
+                            value={mealFormStartTime}
+                            onChange={e => setMealFormStartTime(e.target.value)}
+                            className="bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+                        />
+                        <input
+                            type="time"
+                            value={mealFormEndTime}
+                            onChange={e => setMealFormEndTime(e.target.value)}
+                            className="bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+                        />
+                    </div>
+
+                    <div className="flex justify-end mt-3">
+                        <button
+                            onClick={handleAddMeal}
+                            disabled={mealLoading}
+                            className="bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 disabled:cursor-not-allowed text-white rounded-lg px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap"
+                        >
+                            {mealLoading ? '…' : 'Add meal'}
                         </button>
                     </div>
                 </section>

@@ -1,11 +1,10 @@
 'use server'
 
 import { NextRequest, NextResponse } from "next/server";
-import { Organization } from "@prisma/client";
 import { getSession } from "@/lib/sessionManage";
 import { prisma } from "@/lib/prisma";
 
-export async function POST(req: NextRequest) {
+async function handleRemove(req: NextRequest) {
     try {
         const { email, orgId } = await req.json();
         const sessionData = await getSession();
@@ -27,7 +26,7 @@ export async function POST(req: NextRequest) {
                 { status: 400 });
         }
 
-        const org: Organization | null = await prisma.organization.findUnique({ where: { id: orgId } });
+        const org = await prisma.organization.findUnique({ where: { id: orgId } });
 
         if (!org) {
             return NextResponse.json({
@@ -66,7 +65,7 @@ export async function POST(req: NextRequest) {
                 { status: 404 });
         }
 
-        const userInOrg = await prisma.user.findUnique({
+        const userInOrg = await prisma.user.findFirst({
             where: { email, orgs: { some: { id: orgId } } }
         });
 
@@ -78,25 +77,25 @@ export async function POST(req: NextRequest) {
                 { status: 400 });
         }
 
-        await prisma.$transaction([
-            prisma.user.update({
-                where: {
-                    email
-                },
-                data: {
-                    orgs: { disconnect: { id: orgId } }
-                }
-            }),
+        const isTargetAdmin = await prisma.organization.findFirst({
+            where: { id: orgId, admins: { some: { email } } }
+        });
 
-            prisma.badge.delete({
-                where: {
-                    userId_orgId: {
-                        userId: userInOrg.id,
-                        orgId
-                    }
-                }
-            })
-        ]);
+        if (isTargetAdmin) {
+            return NextResponse.json({
+                success: false,
+                error: "Org admins cannot be removed from this page !!"
+            }, { status: 403 });
+        }
+
+        await prisma.user.update({
+            where: {
+                email
+            },
+            data: {
+                orgs: { disconnect: { id: orgId } }
+            }
+        });
 
         return NextResponse.json(
             {
@@ -105,7 +104,7 @@ export async function POST(req: NextRequest) {
             { status: 200 }
         );
 
-    } catch (error) {
+    } catch {
         // console.error(error);
         return NextResponse.json(
             {
@@ -116,4 +115,12 @@ export async function POST(req: NextRequest) {
         );
     }
 
+}
+
+export async function POST(req: NextRequest) {
+    return handleRemove(req);
+}
+
+export async function DELETE(req: NextRequest) {
+    return handleRemove(req);
 }

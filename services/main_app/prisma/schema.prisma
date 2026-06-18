@@ -79,7 +79,7 @@ model Organization {
 
 	membership		UsersOnOrganizations[]
 
-	badges			Badge[] // badges of users in the org
+	meals			Meal[]
 
 	callBackURL		String? // post req sending the data using a jwt
 
@@ -89,30 +89,30 @@ model Organization {
 	readers    RfidReaders[]
 }
 
-
-model Badge {
-	number		String			@unique
-
-	user		User			@relation(fields: [userId], references: [id])
-	userId		Int				@unique
-
-	org			Organization	@relation(fields: [orgId], references: [id])
-	orgId		Int				@unique
-
-	records		BadgeRecord[]
-
-	createdAt	DateTime		@default(now())
-	@@id([userId, orgId])
-}
-
-model BadgeRecord {
+model Meal {
 	id				Int			@id @default(autoincrement())
 
-	badge			Badge		@relation(fields: [badgeNumber], references: [number])
-	badgeNumber		String
+	name			String
+	startTime		DateTime	@db.Time(0)
+	endTime			DateTime	@db.Time(0)
+
+	organization		Organization	@relation(fields: [organizationId], references: [id])
+	organizationId		Int
 
 	createdAt		DateTime	@default(now())
+	updatedAt		DateTime?
+
+	@@index([organizationId])
 }
+
+
+model Badge {
+	number String @id
+	user   User   @relation(fields: [userId], references: [id])
+	userId Int    @unique
+	createdAt DateTime @default(now())
+}
+
 
 
 // many to many relations

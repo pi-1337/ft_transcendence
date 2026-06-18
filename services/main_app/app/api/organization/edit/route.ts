@@ -1,13 +1,12 @@
 'use server'
 
 import { NextRequest, NextResponse } from "next/server";
-import { Organization } from "@prisma/client";
 import { getSession } from "@/lib/sessionManage";
 import { prisma } from "@/lib/prisma";
 
-export async function POST(req: NextRequest) {
+async function handleEdit(req: NextRequest) {
     try {
-        const { name, type, service, badgeTimes, orgId } = await req.json();
+        const { name, type, service, badgeTimes, active, callBackURL, orgId } = await req.json();
         const sessionData = await getSession();
 
         if (sessionData === null) {
@@ -27,7 +26,7 @@ export async function POST(req: NextRequest) {
                 { status: 400 });
         }
 
-        const org: Organization | null = await prisma.organization.findUnique({ where: { id: orgId } });
+        const org = await prisma.organization.findUnique({ where: { id: orgId } });
 
         if (!org) {
             return NextResponse.json({
@@ -49,22 +48,40 @@ export async function POST(req: NextRequest) {
                 { status: 403 });
         }
 
-        if (!name || !type || !service || !badgeTimes) {
+        if (!name && !type && !service && badgeTimes === undefined && active === undefined && callBackURL === undefined) {
             return NextResponse.json({
                 success: false,
-                error: "One of the inputs is not provided !!"
+                error: "No fields provided !!"
             },
                 { status: 400 });
         }
 
-        const data = {
-            name: name,
-            type: type,
-            service: service,
-            badgeTimes: badgeTimes,
-        };
+        const data: Record<string, unknown> = {};
+        if (name !== undefined) data.name = name;
+        if (type !== undefined) data.type = type;
+        if (service !== undefined) data.service = service;
+        if (badgeTimes !== undefined) {
+            const parsedBadgeTimes = parseInt(String(badgeTimes), 10);
+            if (isNaN(parsedBadgeTimes) || parsedBadgeTimes < 1) {
+                return NextResponse.json({
+                    success: false,
+                    error: "Badge times must be a positive integer !!"
+                }, { status: 400 });
+            }
+            data.badgeTimes = parsedBadgeTimes;
+        }
+        if (active !== undefined) {
+            if (active !== 'TRUE' && active !== 'FALSE') {
+                return NextResponse.json({
+                    success: false,
+                    error: "Active must be TRUE or FALSE !!"
+                }, { status: 400 });
+            }
+            data.active = active;
+        }
+        if (callBackURL !== undefined) data.callBackURL = callBackURL || null;
 
-        await prisma.organization.update({
+        const updatedOrg = await prisma.organization.update({
             where: {
                 id: orgId
             },
@@ -74,12 +91,12 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(
             {
                 success: true,
-                data
+                org: updatedOrg
             },
             { status: 200 }
         );
 
-    } catch (error) {
+    } catch {
         // console.error(error);
         return NextResponse.json(
             {
@@ -90,4 +107,12 @@ export async function POST(req: NextRequest) {
         );
     }
 
+}
+
+export async function POST(req: NextRequest) {
+    return handleEdit(req);
+}
+
+export async function PATCH(req: NextRequest) {
+    return handleEdit(req);
 }

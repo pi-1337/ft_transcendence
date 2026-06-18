@@ -2,7 +2,6 @@ import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/sessionManage';
 import { redirect } from 'next/navigation';
 import OrgDetails from './client';
-import { Organization } from '@prisma/client';
 
 export default async function ServerSide() {
     const session = await getSession();
@@ -21,7 +20,7 @@ export default async function ServerSide() {
     if (!user)
         redirect('/auth/login');
 
-    let orgs: Organization[] = await prisma.organization.findMany({
+    const orgs = await prisma.organization.findMany({
         where: {
             users: { some: { id } }
         },
@@ -33,14 +32,15 @@ export default async function ServerSide() {
             badgeTimes: true,
             active: true,
             createdAt: true,
-            // members: true,
-            // badges: true,
-            // description: true,
+            admins: {
+                where: { id },
+                select: { id: true },
+            },
         }
     });
 
     const formattedOrgs = await Promise.all(
-        orgs.map(async o => ({
+        orgs.map(async (o: (typeof orgs)[number]) => ({
             id: o.id,
             name: o.name,
             type: o.type,
@@ -49,7 +49,8 @@ export default async function ServerSide() {
             active: o.active,
             createdAt: o.createdAt,
             members: await prisma.user.count({ where: { orgs: { some: { id: o.id } } } }) as number,
-            badges: await prisma.badge.count({ where: { orgId: o.id } }) as number,
+            badges: await prisma.badge.count({ where: { user: { orgs: { some: { id: o.id } } } } }) as number,
+            isOrgAdmin: o.admins.length > 0,
         }))
     );
 

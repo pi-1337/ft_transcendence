@@ -4,6 +4,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+type Badge = {
+    number: string;
+    createdAt: Date;
+};
+
 type User = {
     id: number;
     firstname: string;
@@ -11,6 +16,7 @@ type User = {
     email: string;
     phoneNumber: string;
     role: string;
+    badge: Badge | null;
 };
 
 type FieldErrors = {
@@ -35,6 +41,14 @@ export default function EditUserForm({ user, isSelf }: Props) {
     const [errors, setErrors] = useState<FieldErrors>({});
     const [serverError, setServerError] = useState('');
     const [loading, setLoading] = useState(false);
+
+    // Badge state
+    const [badge, setBadge] = useState<Badge | null>(user.badge);
+    const [badgeNumber, setBadgeNumber] = useState('');
+    const [badgeError, setBadgeError] = useState('');
+    const [badgeLoading, setBadgeLoading] = useState(false);
+    const [editingBadge, setEditingBadge] = useState(false);
+    const [editBadgeNumber, setEditBadgeNumber] = useState('');
 
     const validate = (): FieldErrors => {
         const e: FieldErrors = {};
@@ -75,6 +89,97 @@ export default function EditUserForm({ user, isSelf }: Props) {
             setServerError('Network error. Please try again.');
         } finally {
             setLoading(false);
+        }
+    };
+
+    // ── Badge handlers ─────────────────────────────────────────
+    const handleAddBadge = async () => {
+        if (!badgeNumber.trim()) {
+            setBadgeError('Badge number is required.');
+            return;
+        }
+        setBadgeError('');
+        setBadgeLoading(true);
+        try {
+            const res = await fetch(`/api/admin/users/${user.id}/badges`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ number: badgeNumber.trim() }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                setBadgeError(data.error || 'Failed to add badge.');
+                return;
+            }
+            setBadge(data.badge);
+            setBadgeNumber('');
+        } catch {
+            setBadgeError('Network error. Please try again.');
+        } finally {
+            setBadgeLoading(false);
+        }
+    };
+
+    const handleStartEditBadge = () => {
+        if (badge) {
+            setEditingBadge(true);
+            setEditBadgeNumber(badge.number);
+            setBadgeError('');
+        }
+    };
+
+    const handleCancelEditBadge = () => {
+        setEditingBadge(false);
+        setEditBadgeNumber('');
+        setBadgeError('');
+    };
+
+    const handleSaveBadge = async () => {
+        if (!editBadgeNumber.trim()) {
+            setBadgeError('Badge number is required.');
+            return;
+        }
+        setBadgeError('');
+        setBadgeLoading(true);
+        try {
+            const res = await fetch(`/api/admin/users/${user.id}/badges`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ number: editBadgeNumber.trim() }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                setBadgeError(data.error || 'Failed to edit badge.');
+                return;
+            }
+            setBadge(data.badge);
+            handleCancelEditBadge();
+        } catch {
+            setBadgeError('Network error. Please try again.');
+        } finally {
+            setBadgeLoading(false);
+        }
+    };
+
+    const handleDeleteBadge = async () => {
+        setBadgeError('');
+        setBadgeLoading(true);
+        try {
+            const res = await fetch(`/api/admin/users/${user.id}/badges`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                setBadgeError(data.error || 'Failed to delete badge.');
+                return;
+            }
+            setBadge(null);
+            handleCancelEditBadge();
+        } catch {
+            setBadgeError('Network error. Please try again.');
+        } finally {
+            setBadgeLoading(false);
         }
     };
 
@@ -162,6 +267,91 @@ export default function EditUserForm({ user, isSelf }: Props) {
                         </select>
                         {isSelf && (
                             <span className="text-gray-600 text-xs">You cannot change your own role.</span>
+                        )}
+                    </div>
+
+                    {/* ── Badge section ─────────────────────────────────── */}
+                    <div className="border-t border-[#1f1f1f] pt-4">
+                        <label className="text-gray-400 text-xs uppercase tracking-widest mb-3 block">Badge</label>
+                        
+                        {badge ? (
+                            <div className="flex flex-col gap-3">
+                                {editingBadge ? (
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            value={editBadgeNumber}
+                                            onChange={(e) => setEditBadgeNumber(e.target.value)}
+                                            className="flex-1 bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+                                            placeholder="Badge number"
+                                        />
+                                        <button
+                                            onClick={handleSaveBadge}
+                                            disabled={badgeLoading}
+                                            className="text-xs text-green-400 hover:text-green-300 border border-green-900/50 hover:border-green-600/50 rounded-md px-3 py-2 transition-colors disabled:opacity-50"
+                                        >
+                                            {badgeLoading ? '…' : 'Save'}
+                                        </button>
+                                        <button
+                                            onClick={handleCancelEditBadge}
+                                            disabled={badgeLoading}
+                                            className="text-xs text-gray-300 hover:text-white border border-[#333] rounded-md px-3 py-2 transition-colors disabled:opacity-50"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center justify-between p-3 bg-[#1a1a1a] border border-[#333] rounded-lg">
+                                        <div>
+                                            <p className="text-white text-sm font-medium">{badge.number}</p>
+                                            <p className="text-gray-500 text-xs">
+                                                Created {new Date(badge.createdAt).toLocaleDateString()}
+                                            </p>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={handleStartEditBadge}
+                                                className="text-xs text-blue-400 hover:text-blue-300 border border-blue-900/50 hover:border-blue-600/50 rounded-md px-3 py-1 transition-colors"
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+                                                onClick={handleDeleteBadge}
+                                                disabled={badgeLoading}
+                                                className="text-xs text-red-500 hover:text-red-400 border border-red-900/50 hover:border-red-600/50 rounded-md px-3 py-1 transition-colors disabled:opacity-50"
+                                            >
+                                                {badgeLoading ? '…' : 'Remove'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                                {badgeError && (
+                                    <p className="text-red-400 text-xs px-1">{badgeError}</p>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="flex flex-col gap-2">
+                                <p className="text-gray-500 text-xs mb-2">No badge assigned</p>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        value={badgeNumber}
+                                        onChange={(e) => setBadgeNumber(e.target.value)}
+                                        placeholder="Badge number"
+                                        className="flex-1 bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-600"
+                                    />
+                                    <button
+                                        onClick={handleAddBadge}
+                                        disabled={badgeLoading}
+                                        className="bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 disabled:cursor-not-allowed text-white rounded-lg px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap"
+                                    >
+                                        {badgeLoading ? '…' : 'Add Badge'}
+                                    </button>
+                                </div>
+                                {badgeError && (
+                                    <p className="text-red-400 text-xs px-1">{badgeError}</p>
+                                )}
+                            </div>
                         )}
                     </div>
 

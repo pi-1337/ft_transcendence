@@ -43,11 +43,12 @@ export default async function ServerSide() {
     });
 
     const badgeNumbers = badges.map(b => b.number);
-    const totalRecords = await prisma.badgeRecord.count({
-        where: {
-            badgeNumber: { in: badgeNumbers }
-        }
-    });
+    const totalRecords = 0;
+    // const totalRecords = await prisma.badgeRecord.count({
+    //     where: {
+    //         badgeNumber: { in: badgeNumbers }
+    //     }
+    // });
 
     const unreadCount = await prisma.notification.count({
         where: {

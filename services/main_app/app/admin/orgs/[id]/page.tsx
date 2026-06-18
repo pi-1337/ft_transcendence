@@ -23,6 +23,10 @@ export default async function EditOrgPage({ params }: Params) {
         include: {
             users: { select: { id: true, firstname: true, lastname: true, email: true } },
             admins: { select: { id: true, firstname: true, lastname: true, email: true } },
+            meals: {
+                select: { id: true, name: true, startTime: true, endTime: true },
+                orderBy: { startTime: 'asc' },
+            },
         },
     });
 

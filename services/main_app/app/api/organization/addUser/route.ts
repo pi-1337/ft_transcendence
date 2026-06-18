@@ -1,7 +1,6 @@
 'use server'
 
 import { NextRequest, NextResponse } from "next/server";
-import { Organization } from "@prisma/client";
 import { getSession } from "@/lib/sessionManage";
 import { prisma } from "@/lib/prisma";
 
@@ -27,7 +26,7 @@ export async function POST(req: NextRequest) {
                 { status: 400 });
         }
 
-        const org: Organization | null = await prisma.organization.findUnique({ where: { id: orgId } });
+        const org = await prisma.organization.findUnique({ where: { id: orgId } });
 
         if (!org) {
             return NextResponse.json({
@@ -66,7 +65,7 @@ export async function POST(req: NextRequest) {
                 { status: 404 });
         }
 
-        const userInOrg = await prisma.user.findUnique({
+        const userInOrg = await prisma.user.findFirst({
             where: { email, orgs: { some: { id: orgId } } }
         });
 
@@ -90,11 +89,17 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(
             {
                 success: true
+                , user: {
+                    id: userToAdd.id,
+                    firstname: userToAdd.firstname,
+                    lastname: userToAdd.lastname,
+                    email: userToAdd.email,
+                }
             },
             { status: 200 }
         );
 
-    } catch (error) {
+    } catch {
         // console.error(error);
         return NextResponse.json(
             {

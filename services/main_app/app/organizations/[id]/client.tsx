@@ -13,10 +13,11 @@ type Org = {
     createdAt: Date,
     members: number,
     badges: number,
+    isOrgAdmin: boolean,
 };
 
 export default function OrgDetails({ orgs }: { orgs: Org[] }) {
-    const params: any = useParams();
+    const params = useParams<{ id: string }>();
     const org = orgs.find(org => org.id === parseInt(params.id));
 
     if (!org) {
@@ -43,6 +44,14 @@ export default function OrgDetails({ orgs }: { orgs: Org[] }) {
                     <span className="text-[#333]">/</span>
                     <span className="text-white font-semibold">{org.name}</span>
                 </div>
+                {org.isOrgAdmin && (
+                    <Link
+                        href={`/organizations/${org.id}/edit`}
+                        className="text-sm text-white bg-blue-600 hover:bg-blue-500 rounded-lg px-4 py-2 transition-colors"
+                    >
+                        Edit
+                    </Link>
+                )}
             </header>
 
             <main className="max-w-5xl mx-auto px-8 py-12">

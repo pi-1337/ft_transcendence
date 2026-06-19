@@ -10,8 +10,6 @@ export default async function OrgAdminEditPage({ params }: Params) {
 
     if (!session)
         redirect('/auth/login');
-    if (session.role === 'ADMIN')
-        redirect('/admin/dashboard');
 
     const { id: rawId } = await params;
     const orgId = parseInt(rawId, 10);

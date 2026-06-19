@@ -10,9 +10,6 @@ export default async function ServerSide() {
     if (!session)
         redirect('/auth/login');
 
-    if (session.role === 'ADMIN')
-        redirect('/admin/dashboard');
-
     const { id } = session;
     const user = await prisma.user.findUnique({
         where: { id },

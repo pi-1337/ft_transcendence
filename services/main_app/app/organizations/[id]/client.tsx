@@ -36,6 +36,7 @@ export default function OrgDetails({ orgs }: { orgs: Org[] }) {
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-white">
             {/* Top bar */}
+            
             <header className="border-b border-[#1f1f1f] px-8 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <Link href="/organizations" className="text-gray-500 hover:text-white text-sm transition-colors">
@@ -50,6 +51,14 @@ export default function OrgDetails({ orgs }: { orgs: Org[] }) {
                         className="text-sm text-white bg-blue-600 hover:bg-blue-500 rounded-lg px-4 py-2 transition-colors"
                     >
                         Edit
+                    </Link>
+                )}
+                {org.isOrgAdmin && (
+                    <Link
+                        href={`/organizations/${org.id}/scans`}
+                        className="text-sm text-white bg-emerald-700 hover:bg-emerald-600 rounded-lg px-4 py-2 transition-colors"
+                    >
+                        Scans
                     </Link>
                 )}
             </header>

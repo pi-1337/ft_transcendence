@@ -105,6 +105,7 @@ export default function AdminDashboard({ firstname, lastname, email, totalUsers,
                     <div className="grid gap-4">
                         {[
                             { title: 'Manage user accounts', link: '/admin/users', icon: Users, action: 'Manage Users' },
+                            { title: 'Organizations', link: '/organizations', icon: Building2, action: 'See Orgs' },
                             { title: 'System organizations', link: '/admin/orgs', icon: Building2, action: 'Manage Orgs' },
                             { title: 'RFC Reader hardware', link: '/admin/rfcReaders', icon: Radio, action: 'Manage Readers' },
                             { title: 'Announcements', link: '/admin/announcements', icon: Megaphone, action: 'Manage Announcements' }

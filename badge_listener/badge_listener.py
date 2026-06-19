@@ -21,12 +21,10 @@ async def receive_and_enrich_scan(request: Request):
         print(f"\n[!] WARNING: Dropped invalid request. Missing data: {scan}")
         raise HTTPException(status_code=400, detail="Missing badge_id or reader_id")
 
-    current_time = datetime.now(UTC)
-    enriched_metadata = {
-        "event_id": current_time.isoformat(),       
+    # current_time = datetime.now(UTC)
+    enriched_metadata = {      
         "badge_id": badge_id,       
         "reader_id": reader_id,     
-        "timestamp_utc": current_time.isoformat(),
     }
 
 
@@ -39,7 +37,7 @@ async def receive_and_enrich_scan(request: Request):
     
     # 4. FORWARD TO NEXT.JS (Inside the function!)
     NEXTJS_URL = "http://localhost:3000/api/scans"
-    SECRET_KEY = "Bearer MySuperSecretPassword123"
+    SECRET_KEY = "Bearer Zoom123"
 
     headers = {
         "Authorization": SECRET_KEY,
@@ -52,7 +50,7 @@ async def receive_and_enrich_scan(request: Request):
             if response.status_code == 200 or response.status_code == 201:
                 print("[SUCCESS] Data saved to Next.js database!")
             else:
-                print(f"[ERROR] Next.js rejected the payload: {response.status_code}")
+                print(f"[ERROR] Next.js rejected the payload: {response.status_code} — {response.text}")
         except httpx.RequestError as e:
             print(f"[ERROR] Could not connect to Next.js: {e}")
     

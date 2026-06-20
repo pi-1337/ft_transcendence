@@ -5,7 +5,7 @@ import bcrypt from "bcrypt"
 
 export async function GET(req: NextRequest) {
     try {
-        const admin: User = await prisma.user.findFirst({
+        const admin: User | null = await prisma.user.findFirst({
             where: {
                 role: "ADMIN"
             }
@@ -18,12 +18,23 @@ export async function GET(req: NextRequest) {
             })
         }
 
+        const firstname = process.env.ADMIN_FIRSTNAME;
+        const lastname = process.env.ADMIN_LASTNAME;
+        const email = process.env.ADMIN_EMAIL;
+
+        if (!firstname || !lastname || !email) {
+            return NextResponse.json({
+                success: false,
+                error: "Missing ADMIN_FIRSTNAME, ADMIN_LASTNAME or ADMIN_EMAIL env vars"
+            }, { status: 500 });
+        }
+
         await prisma.user.create({
             data: {
-                firstname: process.env.ADMIN_FIRSTNAME,
-                lastname: process.env.ADMIN_LASTNAME,
+                firstname,
+                lastname,
                 phoneNumber: process.env.ADMIN_PHONE,
-                email: process.env.ADMIN_EMAIL,
+                email,
                 password: await bcrypt.hash(
                     process.env.ADMIN_PASS || "very-secure-admin-password", 10
                 ),

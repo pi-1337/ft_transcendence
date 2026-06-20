@@ -5,9 +5,11 @@ export type UserFrontend = {
     firstname: string,
     lastname: string,
     email: string,
-    phoneNumber: string,
+    phoneNumber: string | null,
     role: string,
-    avatar: string
+    avatar: string | null,
+    twoFactorEnabled?: boolean,
+    twoFactorEmail?: string | null
 };
 
 

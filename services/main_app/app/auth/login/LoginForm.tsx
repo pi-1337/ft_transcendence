@@ -46,6 +46,11 @@ export default function LoginForm({ ft_auth_url }: { ft_auth_url: string }) {
                 return;
             }
 
+            if (data.requiresTwoFactor) {
+                router.push('/auth/2fa');
+                return;
+            }
+
             if (data.user?.role === 'ADMIN')
                 router.push('/admin/dashboard');
             else

@@ -1,7 +1,7 @@
 'use server'
 
 import { NextRequest, NextResponse } from "next/server";
-import { User, Organization } from "@prisma/client";
+import { User } from "@prisma/client";
 import { getSession } from "@/lib/sessionManage";
 import { prisma } from "@/lib/prisma";
 
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
                 { status: 400 });
         }
 
-        const user: User = await prisma.user.findUnique({ where: { id } });
+        const user: User | null = await prisma.user.findUnique({ where: { id } });
 
         if (!user) {
             return NextResponse.json({

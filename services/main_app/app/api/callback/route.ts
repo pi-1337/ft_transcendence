@@ -3,6 +3,7 @@
 import { authorizeUserByCode, User_42 } from "@/lib/42school_Oauth";
 import { ft_sign } from "@/lib/jwtHelper";
 import { prisma } from "@/lib/prisma";
+import { startTwoFactorChallenge } from "@/lib/twoFactor";
 import { User } from "@prisma/client";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
@@ -83,6 +84,19 @@ export async function GET(req: NextRequest) {
             });
         }
 
+        if (authenticatedUser.twoFactorEnabled) {
+            const pendingToken = ft_sign({ id: authenticatedUser.id, role: authenticatedUser.role, flow: 'login' }, '10m');
+            const destinationEmail = authenticatedUser.twoFactorEmail || authenticatedUser.email;
+            await startTwoFactorChallenge(authenticatedUser.id, destinationEmail, 'LOGIN');
+
+            const cookieStorage = await cookies();
+            cookieStorage.set('pending_2fa', pendingToken, {
+                httpOnly: true,
+            });
+
+            return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL as string}/auth/2fa`);
+        }
+
         const token = ft_sign({ id: authenticatedUser.id, role: authenticatedUser.role });
 
         const cookieStorage = await cookies();
@@ -92,7 +106,7 @@ export async function GET(req: NextRequest) {
 
         return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL as string}/dashboard`);
 
-    } catch (error) {
+    } catch {
         return NextResponse.json({
             status: 500,
             error: "Something went wrong !"

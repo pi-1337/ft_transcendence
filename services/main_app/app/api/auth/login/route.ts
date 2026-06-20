@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt"
 import { cookies } from "next/headers";
 import { ft_sign } from "@/lib/jwtHelper";
-import { User } from "@prisma/client";
+import { startTwoFactorChallenge } from "@/lib/twoFactor";
 
 const validateEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -34,15 +34,7 @@ export async function POST(req: NextRequest) {
                 { status: 400 });
         }
 
-        const user: User = await prisma.user.findUnique({ where: { email } });
-
-        if (!user) {
-            return NextResponse.json({
-                success: false,
-                error: "No such user !!"
-            },
-                { status: 404 });
-        }
+        const user = await prisma.user.findUniqueOrThrow({ where: { email } });
 
         if (!user.password) {
             return NextResponse.json({
@@ -61,6 +53,27 @@ export async function POST(req: NextRequest) {
             },
                 { status: 401 }
 
+            );
+        }
+
+        if (user.twoFactorEnabled) {
+            const pendingToken = ft_sign({ id: user.id, role: user.role, flow: 'login' }, '10m');
+            const destinationEmail = user.twoFactorEmail || user.email;
+            const challengeMeta = await startTwoFactorChallenge(user.id, destinationEmail, 'LOGIN');
+
+            const cookieStorage = await cookies();
+            cookieStorage.set('pending_2fa', pendingToken, {
+                httpOnly: true,
+            });
+
+            return NextResponse.json(
+                {
+                    success: true,
+                    requiresTwoFactor: true,
+                    maskedEmail: challengeMeta.maskedEmail,
+                    expiresInMinutes: challengeMeta.expiresInMinutes,
+                },
+                { status: 200 }
             );
         }
 
@@ -85,12 +98,23 @@ export async function POST(req: NextRequest) {
             { status: 200 }
         );
 
-    } catch (error) {
-        // console.error(error);
+    } catch (error: unknown) {
+        if ((error as { code?: string }).code === 'P2025') {
+            return NextResponse.json(
+                {
+                    success: false,
+                    error: "No such user !!"
+                },
+                { status: 404 }
+            );
+        }
+
+        const message = error instanceof Error ? error.message : "Something went wrong !!";
+
         return NextResponse.json(
             {
                 success: false,
-                error: "Something went wrong !!"
+                error: process.env.NODE_ENV === 'production' ? "Something went wrong !!" : message
             },
             { status: 500 }
         );

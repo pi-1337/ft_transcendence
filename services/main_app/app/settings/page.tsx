@@ -22,7 +22,9 @@ export default async function ServerSide() {
             email: true,
             phoneNumber: true,
             role: true,
-            avatar: true
+            avatar: true,
+            twoFactorEnabled: true,
+            twoFactorEmail: true,
         }
     });
 

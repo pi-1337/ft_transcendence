@@ -3,10 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt"
-import { cookies } from "next/headers";
-import { ft_sign } from "@/lib/jwtHelper";
 import { User } from "@prisma/client";
-import { updateTag } from "next/cache";
 
 const validateEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -46,7 +43,7 @@ export async function POST(req: NextRequest) {
                 { status: 400 });
         }
 
-        const user: User = await prisma.user.findUnique({ where: { email } });
+        const user: User | null = await prisma.user.findUnique({ where: { email } });
 
         if (user) {
             return NextResponse.json({

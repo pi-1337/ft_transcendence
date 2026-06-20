@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Shield, Users, Building2, Radio, LogOut, ArrowRight, Activity, ExternalLink, LayoutGrid } from 'lucide-react';
+import { Shield, Users, Building2, Radio, LogOut, ArrowRight, Activity, LayoutGrid, Megaphone } from 'lucide-react';
 
 type Props = {
     firstname: string;
@@ -89,7 +89,8 @@ export default function AdminDashboard({ firstname, lastname, email, totalUsers,
                         {[
                             { title: 'Manage user accounts', link: '/admin/users', icon: Users, action: 'Manage Users' },
                             { title: 'System organizations', link: '/admin/orgs', icon: Building2, action: 'Manage Orgs' },
-                            { title: 'RFC Reader hardware', link: '/admin/rfcReaders', icon: Radio, action: 'Manage Readers' }
+                            { title: 'RFC Reader hardware', link: '/admin/rfcReaders', icon: Radio, action: 'Manage Readers' },
+                            { title: 'Announcements', link: '/admin/announcements', icon: Megaphone, action: 'Manage Announcements' }
                         ].map((item, idx) => (
                             <div key={item.title} className="group">
                                 <div className="flex items-center justify-between p-5 rounded-2xl hover:bg-white/5 transition-all border border-transparent hover:border-gray-800">
@@ -107,7 +108,7 @@ export default function AdminDashboard({ firstname, lastname, email, totalUsers,
                                         <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
                                     </Link>
                                 </div>
-                                {idx < 2 && <div className="h-px bg-gray-800/50 mx-6" />}
+                                {idx < 3 && <div className="h-px bg-gray-800/50 mx-6" />}
                             </div>
                         ))}
                     </div>

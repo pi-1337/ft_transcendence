@@ -1,0 +1,1 @@
+./send_request.sh "normal" "1"

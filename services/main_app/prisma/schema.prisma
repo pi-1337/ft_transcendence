@@ -28,7 +28,7 @@ model User {
 
 	firstname			String
 	lastname			String
-	avatar				String
+	avatar				String?
 	phoneNumber			String?
 	email				String			@unique
 	login				String?			@unique
@@ -41,6 +41,7 @@ model User {
 	readNotifications	Notification[]	@relation("read")
 	orgs				Organization[]	@relation("membership")
 	owned_orgs			Organization[]	@relation("administration")
+	announcements		Announcement[]	@relation("createdBy")
 
 	// not used by dev
 	membership			UsersOnOrganizations[]
@@ -80,7 +81,7 @@ model Organization {
 	membership		UsersOnOrganizations[]
 
 	meals			Meal[]
-
+	announcements	Announcement[]
 	callBackURL		String? // post req sending the data using a jwt
 
 	createdAt 		DateTime 	@default(now())
@@ -111,6 +112,25 @@ model Badge {
 	user   User   @relation(fields: [userId], references: [id])
 	userId Int    @unique
 	createdAt DateTime @default(now())
+}
+
+model Announcement {
+	id				Int				@id @default(autoincrement())
+
+	title			String
+	message			String
+
+	organization		Organization	@relation(fields: [organizationId], references: [id], onDelete: Cascade)
+	organizationId		Int
+
+	createdBy			User			@relation("createdBy", fields: [userId], references: [id])
+	userId				Int
+
+	createdAt			DateTime		@default(now())
+	updatedAt			DateTime?
+
+	@@index([organizationId])
+	@@index([userId])
 }
 
 

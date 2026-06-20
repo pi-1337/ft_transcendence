@@ -61,6 +61,14 @@ export default function OrgDetails({ orgs }: { orgs: Org[] }) {
                         Scans
                     </Link>
                 )}
+                {org.isOrgAdmin && (
+                    <Link
+                        href={`/organizations/${org.id}/analytics`}
+                        className="text-sm text-white bg-emerald-700 hover:bg-emerald-600 rounded-lg px-4 py-2 transition-colors"
+                    >
+                        Snalytics
+                    </Link>
+                )}
             </header>
 
             <main className="max-w-5xl mx-auto px-8 py-12">
@@ -107,7 +115,7 @@ export default function OrgDetails({ orgs }: { orgs: Org[] }) {
                         <div className="h-px bg-[#1f1f1f]" />
                         <div className="flex justify-between">
                             <span className="text-gray-400">Created</span>
-                            <span className="text-white">{org.createdAt.toLocaleDateString()}</span>
+                            <span className="text-white">{org.createdAt.toLocaleDateString('en-GB')}</span>
                         </div>
                     </div>
                 </div>

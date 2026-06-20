@@ -1,4 +1,19 @@
-- scans appear based on organization, and is only allowed to admins of that organization
-- enforce meals rules, and badge times rules
-- add statistics to the page, like number of badges so far
-- add api key validation into the public api
+- statistics
+    you can select the range, [Today, Last 60 Days] per day
+        for each meal
+            [admins, regular users][accepted, rejected, pending] badges
+        members
+        badges
+
+
+// statistics display
+    - pie chart that shows accepted badges, declined and pending for a given period of time
+        1 day, 7 days, 30 days, 60 days
+    - same period before you get cards, each card represents a meal, with its name, start/end date
+        number of accepted and declined badges same pie chart inside of it
+    - a line that shows the number of accepted or declined badges over 1 week, 30 days, 60 days
+
+// export
+you set a period of time and download the last 1 day, 7 days, 30 days, 60 days
+    in a csv format with each day and meals of that day and member count of that org at that day
+

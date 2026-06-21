@@ -30,6 +30,7 @@ services:
       - my_network
     volumes:
       - db:/var/lib/mysql
+    env_file: ./services/mariadb/.env
 
   avatar_server:
     build: ./services/avatar_server

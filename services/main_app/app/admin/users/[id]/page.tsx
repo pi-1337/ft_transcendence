@@ -17,7 +17,8 @@ export default async function EditUserPage({ params }: Params) {
     const userId = parseInt(rawId);
     if (isNaN(userId))
         redirect('/admin/users');
-
+    
+    // add try catch block to protect the app from craching
     const user = await prisma.user.findUnique({
         where: { id: userId },
         select: {
@@ -34,5 +35,10 @@ export default async function EditUserPage({ params }: Params) {
     if (!user)
         redirect('/admin/users');
 
-    return <EditUserForm user={user} isSelf={userId === session.id} />;
+    const userForForm = {
+        ...user,
+        phoneNumber: user.phoneNumber ?? '',
+    };
+
+    return <EditUserForm user={userForForm} isSelf={userId === session.id} />;
 }

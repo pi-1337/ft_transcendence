@@ -1,27 +1,4 @@
-
 services:
-  main_app:
-    build: ./services/main_app
-    image: main_app:ft_transcendence
-    container_name: main_app
-    networks:
-      - my_network
-    depends_on:
-      - mariadb
-    volumes:
-      - avatar:/app/public/avatars
-    env_file: ./services/main_app/.env
-
-  public_api:
-    build: ./services/public_api
-    image: public_api:ft_transcendence
-    container_name: public_api
-    networks:
-      - my_network
-    depends_on:
-      - mariadb
-    env_file: ./services/public_api/.env
-
   mariadb:
     build: ./services/mariadb
     image: mariadb:ft_transcendence
@@ -31,6 +8,39 @@ services:
     volumes:
       - db:/var/lib/mysql
     env_file: ./services/mariadb/.env
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb-admin ping -h 127.0.0.1 -u$$DB_USER -p$$DB_PASS --silent"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 20s
+
+  main_app:
+    build: ./services/main_app
+    image: main_app:ft_transcendence
+    container_name: main_app
+    environment:
+      - TZ=Africa/Casablanca
+    networks:
+      - my_network
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    volumes:
+      - avatar:/app/public/avatars
+    env_file: ./services/main_app/.env
+
+  reverse_proxy:
+    build: ./services/reverse_proxy
+    image: reverse_proxy:ft_transcendence
+    container_name: reverse_proxy
+    ports:
+      - "3000:3000"
+      - "3002:3002"
+    networks:
+      - my_network
+    depends_on:
+      - main_app
 
   avatar_server:
     build: ./services/avatar_server
@@ -41,24 +51,10 @@ services:
     volumes:
       - avatar:/avatars
 
-  reverse_proxy:
-    build: ./services/reverse_proxy
-    image: reverse_proxy:ft_transcendence
-    container_name: reverse_proxy
-    ports:
-      - 3000:3000
-      - 3001:3001
-      - 3002:3002
-    networks:
-      - my_network
-    depends_on:
-      - main_app
-      - public_api
-      - avatar_server
 
 networks:
-  my_network: 
+  my_network:
 
 volumes:
-  avatar: 
-  db: 
+  avatar:
+  db:

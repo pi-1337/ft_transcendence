@@ -23,7 +23,8 @@ export default async function ServerSide() {
             lastname: true,
             email: true,
             phoneNumber: true,
-            role: true
+            role: true,
+            avatar: true,
         }
     });
 

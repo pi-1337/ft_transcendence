@@ -9,10 +9,10 @@ import { useState } from 'react';
 import { Shield, ChevronLeft, User, Mail, Phone, Camera, Save, X, KeyRound } from 'lucide-react';
 
 export default function Settings({ user }: { user: UserFrontend }) {
-    const firstname =  user.firstname;
-    const lastname =  user.lastname;
-    const email =  user.email;
-    const phoneNumber = user.phoneNumber || "";
+    const [firstname, setFirstname] = useState(user.firstname);
+    const [lastname, setLastname] = useState(user.lastname);
+    const [email, setEmail] = useState(user.email);
+    const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber || "");
     const avatar = user.avatar || '/avatars/default-avatar.png';
 
     const [saved, setSaved] = useState(false);
@@ -169,6 +169,7 @@ export default function Settings({ user }: { user: UserFrontend }) {
                                             type="text"
                                             name="firstname"
                                             value={firstname}
+                                            onChange={(e) => setFirstname(e.target.value)}
                                             className="w-full bg-gray-900/50 border border-gray-800 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
                                         />
                                     </div>
@@ -181,6 +182,7 @@ export default function Settings({ user }: { user: UserFrontend }) {
                                             type="text"
                                             name="lastname"
                                             value={lastname}
+                                            onChange={(e) => setLastname(e.target.value)}
                                             className="w-full bg-gray-900/50 border border-gray-800 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
                                         />
                                     </div>
@@ -195,6 +197,7 @@ export default function Settings({ user }: { user: UserFrontend }) {
                                         type="email"
                                         name="email"
                                         value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
                                         className="w-full bg-gray-900/50 border border-gray-800 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
                                     />
                                 </div>
@@ -208,6 +211,7 @@ export default function Settings({ user }: { user: UserFrontend }) {
                                         type="tel"
                                         name="phoneNumber"
                                         value={phoneNumber}
+                                        onChange={(e) => setPhoneNumber(e.target.value)}
                                         className="w-full bg-gray-900/50 border border-gray-800 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
                                     />
                                 </div>

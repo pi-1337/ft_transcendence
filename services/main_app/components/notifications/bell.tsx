@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Bell as BellIcon } from "lucide-react";
 
-export async function Bell(
+export function Bell(
     { unreadCount }: { unreadCount: number }
 ) {
     return (

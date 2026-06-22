@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { RequestStatus } from '@prisma/client';
 
+type DecisionStatus = 'ACCEPTED' | 'REJECTED';
+
 function authorize(request: Request) {
     const scannerApiKey = process.env.SCANNER_API_KEY;
     if (!scannerApiKey)
@@ -21,6 +23,10 @@ function parseId(id: string) {
     return scanId;
 }
 
+function isDecisionStatus(value: unknown): value is DecisionStatus {
+    return value === RequestStatus.ACCEPTED || value === RequestStatus.REJECTED;
+}
+
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const unauthorized = authorize(request);
@@ -33,8 +39,8 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
             return NextResponse.json({ error: 'Invalid scan id' }, { status: 400 });
 
         const body = await request.json();
-        const decision = body?.decision as RequestStatus | undefined;
-        if (!decision || ![RequestStatus.ACCEPTED, RequestStatus.REJECTED].includes(decision))
+        const decision = body?.decision;
+        if (!isDecisionStatus(decision))
             return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
 
         const currentState = await prisma.badgeScan.findUnique({

@@ -89,7 +89,7 @@ export async function POST(request: Request) {
 
         const autoReject = userAcceptedCount >= organization.badgeTimes;
 
-        await prisma.badgeScan.create({
+        const entry = await prisma.badgeScan.create({
             data: {
                 badgeId: badge.number,
                 rfidReaderID: rfReader.id,
@@ -98,7 +98,7 @@ export async function POST(request: Request) {
             }
         });
 
-        return NextResponse.json({ success: true }, { status: 201 });
+        return NextResponse.json({ success: true, id: entry.id }, { status: 201 });
 
     }
     catch (error)

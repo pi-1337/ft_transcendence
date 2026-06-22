@@ -9,10 +9,10 @@ import { useState } from 'react';
 import { Shield, ChevronLeft, User, Mail, Phone, Camera, Save, X, KeyRound } from 'lucide-react';
 
 export default function Settings({ user }: { user: UserFrontend }) {
-    const firstname =  user.firstname;
-    const lastname =  user.lastname;
-    const email =  user.email;
-    const phoneNumber = user.phoneNumber || "";
+    const [firstname, setFirstname] = useState(user.firstname);
+    const [lastname, setLastname] = useState(user.lastname);
+    const [email, setEmail] = useState(user.email);
+    const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber || "");
     const avatar = user.avatar || '/avatars/default-avatar.png';
 
     const [saved, setSaved] = useState(false);
@@ -137,6 +137,7 @@ export default function Settings({ user }: { user: UserFrontend }) {
                     <div className="bg-[#111] border border-[#1f1f1f] rounded-2xl p-6">
                         <h2 className="text-gray-400 text-xs uppercase tracking-widest mb-6">Personal information</h2>
 
+<<<<<<< HEAD
                         <div className="grid grid-cols-2 gap-4 mb-6">
                             <div>
                                 <label className="block text-sm text-gray-400 mb-2">First Name</label>
@@ -155,6 +156,78 @@ export default function Settings({ user }: { user: UserFrontend }) {
                                     value={lastname}
                                     className="w-full bg-[#0a0a0a] border border-[#1f1f1f] rounded-lg px-4 py-2 text-white placeholder-gray-600 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600/50 transition-colors"
                                 />
+=======
+                            <div className="grid sm:grid-cols-2 gap-6 mb-6">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-gray-400 ml-1">First Name</label>
+                                    <div className="relative group">
+                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-indigo-400 transition-colors" />
+                                        <input
+                                            type="text"
+                                            name="firstname"
+                                            value={firstname}
+                                            onChange={(e) => setFirstname(e.target.value)}
+                                            className="w-full bg-gray-900/50 border border-gray-800 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-gray-400 ml-1">Last Name</label>
+                                    <div className="relative group">
+                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-indigo-400 transition-colors" />
+                                        <input
+                                            type="text"
+                                            name="lastname"
+                                            value={lastname}
+                                            onChange={(e) => setLastname(e.target.value)}
+                                            className="w-full bg-gray-900/50 border border-gray-800 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2 mb-6">
+                                <label className="text-sm font-medium text-gray-400 ml-1">Email Address</label>
+                                <div className="relative group">
+                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-indigo-400 transition-colors" />
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="w-full bg-gray-900/50 border border-gray-800 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-400 ml-1">Phone Number</label>
+                                <div className="relative group">
+                                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-indigo-400 transition-colors" />
+                                    <input
+                                        type="tel"
+                                        name="phoneNumber"
+                                        value={phoneNumber}
+                                        onChange={(e) => setPhoneNumber(e.target.value)}
+                                        className="w-full bg-gray-900/50 border border-gray-800 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="mt-8 flex gap-4">
+                                <button
+                                    type="submit"
+                                    className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl px-8 py-3.5 transition-all shadow-xl shadow-indigo-500/20"
+                                >
+                                    <Save className="w-4 h-4" />
+                                    Save Changes
+                                </button>
+                                <Link
+                                    href="/dashboard"
+                                    className="flex items-center gap-2 bg-gray-800/50 hover:bg-gray-800 text-white font-bold rounded-xl px-8 py-3.5 border border-gray-700 transition-all"
+                                >
+                                    Cancel
+                                </Link>
                             </div>
                         </div>
 

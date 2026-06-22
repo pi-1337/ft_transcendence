@@ -36,15 +36,15 @@ async def receive_and_enrich_scan(request: Request):
     print("="*50 + "\n")
     # TODO: move into a .env file
     # 4. FORWARD TO NEXT.JS (Inside the function!)
-    NEXTJS_URL = "http://localhost:3000/api/public/v1/scans"
-    SECRET_KEY = "Bearer H3R0123"
+    NEXTJS_URL = "https://localhost:3000/api/public/v1/scans"
+    SECRET_KEY = "Bearer Zoom123"
 
     headers = {
         "Authorization": SECRET_KEY,
         "Content-Type": "application/json"
     }
 
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(verify=False) as client:
         try:
             response = await client.post(NEXTJS_URL, json=enriched_metadata, headers=headers)
             if response.status_code == 200 or response.status_code == 201:

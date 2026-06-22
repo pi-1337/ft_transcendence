@@ -128,7 +128,7 @@ export async function POST(req: NextRequest) {
             },
         });
 
-        const userIds = org.users.map((u) => u.id);
+        const userIds = org.users.map((u: { id: number }) => u.id);
         if (userIds.length > 0) {
             const notificationMessage = `[${title.trim()}] ${message.trim()}`;
             await sendNotification(userIds, notificationMessage);

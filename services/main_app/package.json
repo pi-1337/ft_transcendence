@@ -20,7 +20,10 @@
     "nodemailer": "^9.0.1",
     "prisma": "^5.8.0",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "swagger-jsdoc": "^6.3.0",
+    "swagger-ui-express": "^5.0.1",
+    "yaml": "^2.9.0"
   },
   "devDependencies": {
     "@mermaid-js/mermaid-cli": "^11.14.0",
@@ -31,6 +34,7 @@
     "@types/nodemailer": "^8.0.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/yaml": "^1.9.6",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
     "prisma-erd-generator": "^2.4.2",

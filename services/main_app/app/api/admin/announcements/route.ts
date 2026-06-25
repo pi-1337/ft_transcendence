@@ -20,10 +20,10 @@ export async function GET(req: NextRequest) {
 
         if (!session)
             return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
-        if (session.role !== 'ADMIN')
+        if (session.role !== "ADMIN")
             return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
 
-        const orgId = parseOrgId(req.nextUrl.searchParams.get('orgId'));
+        const orgId = parseOrgId(req.nextUrl.searchParams.get("orgId"));
 
         const announcements = await prisma.announcement.findMany({
             where: orgId ? { organizationId: orgId } : undefined,
@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
                 },
             },
             orderBy: {
-                createdAt: 'desc',
+                createdAt: "desc",
             },
         });
 
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
 
         if (!session)
             return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
-        if (session.role !== 'ADMIN')
+        if (session.role !== "ADMIN")
             return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
 
         const { organizationId, title, message } = await req.json();
@@ -75,10 +75,10 @@ export async function POST(req: NextRequest) {
         if (isNaN(parsedOrganizationId))
             return NextResponse.json({ success: false, error: "Invalid organizationId" }, { status: 400 });
 
-        if (typeof title !== 'string' || title.trim().length === 0)
+        if (typeof title !== "string" || title.trim().length === 0)
             return NextResponse.json({ success: false, error: "title is required" }, { status: 400 });
 
-        if (typeof message !== 'string' || message.trim().length === 0)
+        if (typeof message !== "string" || message.trim().length === 0)
             return NextResponse.json({ success: false, error: "message is required" }, { status: 400 });
 
         const org = await prisma.organization.findUnique({

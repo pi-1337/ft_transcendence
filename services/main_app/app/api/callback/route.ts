@@ -85,12 +85,12 @@ export async function GET(req: NextRequest) {
         }
 
         if (authenticatedUser.twoFactorEnabled) {
-            const pendingToken = ft_sign({ id: authenticatedUser.id, role: authenticatedUser.role, flow: 'login' }, '10m');
+            const pendingToken = ft_sign({ id: authenticatedUser.id, role: authenticatedUser.role, flow: "login" }, "10m");
             const destinationEmail = authenticatedUser.twoFactorEmail || authenticatedUser.email;
-            await startTwoFactorChallenge(authenticatedUser.id, destinationEmail, 'LOGIN');
+            await startTwoFactorChallenge(authenticatedUser.id, destinationEmail, "LOGIN");
 
             const cookieStorage = await cookies();
-            cookieStorage.set('pending_2fa', pendingToken, {
+            cookieStorage.set("pending_2fa", pendingToken, {
                 httpOnly: true,
             });
 
@@ -100,7 +100,7 @@ export async function GET(req: NextRequest) {
         const token = ft_sign({ id: authenticatedUser.id, role: authenticatedUser.role });
 
         const cookieStorage = await cookies();
-        cookieStorage.set('session', token, {
+        cookieStorage.set("session", token, {
             httpOnly: true,
         });
 

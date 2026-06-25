@@ -1,112 +1,108 @@
-'use client'
+"use client";
+import { useState } from "react";
+import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft, faPlus } from "@fortawesome/free-solid-svg-icons";
 
-import { useState } from 'react';
-import Link from 'next/link';
-
-type Org = {
-    id: number;
-    name: string;
-    type: string;
-    service: string;
-    active: 'TRUE' | 'FALSE';
-    admins: { id: number; firstname: string; lastname: string }[];
-    _count: { users: number };
-    createdAt: Date;
+interface Org
+{
+	id: number;
+	name: string;
+	type: string;
+	service: string;
+	active: "TRUE" | "FALSE";
+	admins: { id: number; firstname: string; lastname: string }[];
+	_count: { users: number };
+	createdAt: Date;
 };
 
-type Props = {
-    orgs: Org[];
+interface Props
+{
+	orgs: Org[];
 };
 
-export default function OrgsTable({ orgs: initialOrgs }: Props) {
-    const [orgs] = useState(initialOrgs);
+export default function OrgsTable({ orgs: initialOrgs }: Props)
+{
+	const [orgs] = useState(initialOrgs);
 
-    return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white">
-            <header className="border-b border-[#1f1f1f] px-8 py-4 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                    <Link href="/admin/dashboard" className="text-gray-500 hover:text-white text-sm transition-colors">
-                        ← Admin Panel
-                    </Link>
-                    <span className="text-[#333]">/</span>
-                    <span className="text-white font-semibold">Organizations</span>
-                </div>
-                <Link
-                    href="/admin/orgs/create"
-                    className="bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg px-4 py-1.5 transition-colors"
-                >
-                    + Create org
-                </Link>
-            </header>
+	return (
+		<div className="min-h-screen bg-[#111111] text-white">
+			<header className="sticky top-0 z-50 bg-[#111111]/90 backdrop-blur-md border-b border-[#2A2A2A] px-5 md:px-8 py-4 flex items-center justify-between">
+				<div className="flex items-center gap-3">
+					<Link href="/admin/dashboard" className="flex items-center gap-2 text-[#888888] hover:text-white text-sm font-medium transition-all group">
+						<FontAwesomeIcon icon={faChevronLeft} className="text-xs group-hover:-translate-x-1 transition-transform"/>
+						<span className="hidden sm:inline">Admin Panel</span>
+					</Link>
+					<div className="w-px h-4 bg-[#2A2A2A]"/>
+					<span className="text-white font-semibold text-sm">Organizations</span>
+				</div>
+				<Link href="/admin/orgs/create" className="flex items-center gap-2 bg-[#E8963A] hover:bg-[#D4842A] text-white text-sm font-bold rounded-xl px-4 py-2 transition-colors">
+					<FontAwesomeIcon icon={faPlus} className="text-xs"/>
+					Create org
+				</Link>
+			</header>
 
-            <main className="max-w-6xl mx-auto px-8 py-10">
-                <h1 className="text-xl font-semibold mb-6">All organizations ({orgs.length})</h1>
+			<main className="max-w-6xl mx-auto px-5 md:px-8 py-10">
+				<p className="text-[#666666] text-sm mb-6">{orgs.length} organizations total</p>
 
-                <div className="bg-[#111] border border-[#1f1f1f] rounded-2xl overflow-hidden">
-                    <table className="w-full text-sm">
-                        <thead>
-                            <tr className="border-b border-[#1f1f1f]">
-                                <th className="text-left text-gray-500 font-medium px-5 py-3">Name</th>
-                                <th className="text-left text-gray-500 font-medium px-5 py-3">Type</th>
-                                <th className="text-left text-gray-500 font-medium px-5 py-3">Service</th>
-                                <th className="text-left text-gray-500 font-medium px-5 py-3">Status</th>
-                                <th className="text-left text-gray-500 font-medium px-5 py-3">Members</th>
-                                <th className="text-left text-gray-500 font-medium px-5 py-3">Admins</th>
-                                <th className="text-left text-gray-500 font-medium px-5 py-3">Created</th>
-                                <th className="px-5 py-3" />
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {orgs.map((org, i) => (
-                                <tr
-                                    key={org.id}
-                                    className={i !== orgs.length - 1 ? 'border-b border-[#1a1a1a]' : ''}
-                                >
-                                    <td className="px-5 py-3 text-white font-medium">{org.name}</td>
-                                    <td className="px-5 py-3 text-gray-400">{org.type}</td>
-                                    <td className="px-5 py-3 text-gray-400">{org.service}</td>
-                                    <td className="px-5 py-3">
-                                        {org.active === 'TRUE' ? (
-                                            <span className="text-xs bg-green-600/20 text-green-400 border border-green-600/30 rounded-full px-2.5 py-0.5">
-                                                Active
-                                            </span>
-                                        ) : (
-                                            <span className="text-xs bg-[#1a1a1a] text-gray-500 border border-[#2a2a2a] rounded-full px-2.5 py-0.5">
-                                                Inactive
-                                            </span>
-                                        )}
-                                    </td>
-                                    <td className="px-5 py-3 text-gray-400">{org._count.users}</td>
-                                    <td className="px-5 py-3 text-gray-400">
-                                        {org.admins.length === 0
-                                            ? <span className="text-gray-600 italic">none</span>
-                                            : org.admins.map(a => `${a.firstname} ${a.lastname}`).join(', ')
-                                        }
-                                    </td>
-                                    <td className="px-5 py-3 text-gray-500">
-                                        {new Date(org.createdAt).toLocaleDateString()}
-                                    </td>
-                                    <td className="px-5 py-3">
-                                        <Link
-                                            href={`/admin/orgs/${org.id}`}
-                                            className="text-xs text-gray-400 hover:text-white border border-[#333] hover:border-[#555] rounded-md px-3 py-1 transition-colors"
-                                        >
-                                            Edit
-                                        </Link>
-                                    </td>
-                                </tr>
-                            ))}
-                            {orgs.length === 0 && (
-                                <tr>
-                                    <td colSpan={8} className="px-5 py-8 text-center text-gray-600">
-                                        No organizations found.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </main>
-        </div>
-    );
+				<div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-2xl overflow-hidden">
+					<div className="overflow-x-auto">
+						<table className="w-full text-sm">
+							<thead>
+								<tr className="border-b border-[#2A2A2A] bg-[#111111]/60">
+									<th className="text-left text-[#666666] font-bold uppercase tracking-widest text-[10px] px-5 py-4">Name</th>
+									<th className="text-left text-[#666666] font-bold uppercase tracking-widest text-[10px] px-5 py-4 hidden md:table-cell">Type</th>
+									<th className="text-left text-[#666666] font-bold uppercase tracking-widest text-[10px] px-5 py-4 hidden lg:table-cell">Service</th>
+									<th className="text-left text-[#666666] font-bold uppercase tracking-widest text-[10px] px-5 py-4">Status</th>
+									<th className="text-left text-[#666666] font-bold uppercase tracking-widest text-[10px] px-5 py-4 hidden sm:table-cell">Members</th>
+									<th className="text-left text-[#666666] font-bold uppercase tracking-widest text-[10px] px-5 py-4 hidden lg:table-cell">Admins</th>
+									<th className="text-left text-[#666666] font-bold uppercase tracking-widest text-[10px] px-5 py-4 hidden md:table-cell">Created</th>
+									<th className="px-5 py-4"/>
+								</tr>
+							</thead>
+							<tbody className="divide-y divide-[#2A2A2A]">
+								{orgs.length === 0
+								?
+									<tr>
+										<td colSpan={8} className="px-5 py-12 text-center text-[#555555]">No organizations found.</td>
+									</tr>
+								:
+									orgs.map((org) =>
+									(
+										<tr key={org.id} className="hover:bg-[#222222] transition-all">
+											<td className="px-5 py-3.5 text-white font-semibold">{org.name}</td>
+											<td className="px-5 py-3.5 text-[#888888] hidden md:table-cell">{org.type}</td>
+											<td className="px-5 py-3.5 text-[#888888] hidden lg:table-cell">{org.service}</td>
+											<td className="px-5 py-3.5">
+												{org.active === "TRUE"
+												?
+													<span className="inline-flex items-center gap-1.5 text-[10px] font-black bg-green-500/10 text-green-400 border border-green-500/20 rounded-full px-2.5 py-1 uppercase tracking-wider">
+														<span className="w-1 h-1 rounded-full bg-green-400"/>
+														Active
+													</span>
+												:
+													<span className="inline-flex items-center gap-1.5 text-[10px] font-black bg-[#222222] text-[#666666] border border-[#2A2A2A] rounded-full px-2.5 py-1 uppercase tracking-wider">
+														<span className="w-1 h-1 rounded-full bg-[#555555]"/>
+														Inactive
+													</span>
+												}
+											</td>
+											<td className="px-5 py-3.5 text-[#888888] hidden sm:table-cell">{org._count.users}</td>
+											<td className="px-5 py-3.5 text-[#888888] hidden lg:table-cell">
+												{ org.admins.length === 0 ? <span className="text-[#444444] italic">none</span>: org.admins.map(a => `${a.firstname} ${a.lastname}`).join(", ") }
+											</td>
+											<td className="px-5 py-3.5 text-[#666666] hidden md:table-cell">{new Date(org.createdAt).toLocaleDateString()}</td>
+											<td className="px-5 py-3.5">
+												<Link href={`/admin/orgs/${org.id}`} className="text-xs font-bold text-[#E8963A] hover:text-[#D4842A] transition-colors">Edit</Link>
+											</td>
+										</tr>
+									))
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</main>
+		</div>
+	);
 }

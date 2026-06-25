@@ -10,7 +10,7 @@ export async function POST(req: NextRequest, { params }: Params) {
 
         if (!session)
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        if (session.role !== 'ADMIN')
+        if (session.role !== "ADMIN")
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
         const { id: rawId } = await params;
@@ -64,7 +64,7 @@ export async function DELETE(req: NextRequest, { params }: Params) {
 
         if (!session)
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        if (session.role !== 'ADMIN')
+        if (session.role !== "ADMIN")
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
         const { id: rawId } = await params;

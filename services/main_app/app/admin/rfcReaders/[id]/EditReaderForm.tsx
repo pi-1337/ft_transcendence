@@ -1,107 +1,118 @@
-'use client'
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { faChevronLeft, faMicrochip } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { toast } from "react-toastify";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-
-type Org = { id: number; name: string };
-
-type Reader = {
-    id: number;
-    location: string;
-    organizationId: number;
+interface Org
+{
+	id: number;
+	name: string;
 };
 
-type Props = {
-    reader: Reader;
-    organizations: Org[];
+interface Reader
+{
+	id: number;
+	location: string;
+	organizationId: number;
 };
 
-export default function EditReaderForm({ reader, organizations }: Props) {
-    const router = useRouter();
-    const [location, setLocation] = useState(reader.location);
-    const [organizationId, setorganizationId] = useState(reader.organizationId);
-    const [serverError, setServerError] = useState('');
-    const [loading, setLoading] = useState(false);
+interface Props
+{
+	reader: Reader;
+	organizations: Org[];
+};
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!location.trim()) return;
+export default function EditReaderForm({ reader, organizations }: Props)
+{
+	const router = useRouter();
+	const [location, setLocation] = useState(reader.location);
+	const [organization_id, setorganizationId] = useState(reader.organizationId);
+	const [server_error, setServerError] = useState("");
+	const [loading, setLoading] = useState(false);
 
-        setLoading(true);
-        setServerError('');
-        try {
-            const res = await fetch(`/api/admin/rfcReaders/${reader.id}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ location, organizationId }),
-            });
-            const data = await res.json();
-            if (!res.ok) {
-                setServerError(data.error || 'Something went wrong.');
-                return;
-            }
-            router.push('/admin/rfcReaders');
-        } catch {
-            setServerError('Network error. Please try again.');
-        } finally {
-            setLoading(false);
-        }
-    };
+	async function handleSubmit(e: React.FormEvent)
+	{
+		e.preventDefault();
+		if (!location.trim())
+			return (toast.error("Please enter location"));
 
-    return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white">
-            <header className="border-b border-[#1f1f1f] px-8 py-4 flex items-center gap-4">
-                <Link href="/admin/rfcReaders" className="text-gray-500 hover:text-white text-sm transition-colors">
-                    ← RFC Readers
-                </Link>
-                <span className="text-[#333]">/</span>
-                <span className="text-white font-semibold">Edit reader</span>
-            </header>
+		setLoading(true);
+		setServerError("");
+		try
+		{
+			const res = await fetch(`/api/admin/rfcReaders/${reader.id}`,
+			{
+				method: "PATCH",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ location, organization_id }),
+			});
+			const data = await res.json();
+			if (!res.ok)
+			{
+				setServerError(data.error || "Something went wrong.");
+				return ;
+			}
+			router.push("/admin/rfcReaders");
+		}
+		catch
+		{
+			setServerError("Network error. Please try again.");
+		}
+		finally
+		{
+			setLoading(false);
+		}
+	};
 
-            <main className="max-w-lg mx-auto px-8 py-12">
-                <h1 className="text-xl font-semibold mb-2">Reader #{reader.id}</h1>
-                <p className="text-gray-500 text-sm mb-8">{reader.location}</p>
+	return (
+		<div className="min-h-screen bg-[#111111] text-white">
+			<header className="sticky top-0 z-50 bg-[#111111]/90 backdrop-blur-md border-b border-[#2A2A2A] px-5 md:px-8 py-4 flex items-center gap-3">
+				<Link href="/admin/rfcReaders" className="flex items-center gap-2 text-[#888888] hover:text-white text-[16px] font-medium transition-all group">
+					<FontAwesomeIcon icon={faChevronLeft} className="text-xs group-hover:-translate-x-1 transition-transform"/>
+					RFC Readers
+				</Link>
+				<div className="w-px h-4 bg-[#2A2A2A]"/>
+				<span className="text-white font-semibold text-[16px]">Edit reader</span>
+			</header>
 
-                {serverError && (
-                    <div className="mb-6 rounded-lg bg-red-900/40 border border-red-600 text-red-400 text-sm px-4 py-3">
-                        {serverError}
-                    </div>
-                )}
+			<main className="max-w-md mx-auto px-5 md:px-8 py-10 md:py-12">
+				<div className="flex items-center gap-3 mb-8">
+					<div className="w-10 h-10 bg-[#E8963A]/10 border border-[#E8963A]/20 rounded-xl flex items-center justify-center">
+						<FontAwesomeIcon icon={faMicrochip} className="text-[#E8963A] text-[16px]"/>
+					</div>
+					<div>
+						<h1 className="text-xl font-bold leading-none">Reader #{reader.id}</h1>
+						<p className="text-[#666666] text-xs mt-1">{reader.location}</p>
+					</div>
+				</div>
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-                    <div className="flex flex-col gap-1">
-                        <label className="text-gray-400 text-sm">Location</label>
-                        <input
-                            type="text"
-                            value={location}
-                            onChange={(e) => setLocation(e.target.value)}
-                            className="bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
-                        />
-                    </div>
+				{server_error && ( <div className="mb-5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-[16px] px-4 py-3">{server_error}</div> )}
 
-                    <div className="flex flex-col gap-1">
-                        <label className="text-gray-400 text-sm">Organization</label>
-                        <select
-                            value={organizationId}
-                            onChange={(e) => setorganizationId(Number(e.target.value))}
-                            className="bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
-                        >
-                            {organizations.map((org) => (
-                                <option key={org.id} value={org.id}>{org.name}</option>
-                            ))}
-                        </select>
-                    </div>
+				<form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+					<div className="flex flex-col gap-1.5">
+						<label className="text-[#888888] text-xs font-semibold uppercase tracking-widest">Location</label>
+						<input type="text" value={location} onChange={(e) => setLocation(e.target.value)} className="bg-[#1A1A1A] border border-[#2A2A2A] text-white rounded-xl px-4 py-3 text-[16px] focus:outline-none focus:border-[#E8963A] transition-colors placeholder-[#555555]"/>
+					</div>
 
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="mt-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-sm font-medium rounded-lg px-4 py-2.5 transition-colors"
-                    >
-                        {loading ? 'Saving...' : 'Save changes'}
-                    </button>
-                </form>
-            </main>
-        </div>
-    );
+					<div className="flex flex-col gap-1.5">
+						<label className="text-[#888888] text-xs font-semibold uppercase tracking-widest">Organization</label>
+						<select value={organization_id} onChange={(e) => setorganizationId(Number(e.target.value))} className="bg-[#1A1A1A] border border-[#2A2A2A] text-white rounded-xl px-4 py-3 text-[16px] focus:outline-none focus:border-[#E8963A] transition-colors">
+							{organizations.map((org) =>
+							(
+								<option key={org.id} value={org.id}>{org.name}</option>
+							))}
+						</select>
+					</div>
+
+					<div className="flex gap-3 mt-2">
+						<Link href="/admin/rfcReaders" className="flex-1 text-center border border-[#2A2A2A] hover:border-[#444444] text-[#888888] hover:text-white rounded-xl py-3 text-[16px] font-semibold transition-all">Cancel</Link>
+						<button type="submit" disabled={loading} className="flex-1 bg-[#E8963A] hover:bg-[#D4842A] disabled:opacity-60 disabled:cursor-not-allowed text-white rounded-xl py-3 text-[16px] font-bold transition-colors flex items-center justify-center gap-2">{ loading ? "Saving…" : "Save changes" }</button>
+					</div>
+				</form>
+			</main>
+		</div>
+	);
 }

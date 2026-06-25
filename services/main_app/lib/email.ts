@@ -22,7 +22,7 @@ function getTransporter() {
     return nodemailer.createTransport({
         host,
         port,
-        secure: process.env.SMTP_SECURE === 'true',
+        secure: process.env.SMTP_SECURE === "true",
         auth: {
             user,
             pass,
@@ -33,14 +33,14 @@ function getTransporter() {
 export async function sendOtpEmail({ to, code, expiresInMinutes }: SendOtpMailParams) {
     const from = process.env.SMTP_FROM || "no-reply@ft-transcendence.local";
     const transporter = getTransporter();
-    const requireSmtp = process.env.TWO_FACTOR_REQUIRE_SMTP === 'true';
+    const requireSmtp = process.env.TWO_FACTOR_REQUIRE_SMTP === "true";
 
     const subject = "Your verification code";
     const text = `Your verification code is ${code}. It expires in ${expiresInMinutes} minutes.`;
 
     if (!transporter) {
         console.log(`[2FA-DEV] OTP for ${to}: ${code}`);
-        return;
+        return ;
     }
 
     try {

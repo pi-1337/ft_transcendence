@@ -1,4 +1,4 @@
-'use server'
+"use server"
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/sessionManage";
@@ -71,7 +71,7 @@ async function handleEdit(req: NextRequest) {
             data.badgeTimes = parsedBadgeTimes;
         }
         if (active !== undefined) {
-            if (active !== 'TRUE' && active !== 'FALSE') {
+            if (active !== "TRUE" && active !== "FALSE") {
                 return NextResponse.json({
                     success: false,
                     error: "Active must be TRUE or FALSE !!"

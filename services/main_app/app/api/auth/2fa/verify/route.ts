@@ -13,10 +13,10 @@ export async function POST(req: NextRequest) {
 
         const { code } = await req.json();
 
-        if (typeof code !== 'string' || !/^\d{4,8}$/.test(code))
+        if (typeof code !== "string" || !/^\d{4,8}$/.test(code))
             return NextResponse.json({ success: false, error: "Invalid code format" }, { status: 400 });
 
-        const verification = await verifyTwoFactorChallenge(pending.id, code, 'LOGIN');
+        const verification = await verifyTwoFactorChallenge(pending.id, code, "LOGIN");
         if (!verification.ok)
             return NextResponse.json({ success: false, error: verification.error }, { status: 400 });
 
@@ -30,8 +30,8 @@ export async function POST(req: NextRequest) {
 
         const sessionToken = ft_sign({ id: user.id, role: user.role });
         const cookieStorage = await cookies();
-        cookieStorage.set('session', sessionToken, { httpOnly: true });
-        cookieStorage.delete('pending_2fa');
+        cookieStorage.set("session", sessionToken, { httpOnly: true });
+        cookieStorage.delete("pending_2fa");
 
         return NextResponse.json({
             success: true,

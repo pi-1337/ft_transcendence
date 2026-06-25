@@ -1,226 +1,166 @@
-'use client'
+"use client";
+import Link from "next/link";
+import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft, faChevronRight, faBolt, faCalendar, faListUl, faClock, faArrowRight, faArrowRightToBracket, faArrowRightFromBracket, } from "@fortawesome/free-solid-svg-icons";
 
-import Link from 'next/link';
-import { useState } from 'react';
-import { Shield, ChevronLeft, Award, Building2, Tag, Calendar, Activity, ArrowRight, ExternalLink, Info } from 'lucide-react';
-
-// Mock data for badges
-const mockBadges = [
-    {
-        number: 'BADGE-001',
-        userId: 1,
-        orgId: 1,
-        orgName: 'Acme Corporation',
-        createdAt: new Date('2024-01-15'),
-        records: 12
-    },
-    {
-        number: 'BADGE-002',
-        userId: 1,
-        orgId: 2,
-        orgName: 'Tech Startup Inc',
-        createdAt: new Date('2024-02-20'),
-        records: 8
-    }
+const mock_badges =
+[
+	{
+		number: "BADGE-001",
+		userId: 1,
+		orgId: 1,
+		orgName: "Acme Corporation",
+		createdAt: new Date("2024-01-15"),
+		records: 12
+	},
+	{
+		number: "BADGE-002",
+		userId: 1,
+		orgId: 2,
+		orgName: "Tech Startup Inc",
+		createdAt: new Date("2024-02-20"),
+		records: 8
+	}
 ];
 
-const mockRecords = [
-    {
-        id: 1,
-        badgeNumber: 'BADGE-001',
-        timestamp: new Date('2024-01-20 10:30:00'),
-        action: 'Entry'
-    },
-    {
-        id: 2,
-        badgeNumber: 'BADGE-001',
-        timestamp: new Date('2024-01-20 17:00:00'),
-        action: 'Exit'
-    },
-    {
-        id: 3,
-        badgeNumber: 'BADGE-001',
-        timestamp: new Date('2024-01-21 09:15:00'),
-        action: 'Entry'
-    },
-    {
-        id: 4,
-        badgeNumber: 'BADGE-001',
-        timestamp: new Date('2024-01-21 18:45:00'),
-        action: 'Exit'
-    }
+const mock_records =
+[
+	{
+		id: 1,
+		badgeNumber: "BADGE-001",
+		timestamp: new Date("2024-01-20 10:30:00"),
+		action: "Entry"
+	},
+	{
+		id: 2,
+		badgeNumber: "BADGE-001",
+		timestamp: new Date("2024-01-20 17:00:00"),
+		action: "Exit"
+	},
+	{
+		id: 3,
+		badgeNumber: "BADGE-002",
+		timestamp: new Date("2024-01-21 09:15:00"),
+		action: "Entry"
+	},
+	{
+		id: 4,
+		badgeNumber: "BADGE-002",
+		timestamp: new Date("2024-01-21 18:45:00"),
+		action: "Exit"
+	}
 ];
 
-export default function BadgeDetails() {
-    const [selectedBadge, setSelectedBadge] = useState(mockBadges[0]);
-    const badgeRecords = mockRecords.filter(r => r.badgeNumber === selectedBadge.number);
+export default function BadgeDetails()
+{
+	const [selectedBadge, setSelectedBadge] = useState(mock_badges[0]);
+	const badgeRecords = mock_records.filter(r => r.badgeNumber === selectedBadge.number);
+	const badge_overview_items =
+	[
+		{ label: "Badge", value: selectedBadge.number, cls: "font-mono text-[#E8963A] text-[16px]" },
+		{ label: "Organization", value: selectedBadge.orgName, cls: "text-[#CCCCCC] text-[16px] font-medium" },
+		{ label: "Issued", value: selectedBadge.createdAt.toLocaleDateString(), cls: "text-[#CCCCCC] text-[16px]" },
+		{ label: "Records", value: badgeRecords.length, cls: "text-white text-xl font-bold" },
+	];
 
-    return (
-        <div className="min-h-screen bg-[#030712] text-white font-sans">
-            {/* Top bar */}
-            <header className="border-b border-gray-800 bg-[#030712]/80 backdrop-blur-md sticky top-0 z-50 px-8 py-4 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                    <Link href="/dashboard" className="flex items-center gap-2 text-gray-400 hover:text-white text-sm font-medium transition-all group">
-                        <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                        Dashboard
-                    </Link>
-                    <div className="w-px h-4 bg-gray-800" />
-                    <div className="flex items-center gap-2">
-                        <Shield className="w-4 h-4 text-indigo-500" />
-                        <span className="text-white font-bold tracking-tight">Badges</span>
-                    </div>
-                </div>
-            </header>
-
-            <main className="max-w-5xl mx-auto px-8 py-12">
-                <div className="flex items-center gap-4 mb-10">
-                    <div className="bg-indigo-500/10 p-3 rounded-2xl border border-indigo-500/20">
-                        <Award className="w-8 h-8 text-indigo-500" />
-                    </div>
-                    <div>
-                        <h1 className="text-3xl font-bold tracking-tight">Your Badges</h1>
-                        <p className="text-gray-500 mt-1">Select a badge to view detailed access records</p>
-                    </div>
-                </div>
-
-                {/* Badge Selection */}
-                <div className="grid md:grid-cols-2 gap-6 mb-12">
-                    {mockBadges.map((badge) => (
-                        <button
-                            key={badge.number}
-                            onClick={() => setSelectedBadge(badge)}
-                            className={`group relative text-left bg-[#0b1120]/50 border rounded-3xl p-8 transition-all duration-300 overflow-hidden ${
-                                selectedBadge.number === badge.number
-                                    ? 'border-indigo-500 shadow-xl shadow-indigo-500/10'
-                                    : 'border-gray-800 hover:border-gray-700'
-                            }`}
-                        >
-                            <div className={`absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 blur-[60px] rounded-full pointer-events-none transition-opacity ${
-                                selectedBadge.number === badge.number ? 'opacity-100' : 'opacity-0'
-                            }`} />
-                            
-                            <div className="flex items-center justify-between mb-4">
-                                <div className={`font-mono text-xl font-black tracking-wider ${
-                                    selectedBadge.number === badge.number ? 'text-indigo-400' : 'text-gray-400'
-                                }`}>
-                                    {badge.number}
-                                </div>
-                                <div className={`p-2 rounded-xl border transition-colors ${
-                                    selectedBadge.number === badge.number 
-                                        ? 'bg-indigo-500/20 border-indigo-500/30 text-indigo-400' 
-                                        : 'bg-gray-800/50 border-gray-700 text-gray-500'
-                                }`}>
-                                    <Tag className="w-4 h-4" />
-                                </div>
-                            </div>
-                            
-                            <div className="flex items-center gap-2 text-gray-300 mb-6">
-                                <Building2 className="w-4 h-4 text-gray-500" />
-                                <span className="font-bold">{badge.orgName}</span>
-                            </div>
-                            
-                            <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
-                                <div className="flex items-center gap-2 text-gray-500">
-                                    <Activity className="w-3 h-3" />
-                                    <span>{badge.records} records</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-gray-500">
-                                    <Calendar className="w-3 h-3" />
-                                    <span>{badge.createdAt.toLocaleDateString()}</span>
-                                </div>
-                            </div>
-                        </button>
-                    ))}
-                </div>
-
-                {/* Badge Details Grid */}
-                <div className="grid lg:grid-cols-3 gap-8">
-                    {/* Badge Information Card */}
-                    <div className="lg:col-span-1">
-                        <div className="bg-[#0b1120]/50 border border-gray-800 rounded-[2.5rem] p-8 relative overflow-hidden h-full">
-                            <h2 className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-8 flex items-center gap-2">
-                                <Info className="w-3.5 h-3.5" />
-                                Badge Information
-                            </h2>
-                            
-                            <div className="space-y-6">
-                                {[
-                                    { label: 'Badge Number', value: selectedBadge.number, font: 'font-mono text-indigo-400' },
-                                    { label: 'Organization', value: selectedBadge.orgName, font: 'text-white font-bold' },
-                                    { label: 'Date Issued', value: selectedBadge.createdAt.toLocaleDateString(), font: 'text-gray-300' },
-                                    { label: 'Record Count', value: badgeRecords.length, font: 'text-white font-black' }
-                                ].map((item, idx) => (
-                                    <div key={item.label}>
-                                        <div className="flex flex-col gap-1">
-                                            <span className="text-[10px] font-black text-gray-600 uppercase tracking-wider">{item.label}</span>
-                                            <span className={item.font}>{item.value}</span>
-                                        </div>
-                                        {idx < 3 && <div className="h-px bg-gray-800/50 mt-4" />}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Recent Records Table Card */}
-                    <div className="lg:col-span-2">
-                        <div className="bg-[#0b1120]/50 border border-gray-800 rounded-[2.5rem] overflow-hidden h-full">
-                            <div className="p-8 border-b border-gray-800 bg-gray-900/20 flex items-center justify-between">
-                                <h2 className="text-white font-bold tracking-tight flex items-center gap-3">
-                                    <Activity className="w-5 h-5 text-indigo-500" />
-                                    Recent Records
-                                    <span className="text-[10px] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full px-2 py-0.5 ml-2">
-                                        {badgeRecords.length} entries
-                                    </span>
-                                </h2>
-                            </div>
-                            
-                            <div className="overflow-x-auto">
-                                <table className="w-full text-sm">
-                                    <thead>
-                                        <tr className="border-b border-gray-800 bg-gray-900/10">
-                                            <th className="text-left text-gray-500 font-bold uppercase tracking-widest text-[10px] px-8 py-5">Timestamp</th>
-                                            <th className="text-left text-gray-500 font-bold uppercase tracking-widest text-[10px] px-8 py-5">Action</th>
-                                            <th className="px-8 py-5" />
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-800/50">
-                                        {badgeRecords.map((record) => (
-                                            <tr key={record.id} className="hover:bg-white/5 transition-all group/row">
-                                                <td className="px-8 py-4">
-                                                    <div className="flex items-center gap-2 text-gray-300">
-                                                        <Calendar className="w-4 h-4 text-gray-600" />
-                                                        {record.timestamp.toLocaleString()}
-                                                    </div>
-                                                </td>
-                                                <td className="px-8 py-4">
-                                                    <span className={`inline-flex items-center gap-1.5 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider ${
-                                                        record.action === 'Entry'
-                                                            ? 'bg-green-500/10 text-green-400 border border-green-600/20'
-                                                            : 'bg-orange-500/10 text-orange-400 border border-orange-600/20'
-                                                    }`}>
-                                                        <span className={`w-1 h-1 rounded-full ${record.action === 'Entry' ? 'bg-green-400' : 'bg-orange-400'}`} />
-                                                        {record.action}
-                                                    </span>
-                                                </td>
-                                                <td className="px-8 py-4 text-right">
-                                                    <Link
-                                                        href={`/records/${record.id}`}
-                                                        className="inline-flex items-center gap-1 text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors group/link"
-                                                    >
-                                                        Details
-                                                        <ArrowRight className="w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform" />
-                                                    </Link>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </div>
-    );
+	return (
+		<div className="min-h-screen bg-[#111111] text-white">
+			<header className="px-5 md:px-8 py-4 border-b border-[#222222] flex items-center gap-3 sticky top-0 z-50 bg-[#111111]/90 backdrop-blur-md">
+				<Link href="/dashboard" className="flex items-center gap-1.5 text-[#555555] hover:text-white text-[16px] transition-colors group">
+					<FontAwesomeIcon icon={faChevronLeft} className="text-xs group-hover:-translate-x-0.5 transition-transform" />
+					Dashboard
+				</Link>
+				<div className="w-px h-4 bg-[#2A2A2A]" />
+				<span className="text-[16px] font-semibold">Badges</span>
+			</header>
+	
+			<main className="max-w-4xl mx-auto px-5 md:px-8 py-10 flex flex-col gap-7">
+				<div>
+					<h1 className="text-xl font-bold">Your badges</h1>
+					<p className="text-[#555555] text-[16px] mt-1">Select a badge to view its access records</p>
+				</div>
+	
+				<div className="border border-[#222222] rounded-2xl overflow-hidden">
+					{mock_badges.map((badge, idx) =>
+					(
+						<button key={badge.number} onClick={() => setSelectedBadge(badge)} className={`w-full flex items-center justify-between px-5 py-4 text-left transition-colors gap-4 ${idx > 0 ? "border-t border-[#222222]" : ""} ${selectedBadge.number === badge.number ? "bg-[#1F1F1F] border-l-2 border-l-[#E8963A]" : "bg-[#1A1A1A] border-l-2 border-l-transparent hover:bg-[#1F1F1F]"}`}>
+							<div className="flex items-center gap-4 min-w-0">
+								<span className={`font-mono text-[16px] shrink-0 ${selectedBadge.number === badge.number ? "text-[#E8963A]" : "text-[#555555]"}`}>{badge.number}</span>
+								<span className="text-[16px] font-semibold text-[#CCCCCC] truncate">{badge.orgName}</span>
+							</div>
+							<div className="flex items-center gap-4 shrink-0">
+								<span className="hidden sm:flex items-center gap-1.5 text-[11px] text-[#444444]">
+									<FontAwesomeIcon icon={faBolt} className="text-xs" />
+									{badge.records} records
+								</span>
+								<span className="hidden sm:flex items-center gap-1.5 text-[11px] text-[#444444]">
+									<FontAwesomeIcon icon={faCalendar} className="text-xs" />
+									{badge.createdAt.toLocaleDateString()}
+								</span>
+								<FontAwesomeIcon icon={faChevronRight} className={`text-xs ${selectedBadge.number === badge.number ? "text-[#E8963A]" : "text-[#333333]"}`} />
+							</div>
+						</button>
+					))}
+				</div>
+				
+				<div className="grid lg:grid-cols-[200px_1fr] gap-4">
+					<div className="bg-[#1A1A1A] border border-[#222222] rounded-2xl p-5 flex flex-col gap-0">
+						{badge_overview_items.map((item, index, arr) => (
+							<div key={item.label} className={`py-3 ${index < arr.length - 1 ? "border-b border-[#1F1F1F]" : ""} ${index === 0 ? "pt-0" : ""} ${index === arr.length - 1 ? "pb-0" : ""}`}>
+								<p className="text-xs text-[#444444] uppercase tracking-widest font-bold mb-1">{item.label}</p>
+								<p className={item.cls}>{item.value}</p>
+							</div>
+						))}
+					</div>
+					
+					<div className="bg-[#1A1A1A] border border-[#222222] rounded-2xl overflow-hidden">
+						<div className="px-5 py-3.5 border-b border-[#222222] flex items-center gap-2">
+							<FontAwesomeIcon icon={faListUl} className="text-[16px] text-[#E8963A]" />
+							<span className="text-[16px] font-semibold">Access records</span>
+							<span className="text-xs font-bold bg-[#E8963A]/10 text-[#E8963A] border border-[#E8963A]/20 rounded-full px-2 py-0.5 ml-1">
+								{badgeRecords.length} entries
+							</span>
+						</div>
+						<div className="overflow-x-auto">
+							<table className="w-full">
+								<thead>
+									<tr className="border-b border-[#222222]">
+										<th className="text-left text-xs text-[#444444] font-bold uppercase tracking-widest px-5 py-3">Timestamp</th>
+										<th className="text-left text-xs text-[#444444] font-bold uppercase tracking-widest px-5 py-3">Action</th>
+										<th className="px-5 py-3" />
+									</tr>
+								</thead>
+								<tbody>
+									{badgeRecords.map((record, idx) =>
+									(
+										<tr key={record.id} className={`hover:bg-white/1.5 transition-colors ${idx < badgeRecords.length - 1 ? "border-b border-[#1E1E1E]" : ""}`}>
+											<td className="px-5 py-3">
+												<div className="flex items-center gap-2 text-[#666666] text-xs">
+													<FontAwesomeIcon icon={faClock} className="text-[#333333] text-xs" />
+													{record.timestamp.toLocaleString()}
+												</div>
+											</td>
+											<td className="px-5 py-3">
+												<span className={`inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${record.action === "Entry"? "bg-green-500/6 text-green-400 border-green-500/20": "bg-orange-500/6 text-orange-400 border-orange-500/20"}`}>
+													<FontAwesomeIcon icon={record.action === "Entry" ? faArrowRightToBracket : faArrowRightFromBracket} className="text-[9px]" />
+													{record.action}
+												</span>
+											</td>
+											<td className="px-5 py-3 text-right">
+												<Link href={`/records/${record.id}`} className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#E8963A] hover:text-[#F4A94A] transition-colors group/link">
+													Details
+													<FontAwesomeIcon icon={faArrowRight} className="text-xs group-hover/link:translate-x-0.5 transition-transform" />
+												</Link>
+											</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</main>
+		</div>
+	);
 }

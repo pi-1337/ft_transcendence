@@ -1,4 +1,4 @@
-'use server'
+"use server"
 
 import { NextRequest, NextResponse } from "next/server";
 import { User, Organization } from "@prisma/client";

@@ -3,22 +3,22 @@ import { TwoFactorPurpose } from "@prisma/client";
 import { prisma } from "./prisma";
 import { sendOtpEmail } from "./email";
 
-const OTP_LENGTH = parseInt(process.env.TWO_FACTOR_OTP_LENGTH || '6', 10);
-const OTP_TTL_MINUTES = parseInt(process.env.TWO_FACTOR_OTP_TTL_MINUTES || '5', 10);
-const OTP_MAX_ATTEMPTS = parseInt(process.env.TWO_FACTOR_OTP_MAX_ATTEMPTS || '5', 10);
-const OTP_MAX_RESENDS = parseInt(process.env.TWO_FACTOR_OTP_MAX_RESENDS || '3', 10);
-const OTP_RESEND_COOLDOWN_SECONDS = parseInt(process.env.TWO_FACTOR_OTP_RESEND_COOLDOWN_SECONDS || '60', 10);
+const OTP_LENGTH = parseInt(process.env.TWO_FACTOR_OTP_LENGTH || "6", 10);
+const OTP_TTL_MINUTES = parseInt(process.env.TWO_FACTOR_OTP_TTL_MINUTES || "5", 10);
+const OTP_MAX_ATTEMPTS = parseInt(process.env.TWO_FACTOR_OTP_MAX_ATTEMPTS || "5", 10);
+const OTP_MAX_RESENDS = parseInt(process.env.TWO_FACTOR_OTP_MAX_RESENDS || "3", 10);
+const OTP_RESEND_COOLDOWN_SECONDS = parseInt(process.env.TWO_FACTOR_OTP_RESEND_COOLDOWN_SECONDS || "60", 10);
 
 export type TwoFactorErrorCode =
-    | 'OTP_INVALID'
-    | 'OTP_EXPIRED'
-    | 'OTP_MAX_ATTEMPTS'
-    | 'OTP_RESEND_COOLDOWN'
-    | 'OTP_MAX_RESENDS'
-    | 'OTP_NOT_FOUND';
+    | "OTP_INVALID"
+    | "OTP_EXPIRED"
+    | "OTP_MAX_ATTEMPTS"
+    | "OTP_RESEND_COOLDOWN"
+    | "OTP_MAX_RESENDS"
+    | "OTP_NOT_FOUND";
 
 function createNumericOtp(length: number): string {
-    let result = '';
+    let result = "";
     for (let i = 0; i < length; i++)
         result += Math.floor(Math.random() * 10).toString();
 
@@ -26,14 +26,14 @@ function createNumericOtp(length: number): string {
 }
 
 export function maskEmail(email: string): string {
-    const [local, domain] = email.split('@');
+    const [local, domain] = email.split("@");
     if (!local || !domain)
         return email;
 
     if (local.length <= 2)
-        return `${local[0] || '*'}*@${domain}`;
+        return `${local[0] || "*"}*@${domain}`;
 
-    return `${local[0]}${'*'.repeat(Math.max(1, local.length - 2))}${local[local.length - 1]}@${domain}`;
+    return `${local[0]}${"*".repeat(Math.max(1, local.length - 2))}${local[local.length - 1]}@${domain}`;
 }
 
 export async function startTwoFactorChallenge(userId: number, destinationEmail: string, purpose: TwoFactorPurpose) {
@@ -84,22 +84,22 @@ export async function resendTwoFactorChallenge(userId: number, destinationEmail:
             consumedAt: null,
         },
         orderBy: {
-            createdAt: 'desc',
+            createdAt: "desc",
         },
     });
 
     if (!challenge)
-        return { ok: false as const, error: 'OTP_NOT_FOUND' as TwoFactorErrorCode };
+        return { ok: false as const, error: "OTP_NOT_FOUND" as TwoFactorErrorCode };
 
     if (challenge.expiresAt.getTime() < Date.now())
-        return { ok: false as const, error: 'OTP_EXPIRED' as TwoFactorErrorCode };
+        return { ok: false as const, error: "OTP_EXPIRED" as TwoFactorErrorCode };
 
     if (challenge.resendCount >= OTP_MAX_RESENDS)
-        return { ok: false as const, error: 'OTP_MAX_RESENDS' as TwoFactorErrorCode };
+        return { ok: false as const, error: "OTP_MAX_RESENDS" as TwoFactorErrorCode };
 
     const elapsedSeconds = Math.floor((Date.now() - challenge.lastSentAt.getTime()) / 1000);
     if (elapsedSeconds < OTP_RESEND_COOLDOWN_SECONDS)
-        return { ok: false as const, error: 'OTP_RESEND_COOLDOWN' as TwoFactorErrorCode, retryAfter: OTP_RESEND_COOLDOWN_SECONDS - elapsedSeconds };
+        return { ok: false as const, error: "OTP_RESEND_COOLDOWN" as TwoFactorErrorCode, retryAfter: OTP_RESEND_COOLDOWN_SECONDS - elapsedSeconds };
 
     const code = createNumericOtp(OTP_LENGTH);
     const codeHash = await bcrypt.hash(code, 10);
@@ -137,18 +137,18 @@ export async function verifyTwoFactorChallenge(userId: number, code: string, pur
             consumedAt: null,
         },
         orderBy: {
-            createdAt: 'desc',
+            createdAt: "desc",
         },
     });
 
     if (!challenge)
-        return { ok: false as const, error: 'OTP_NOT_FOUND' as TwoFactorErrorCode };
+        return { ok: false as const, error: "OTP_NOT_FOUND" as TwoFactorErrorCode };
 
     if (challenge.expiresAt.getTime() < Date.now())
-        return { ok: false as const, error: 'OTP_EXPIRED' as TwoFactorErrorCode };
+        return { ok: false as const, error: "OTP_EXPIRED" as TwoFactorErrorCode };
 
     if (challenge.attempts >= OTP_MAX_ATTEMPTS)
-        return { ok: false as const, error: 'OTP_MAX_ATTEMPTS' as TwoFactorErrorCode };
+        return { ok: false as const, error: "OTP_MAX_ATTEMPTS" as TwoFactorErrorCode };
 
     const matches = await bcrypt.compare(code, challenge.codeHash);
     if (!matches) {
@@ -160,9 +160,9 @@ export async function verifyTwoFactorChallenge(userId: number, code: string, pur
         });
 
         if (challenge.attempts + 1 >= OTP_MAX_ATTEMPTS)
-            return { ok: false as const, error: 'OTP_MAX_ATTEMPTS' as TwoFactorErrorCode };
+            return { ok: false as const, error: "OTP_MAX_ATTEMPTS" as TwoFactorErrorCode };
 
-        return { ok: false as const, error: 'OTP_INVALID' as TwoFactorErrorCode };
+        return { ok: false as const, error: "OTP_INVALID" as TwoFactorErrorCode };
     }
 
     await prisma.twoFactorChallenge.update({

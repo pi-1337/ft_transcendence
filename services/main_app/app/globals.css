@@ -1,18 +1,2 @@
 @import "tailwindcss";
-
-:root {
-  --background: #030712;
-  --foreground: #f8fafc;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-}
+@import "@fortawesome/fontawesome-svg-core/styles.css";

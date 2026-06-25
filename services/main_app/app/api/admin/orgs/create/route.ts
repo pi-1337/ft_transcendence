@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
 
         if (!session)
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        if (session.role !== 'ADMIN')
+        if (session.role !== "ADMIN")
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
         const { name, type, service, badgeTimes, active, callBackURL } = await req.json();
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
         if (isNaN(bt) || bt < 1)
             return NextResponse.json({ error: "badgeTimes must be a positive integer" }, { status: 400 });
 
-        if (active !== undefined && active !== 'TRUE' && active !== 'FALSE')
+        if (active !== undefined && active !== "TRUE" && active !== "FALSE")
             return NextResponse.json({ error: "active must be TRUE or FALSE" }, { status: 400 });
 
         const org = await prisma.organization.create({
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
                 type,
                 service,
                 badgeTimes: bt,
-                active: active ?? 'FALSE',
+                active: active ?? "FALSE",
                 callBackURL: callBackURL || null,
             },
         });

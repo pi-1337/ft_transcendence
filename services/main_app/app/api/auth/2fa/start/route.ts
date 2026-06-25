@@ -22,7 +22,7 @@ export async function POST() {
             return NextResponse.json({ success: false, error: "2FA is not enabled" }, { status: 400 });
 
         const destinationEmail = user.twoFactorEmail || user.email;
-        const result = await startTwoFactorChallenge(pending.id, destinationEmail, 'LOGIN');
+        const result = await startTwoFactorChallenge(pending.id, destinationEmail, "LOGIN");
 
         return NextResponse.json({ success: true, ...result }, { status: 200 });
     } catch {

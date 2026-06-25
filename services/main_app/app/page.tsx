@@ -1,8 +1,6 @@
-import { getSession } from "@/lib/sessionManage";
-import LandingPageClient from "@/components/LandingPageClient";
+import HomePage from "./home/page";
 
-export default async function Home() {
-    const sessionData = await getSession();
-
-    return <LandingPageClient isLoggedIn={!!sessionData} role={sessionData?.role} />;
+export default function Home()
+{
+	return <HomePage />;
 }

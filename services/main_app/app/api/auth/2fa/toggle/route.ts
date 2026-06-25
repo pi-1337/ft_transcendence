@@ -28,9 +28,9 @@ export async function POST(req: NextRequest) {
 
         const destinationEmail = user.twoFactorEmail || user.email;
 
-        if (action === 'request_enable' || action === 'request_disable') {
+        if (action === "request_enable" || action === "request_disable") {
             if (user.password) {
-                if (typeof password !== 'string' || password.length === 0)
+                if (typeof password !== "string" || password.length === 0)
                     return NextResponse.json({ success: false, error: "Password is required" }, { status: 400 });
 
                 const validPassword = await bcrypt.compare(password, user.password);
@@ -38,27 +38,27 @@ export async function POST(req: NextRequest) {
                     return NextResponse.json({ success: false, error: "Incorrect password" }, { status: 401 });
             }
 
-            if (action === 'request_enable' && user.twoFactorEnabled)
+            if (action === "request_enable" && user.twoFactorEnabled)
                 return NextResponse.json({ success: false, error: "2FA already enabled" }, { status: 400 });
 
-            if (action === 'request_disable' && !user.twoFactorEnabled)
+            if (action === "request_disable" && !user.twoFactorEnabled)
                 return NextResponse.json({ success: false, error: "2FA already disabled" }, { status: 400 });
 
-            const purpose = action === 'request_enable' ? 'ENABLE' : 'DISABLE';
+            const purpose = action === "request_enable" ? "ENABLE" : "DISABLE";
             const startResult = await startTwoFactorChallenge(user.id, destinationEmail, purpose);
             return NextResponse.json({ success: true, ...startResult }, { status: 200 });
         }
 
-        if (action === 'confirm_enable' || action === 'confirm_disable') {
-            if (typeof code !== 'string' || !/^\d{4,8}$/.test(code))
+        if (action === "confirm_enable" || action === "confirm_disable") {
+            if (typeof code !== "string" || !/^\d{4,8}$/.test(code))
                 return NextResponse.json({ success: false, error: "Invalid code format" }, { status: 400 });
 
-            const purpose = action === 'confirm_enable' ? 'ENABLE' : 'DISABLE';
+            const purpose = action === "confirm_enable" ? "ENABLE" : "DISABLE";
             const verification = await verifyTwoFactorChallenge(user.id, code, purpose);
             if (!verification.ok)
                 return NextResponse.json({ success: false, error: verification.error }, { status: 400 });
 
-            const enabled = action === 'confirm_enable';
+            const enabled = action === "confirm_enable";
             await prisma.user.update({
                 where: { id: user.id },
                 data: {

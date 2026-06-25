@@ -10,7 +10,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 
         if (!session)
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        if (session.role !== 'ADMIN')
+        if (session.role !== "ADMIN")
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
         const { id: rawId } = await params;
@@ -34,7 +34,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
             data.badgeTimes = bt;
         }
         if (active !== undefined) {
-            if (active !== 'TRUE' && active !== 'FALSE')
+            if (active !== "TRUE" && active !== "FALSE")
                 return NextResponse.json({ error: "active must be TRUE or FALSE" }, { status: 400 });
             data.active = active;
         }
@@ -48,7 +48,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         return NextResponse.json({ success: true, org }, { status: 200 });
 
     } catch (error: unknown) {
-        if ((error as { code?: string }).code === 'P2025')
+        if ((error as { code?: string }).code === "P2025")
             return NextResponse.json({ error: "Organization not found" }, { status: 404 });
         return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
     }

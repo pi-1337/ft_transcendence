@@ -1,8 +1,8 @@
-'use server'
+"use server"
 
 import { getSession } from "./sessionManage";
-import path from 'path';
-import fs from 'fs';
+import path from "path";
+import fs from "fs";
 import { randomUUID } from "crypto";
 import { prisma } from "./prisma";
 
@@ -12,7 +12,7 @@ export const changeAvatar = async (formData: FormData) => {
     if (!session?.id) {
         return {success: false, error: "Not Authorized !!", avatarLink: null};
     }
-    const file = (formData.get('file') || null) as (File | null);
+    const file = (formData.get("file") || null) as (File | null);
 
     if (!file || file?.size === 0) {
         return {success: false, error: "No file Provided !", avatarLink: null};
@@ -35,9 +35,9 @@ export const changeAvatar = async (formData: FormData) => {
     const extension = file.name.split(".").pop();
     
     const filename = session.id.toString()
-                    + '-'
+                    + "-"
                     + randomUUID()
-                    + '.'
+                    + "."
                     + extension;
     const uploadPath = path.join(process.cwd(), "public/avatars", filename);
 

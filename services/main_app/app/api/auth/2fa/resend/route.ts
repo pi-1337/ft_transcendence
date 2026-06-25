@@ -22,10 +22,10 @@ export async function POST() {
             return NextResponse.json({ success: false, error: "2FA is not enabled" }, { status: 400 });
 
         const destinationEmail = user.twoFactorEmail || user.email;
-        const resendResult = await resendTwoFactorChallenge(pending.id, destinationEmail, 'LOGIN');
+        const resendResult = await resendTwoFactorChallenge(pending.id, destinationEmail, "LOGIN");
 
         if (!resendResult.ok)
-            return NextResponse.json({ success: false, error: resendResult.error, retryAfter: 'retryAfter' in resendResult ? resendResult.retryAfter : undefined }, { status: 400 });
+            return NextResponse.json({ success: false, error: resendResult.error, retryAfter: "retryAfter" in resendResult ? resendResult.retryAfter : undefined }, { status: 400 });
 
         return NextResponse.json({ success: true, ...resendResult }, { status: 200 });
     } catch {

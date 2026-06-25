@@ -10,7 +10,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 
         if (!session)
             return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
-        if (session.role !== 'ADMIN')
+        if (session.role !== "ADMIN")
             return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
 
         const { id: rawId } = await params;
@@ -20,10 +20,10 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 
         const { title, message } = await req.json();
 
-        if (title !== undefined && (typeof title !== 'string' || title.trim().length === 0))
+        if (title !== undefined && (typeof title !== "string" || title.trim().length === 0))
             return NextResponse.json({ success: false, error: "title must be a non-empty string" }, { status: 400 });
 
-        if (message !== undefined && (typeof message !== 'string' || message.trim().length === 0))
+        if (message !== undefined && (typeof message !== "string" || message.trim().length === 0))
             return NextResponse.json({ success: false, error: "message must be a non-empty string" }, { status: 400 });
 
         if (title === undefined && message === undefined)
@@ -61,7 +61,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 
         return NextResponse.json({ success: true, announcement }, { status: 200 });
     } catch (error: unknown) {
-        if ((error as { code?: string }).code === 'P2025')
+        if ((error as { code?: string }).code === "P2025")
             return NextResponse.json({ success: false, error: "Announcement not found" }, { status: 404 });
 
         return NextResponse.json({ success: false, error: "Something went wrong" }, { status: 500 });
@@ -74,7 +74,7 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
 
         if (!session)
             return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
-        if (session.role !== 'ADMIN')
+        if (session.role !== "ADMIN")
             return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
 
         const { id: rawId } = await params;
@@ -88,7 +88,7 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
 
         return NextResponse.json({ success: true }, { status: 200 });
     } catch (error: unknown) {
-        if ((error as { code?: string }).code === 'P2025')
+        if ((error as { code?: string }).code === "P2025")
             return NextResponse.json({ success: false, error: "Announcement not found" }, { status: 404 });
 
         return NextResponse.json({ success: false, error: "Something went wrong" }, { status: 500 });

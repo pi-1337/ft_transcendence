@@ -1,18 +1,18 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { getSession } from '@/lib/sessionManage';
-import { RequestStatus } from '@prisma/client';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getSession } from "@/lib/sessionManage";
+import { RequestStatus } from "@prisma/client";
 
 export async function POST(req: NextRequest)
 {
     try {
         const session = await getSession();
         if (!session)
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
         const { requestId, decision } = await req.json();
         if (!requestId || ![RequestStatus.ACCEPTED, RequestStatus.REJECTED].includes(decision))
-            return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
+            return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
 
         const currentState = await prisma.badgeScan.findFirst({
             where: {id: requestId },
@@ -27,12 +27,12 @@ export async function POST(req: NextRequest)
             }
         });
         if (!currentState)
-            return NextResponse.json({ error: 'Scan not found' }, { status: 404 });
+            return NextResponse.json({ error: "Scan not found" }, { status: 404 });
 
         if (currentState.status !== RequestStatus.PENDING)
-            return NextResponse.json({ error: 'Request is no longer pending' }, { status: 409 });
+            return NextResponse.json({ error: "Request is no longer pending" }, { status: 409 });
 
-        if (session.role !== 'ADMIN') {
+        if (session.role !== "ADMIN") {
         
             const isOrgAdmin = await prisma.organization.findFirst({
                 where: {
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest)
                 }
             });
             if (!isOrgAdmin)
-                return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+                return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
         }
         if (decision === RequestStatus.ACCEPTED) {
             const now = new Date();
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest)
                         status: RequestStatus.REJECTED
                     }
                 });
-                return NextResponse.json({ success: true, decision: RequestStatus.REJECTED, reason: 'Meal window closed' });
+                return NextResponse.json({ success: true, decision: RequestStatus.REJECTED, reason: "Meal window closed" });
             }
         }
 
@@ -83,6 +83,6 @@ export async function POST(req: NextRequest)
         return NextResponse.json({ success: true, decision });
 
     } catch (error) {
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }

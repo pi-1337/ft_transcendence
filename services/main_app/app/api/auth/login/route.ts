@@ -1,4 +1,4 @@
-'use server'
+"use server"
 
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
@@ -57,12 +57,12 @@ export async function POST(req: NextRequest) {
         }
 
         if (user.twoFactorEnabled) {
-            const pendingToken = ft_sign({ id: user.id, role: user.role, flow: 'login' }, '10m');
+            const pendingToken = ft_sign({ id: user.id, role: user.role, flow: "login" }, "10m");
             const destinationEmail = user.twoFactorEmail || user.email;
-            const challengeMeta = await startTwoFactorChallenge(user.id, destinationEmail, 'LOGIN');
+            const challengeMeta = await startTwoFactorChallenge(user.id, destinationEmail, "LOGIN");
 
             const cookieStorage = await cookies();
-            cookieStorage.set('pending_2fa', pendingToken, {
+            cookieStorage.set("pending_2fa", pendingToken, {
                 httpOnly: true,
             });
 
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
         const token = ft_sign({ id: user.id, role: user.role });
 
         const cookieStorage = await cookies();
-        cookieStorage.set('session', token, {
+        cookieStorage.set("session", token, {
             httpOnly: true,
         });
 
@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
         );
 
     } catch (error: unknown) {
-        if ((error as { code?: string }).code === 'P2025') {
+        if ((error as { code?: string }).code === "P2025") {
             return NextResponse.json(
                 {
                     success: false,
@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(
             {
                 success: false,
-                error: process.env.NODE_ENV === 'production' ? "Something went wrong !!" : message
+                error: process.env.NODE_ENV === "production" ? "Something went wrong !!" : message
             },
             { status: 500 }
         );

@@ -4,7 +4,7 @@ export function get42OAuthURL() {
     const params = new URLSearchParams({
         client_id: process.env.UID_42 as string,
         redirect_uri: process.env.FALLBACK_42 as string,
-        response_type: 'code'
+        response_type: "code"
     })
     return `https://api.intra.42.fr/oauth/authorize?${params}`;
 }

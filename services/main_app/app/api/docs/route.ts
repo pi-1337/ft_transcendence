@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 export async function GET() {
     try {
@@ -31,13 +31,13 @@ export async function GET() {
                 <script>
                     window.onload = () => {
                         SwaggerUIBundle({
-                            url: '/openapi.yaml',
-                            dom_id: '#swagger-ui',
+                            url: "/openapi.yaml",
+                            dom_id: "#swagger-ui",
                             presets: [
                                 SwaggerUIBundle.presets.apis,
                                 SwaggerUIBundle.presets.managed,
                             ],
-                            layout: 'BaseLayout',
+                            layout: "BaseLayout",
                             defaultModelsExpandDepth: 1,
                             deepLinking: true,
                         });
@@ -48,12 +48,12 @@ export async function GET() {
         `;
 
         return new NextResponse(html, {
-            headers: { 'Content-Type': 'text/html; charset=utf-8' },
+            headers: { "Content-Type": "text/html; charset=utf-8" },
         });
     } catch (error) {
-        console.error('Failed to load API documentation:', error);
+        console.error("Failed to load API documentation:", error);
         return NextResponse.json(
-            { error: 'Failed to load API documentation' },
+            { error: "Failed to load API documentation" },
             { status: 500 }
         );
     }

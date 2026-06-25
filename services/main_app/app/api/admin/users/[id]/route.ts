@@ -9,7 +9,7 @@ type Params = { params: Promise<{ id: string }> };
 
 export async function PATCH(req: NextRequest, { params }: Params) {
     const session = await getSession();
-    if (!session || session.role !== 'ADMIN')
+    if (!session || session.role !== "ADMIN")
         return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
 
     const { id: rawId } = await params;
@@ -39,14 +39,14 @@ export async function PATCH(req: NextRequest, { params }: Params) {
                 ...(lastname !== undefined && { lastname }),
                 ...(email !== undefined && { email }),
                 ...(phoneNumber !== undefined && { phoneNumber }),
-                ...(role !== undefined && { role: role === 'ADMIN' ? 'ADMIN' : 'USER' }),
+                ...(role !== undefined && { role: role === "ADMIN" ? "ADMIN" : "USER" }),
             },
             select: { id: true, firstname: true, lastname: true, email: true, phoneNumber: true, role: true },
         });
 
         return NextResponse.json({ success: true, user }, { status: 200 });
     } catch (error: any) {
-        if (error?.code === 'P2025')
+        if (error?.code === "P2025")
             return NextResponse.json({ success: false, error: "User not found." }, { status: 404 });
         // console.error(error);
         return NextResponse.json({ success: false, error: "Something went wrong." }, { status: 500 });
@@ -55,7 +55,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 
 export async function DELETE(_req: NextRequest, { params }: Params) {
     const session = await getSession();
-    if (!session || session.role !== 'ADMIN')
+    if (!session || session.role !== "ADMIN")
         return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
 
     const { id: rawId } = await params;
@@ -70,7 +70,7 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
         await prisma.user.delete({ where: { id: targetId } });
         return NextResponse.json({ success: true }, { status: 200 });
     } catch (error: any) {
-        if (error?.code === 'P2025')
+        if (error?.code === "P2025")
             return NextResponse.json({ success: false, error: "User not found." }, { status: 404 });
         // console.error(error);
         return NextResponse.json({ success: false, error: "Something went wrong." }, { status: 500 });

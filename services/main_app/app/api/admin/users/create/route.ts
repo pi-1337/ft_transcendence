@@ -8,7 +8,7 @@ const validatePhone = (phone: string) => /^\+[1-9]\d{7,14}$/.test(phone);
 
 export async function POST(req: NextRequest) {
     const session = await getSession();
-    if (!session || session.role !== 'ADMIN')
+    if (!session || session.role !== "ADMIN")
         return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
 
     try {
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
                 email,
                 password: hashedPassword,
                 phoneNumber,
-                role: role === 'ADMIN' ? 'ADMIN' : 'USER',
+                role: role === "ADMIN" ? "ADMIN" : "USER",
             },
             select: { id: true, firstname: true, lastname: true, email: true, role: true },
         });

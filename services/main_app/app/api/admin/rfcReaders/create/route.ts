@@ -4,13 +4,13 @@ import { getSession } from "@/lib/sessionManage";
 
 export async function POST(req: NextRequest) {
     const session = await getSession();
-    if (!session || session.role !== 'ADMIN')
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!session || session.role !== "ADMIN")
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { location, organizationId } = await req.json();
 
     if (!location || !organizationId)
-        return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
+        return NextResponse.json({ error: "Missing fields" }, { status: 400 });
 
     try {
         const reader = await prisma.rfidReaders.create({
@@ -19,6 +19,6 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ success: true, reader });
     } catch (error) {
         // console.error(error);
-        return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
+        return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
     }
 }

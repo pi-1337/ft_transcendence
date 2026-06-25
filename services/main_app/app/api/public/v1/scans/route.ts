@@ -1,13 +1,13 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { RequestStatus, Active } from '@prisma/client';
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { RequestStatus, Active } from "@prisma/client";
 
 export async function POST(request: Request) {
     try
     {
-        const authHeader = request.headers.get('authorization');
+        const authHeader = request.headers.get("authorization");
         if (authHeader !== `Bearer ${process.env.SCANNER_API_KEY}`)
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
         const body = await request.json();
 
@@ -15,13 +15,13 @@ export async function POST(request: Request) {
             where: { number: body.badge_id }
         });
         if (!badge)
-            return NextResponse.json({ error: 'Badge not registered' }, { status: 404 });
+            return NextResponse.json({ error: "Badge not registered" }, { status: 404 });
 
         const rfReader = await prisma.rfidReaders.findUnique({
             where: { id: parseInt(body.reader_id, 10) }
         });
         if (!rfReader)
-            return NextResponse.json({ error: 'rfReader not registered' }, { status: 404 });
+            return NextResponse.json({ error: "rfReader not registered" }, { status: 404 });
 
         const organization = await prisma.organization.findFirst({
             where: {
@@ -31,9 +31,9 @@ export async function POST(request: Request) {
             include: { meals: true }
         });
         if (!organization)
-            return NextResponse.json({ error: 'User not in this organization' }, { status: 403 });
+            return NextResponse.json({ error: "User not in this organization" }, { status: 403 });
         if (organization.active === Active.FALSE)
-            return NextResponse.json({ error: 'Organization is not active' }, { status: 403 });
+            return NextResponse.json({ error: "Organization is not active" }, { status: 403 });
 
         const pendingRequestsCount = await prisma.badgeScan.count({
             where: {
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
         });
 
         if (!activeMeal)
-            return NextResponse.json({ error: 'No active meal window' }, { status: 403 });
+            return NextResponse.json({ error: "No active meal window" }, { status: 403 });
 
         const userPendingCount = await prisma.badgeScan.count({
             where: {

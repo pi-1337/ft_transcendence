@@ -389,6 +389,11 @@ export default function Settings({ user }: { user: UserFrontend }) {
 
                         <div className="grid gap-3 mb-4">
                             <label className="text-sm text-gray-400">Current password (required for password-based accounts)</label>
+=======
+<<<<<<< HEAD
+                        <div className="mb-6">
+                            <label className="block text-sm text-gray-400 mb-2">Email</label>
+>>>>>>> 9f39a9a (removing the commits)
                             <input
                                 type="password"
                                 value={twoFactorPassword}
@@ -396,6 +401,60 @@ export default function Settings({ user }: { user: UserFrontend }) {
                                 className="w-full bg-gray-900/50 border border-gray-800 rounded-xl px-4 py-3 text-white"
                                 placeholder="Enter current password"
                             />
+=======
+                    {/* Avatar Upload */}
+                    <form action={changeAvatarWrapper} className="space-y-6">
+                        <div className="bg-[#0b1120]/50 border border-gray-800 rounded-[2rem] p-8 relative overflow-hidden group">
+                            <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-500/5 blur-[80px] rounded-full pointer-events-none" />
+
+                            <h2 className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-8 flex items-center gap-2">
+                                <span className="w-1 h-4 bg-blue-500 rounded-full" />
+                                Profile picture
+                            </h2>
+                            
+                            <div className="flex flex-col sm:flex-row items-center gap-10">
+                                <div className="relative group">
+                                    <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-gray-800 shadow-2xl relative">
+                                        <img
+                                            src={user.avatar}
+                                            alt='avatar'
+                                            fill
+                                            className="object-cover group-hover:scale-110 transition-transform duration-500"
+                                        />
+                                    </div>
+                                    <div className="absolute inset-0 bg-indigo-500/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                                        <Camera className="w-8 h-8 text-white" />
+                                    </div>
+                                </div>
+
+                                <div className="flex-1 space-y-4 w-full">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-gray-400 ml-1">Upload new avatar</label>
+                                        <input
+                                            type="file"
+                                            name="file"
+                                            className="w-full bg-gray-900/50 border border-gray-800 rounded-xl px-4 py-3 text-sm text-gray-400 file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-500/10 file:text-indigo-400 hover:file:bg-indigo-500/20 transition-all cursor-pointer"
+                                        />
+                                    </div>
+                                    
+                                    <div className="flex gap-4 pt-2">
+                                        <button
+                                            type="submit"
+                                            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl px-8 py-3.5 transition-all shadow-xl shadow-indigo-500/20"
+                                        >
+                                            <Camera className="w-4 h-4" />
+                                            Update Photo
+                                        </button>
+                                        <Link
+                                            href="/dashboard"
+                                            className="flex items-center gap-2 bg-gray-800/50 hover:bg-gray-800 text-white font-bold rounded-xl px-8 py-3.5 border border-gray-700 transition-all"
+                                        >
+                                            Cancel
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+>>>>>>> 4895c80 (fixed the HTTPS and file upload problems, what remains now is testing and code review)
                         </div>
 
                         <div className="flex flex-wrap gap-3 mb-6">

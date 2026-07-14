@@ -96,7 +96,11 @@ async function handleEdit(req: NextRequest) {
             { status: 200 }
         );
 
+<<<<<<< HEAD
     } catch {
+=======
+    } catch (error) {
+>>>>>>> 000abc7 (removed all console.error()s and added redirect to the login and register pages)
         // console.error(error);
         return NextResponse.json(
             {

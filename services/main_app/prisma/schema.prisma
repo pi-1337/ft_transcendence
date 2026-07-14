@@ -28,7 +28,11 @@ model User {
 
 	firstname			String
 	lastname			String
+<<<<<<< HEAD
 	avatar				String?
+=======
+	avatar				String
+>>>>>>> 000abc7 (removed all console.error()s and added redirect to the login and register pages)
 	phoneNumber			String?
 	email				String			@unique
 	login				String?			@unique

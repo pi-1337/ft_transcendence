@@ -98,6 +98,7 @@ export async function POST(req: NextRequest) {
             { status: 200 }
         );
 
+<<<<<<< HEAD
     } catch (error: unknown) {
         if ((error as { code?: string }).code === 'P2025') {
             return NextResponse.json(
@@ -111,6 +112,10 @@ export async function POST(req: NextRequest) {
 
         const message = error instanceof Error ? error.message : "Something went wrong !!";
 
+=======
+    } catch (error) {
+        // console.error(error);
+>>>>>>> 000abc7 (removed all console.error()s and added redirect to the login and register pages)
         return NextResponse.json(
             {
                 success: false,

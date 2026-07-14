@@ -15,6 +15,9 @@ export default async function LoginPage() {
     if (pending)
         redirect('/auth/2fa');
 
+    if (session)
+        redirect('/dashboard');
+
     const ft_auth_url = get42OAuthURL();
 
     return (

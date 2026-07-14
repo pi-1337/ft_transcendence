@@ -137,7 +137,6 @@ export default function Settings({ user }: { user: UserFrontend }) {
                     <div className="bg-[#111] border border-[#1f1f1f] rounded-2xl p-6">
                         <h2 className="text-gray-400 text-xs uppercase tracking-widest mb-6">Personal information</h2>
 
-<<<<<<< HEAD
                         <div className="grid grid-cols-2 gap-4 mb-6">
                             <div>
                                 <label className="block text-sm text-gray-400 mb-2">First Name</label>
@@ -156,7 +155,6 @@ export default function Settings({ user }: { user: UserFrontend }) {
                                     value={lastname}
                                     className="w-full bg-[#0a0a0a] border border-[#1f1f1f] rounded-lg px-4 py-2 text-white placeholder-gray-600 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600/50 transition-colors"
                                 />
-=======
                             <div className="grid sm:grid-cols-2 gap-6 mb-6">
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-gray-400 ml-1">First Name</label>
@@ -179,7 +177,10 @@ export default function Settings({ user }: { user: UserFrontend }) {
                                             type="text"
                                             name="lastname"
                                             value={lastname}
+<<<<<<< HEAD
                                             onChange={(e) => setLastname(e.target.value)}
+=======
+>>>>>>> aa9f624 (complete deletion of bad commits)
                                             className="w-full bg-gray-900/50 border border-gray-800 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
                                         />
                                     </div>
@@ -194,7 +195,10 @@ export default function Settings({ user }: { user: UserFrontend }) {
                                         type="email"
                                         name="email"
                                         value={email}
+<<<<<<< HEAD
                                         onChange={(e) => setEmail(e.target.value)}
+=======
+>>>>>>> aa9f624 (complete deletion of bad commits)
                                         className="w-full bg-gray-900/50 border border-gray-800 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
                                     />
                                 </div>
@@ -208,7 +212,10 @@ export default function Settings({ user }: { user: UserFrontend }) {
                                         type="tel"
                                         name="phoneNumber"
                                         value={phoneNumber}
+<<<<<<< HEAD
                                         onChange={(e) => setPhoneNumber(e.target.value)}
+=======
+>>>>>>> aa9f624 (complete deletion of bad commits)
                                         className="w-full bg-gray-900/50 border border-gray-800 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
                                     />
                                 </div>
@@ -231,6 +238,7 @@ export default function Settings({ user }: { user: UserFrontend }) {
                             </div>
                         </div>
 
+<<<<<<< HEAD
                         <div className="mb-6">
                             <label className="block text-sm text-gray-400 mb-2">Email</label>
                             <input
@@ -239,6 +247,12 @@ export default function Settings({ user }: { user: UserFrontend }) {
                                 value={email}
                                 className="w-full bg-[#0a0a0a] border border-[#1f1f1f] rounded-lg px-4 py-2 text-white placeholder-gray-600 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600/50 transition-colors"
                             />
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> aa9f624 (complete deletion of bad commits)
+>>>>>>> f567166 (complete deletion of bad commits)
                     {/* Avatar Upload */}
                     <form action={changeAvatarWrapper} className="space-y-6">
                         <div className="bg-[#0b1120]/50 border border-gray-800 rounded-[2rem] p-8 relative overflow-hidden group">
@@ -253,7 +267,11 @@ export default function Settings({ user }: { user: UserFrontend }) {
                                 <div className="relative group">
                                     <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-gray-800 shadow-2xl relative">
                                         <img
+<<<<<<< HEAD
                                             src={avatar}
+=======
+                                            src={user.avatar}
+>>>>>>> aa9f624 (complete deletion of bad commits)
                                             alt='avatar'
                                             className="object-cover group-hover:scale-110 transition-transform duration-500"
                                         />
@@ -354,6 +372,7 @@ export default function Settings({ user }: { user: UserFrontend }) {
 
 =======
                     </form>
+<<<<<<< HEAD
 
                     <section className="bg-[#0b1120]/50 border border-gray-800 rounded-[2rem] p-8 relative overflow-hidden group">
                         <div className="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/5 blur-[80px] rounded-full pointer-events-none" />
@@ -502,5 +521,11 @@ export default function Settings({ user }: { user: UserFrontend }) {
                 </div>
             </main>
         </div>
+=======
+                </div>
+            </main>
+        </div>
+>>>>>>> 000abc7 (removed all console.error()s and added redirect to the login and register pages)
+>>>>>>> aa9f624 (complete deletion of bad commits)
     );
 }

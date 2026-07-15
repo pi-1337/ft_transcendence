@@ -106,11 +106,7 @@ export async function GET(req: NextRequest) {
 
         return NextResponse.redirect(`${process.env.NEXT_PUBLIC_BASE_URL as string}/dashboard`);
 
-<<<<<<< HEAD
     } catch {
-=======
-    } catch (error) {
->>>>>>> 000abc7 (removed all console.error()s and added redirect to the login and register pages)
         return NextResponse.json({
             status: 500,
             error: "Something went wrong !"

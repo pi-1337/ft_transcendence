@@ -75,7 +75,6 @@ export default function AdminDashboard({ firstname, lastname, email, totalUsers,
                             </Link>
                         </div>
 
-<<<<<<< HEAD
                         <div className="h-px bg-[#1f1f1f]" />
                         <div className="flex items-center justify-between py-2">
                             <span className="text-sm text-gray-300">Manage organizations</span>
@@ -92,7 +91,6 @@ export default function AdminDashboard({ firstname, lastname, email, totalUsers,
                             </Link>
                         </div>
                         
-=======
                 {/* Management Sections */}
                 <div className="bg-[#0b1120]/50 border border-gray-800 rounded-[2rem] p-8 relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 blur-[100px] rounded-full pointer-events-none" />

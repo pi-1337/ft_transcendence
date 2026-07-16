@@ -48,14 +48,14 @@ services:
     depends_on:
       - mariadb
 
-  mariadb:
-    build: ./services/mariadb
-    image: mariadb:ft_transcendence
-    container_name: mariadb
-    networks:
-      - my_network
-    volumes:
-      - db:/var/lib/mysql
+  # mariadb:
+  #   build: ./services/mariadb
+  #   image: mariadb:ft_transcendence
+  #   container_name: mariadb
+  #   networks:
+  #     - my_network
+  #   volumes:
+  #     - db:/var/lib/mysql
 
   avatar_server:
     build: ./services/avatar_server

@@ -134,398 +134,228 @@ export default function Settings({ user }: { user: UserFrontend }) {
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="bg-[#111] border border-[#1f1f1f] rounded-2xl p-6">
-                        <h2 className="text-gray-400 text-xs uppercase tracking-widest mb-6">Personal information</h2>
-
-                        <div className="grid grid-cols-2 gap-4 mb-6">
-                            <div>
-                                <label className="block text-sm text-gray-400 mb-2">First Name</label>
-                                <input
-                                    type="text"
-                                    name="firstname"
-                                    value={firstname}
-                                    className="w-full bg-[#0a0a0a] border border-[#1f1f1f] rounded-lg px-4 py-2 text-white placeholder-gray-600 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600/50 transition-colors"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm text-gray-400 mb-2">Last Name</label>
-                                <input
-                                    type="text"
-                                    name="lastname"
-                                    value={lastname}
-                                    className="w-full bg-[#0a0a0a] border border-[#1f1f1f] rounded-lg px-4 py-2 text-white placeholder-gray-600 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600/50 transition-colors"
-                                />
-                            <div className="grid sm:grid-cols-2 gap-6 mb-6">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-400 ml-1">First Name</label>
-                                    <div className="relative group">
-                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-indigo-400 transition-colors" />
-                                        <input
-                                            type="text"
-                                            name="firstname"
-                                            value={firstname}
-                                            onChange={(e) => setFirstname(e.target.value)}
-                                            className="w-full bg-gray-900/50 border border-gray-800 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-gray-400 ml-1">Last Name</label>
-                                    <div className="relative group">
-                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-indigo-400 transition-colors" />
-                                        <input
-                                            type="text"
-                                            name="lastname"
-                                            value={lastname}
-<<<<<<< HEAD
-                                            onChange={(e) => setLastname(e.target.value)}
-=======
->>>>>>> aa9f624 (complete deletion of bad commits)
-                                            className="w-full bg-gray-900/50 border border-gray-800 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="space-y-2 mb-6">
-                                <label className="text-sm font-medium text-gray-400 ml-1">Email Address</label>
-                                <div className="relative group">
-                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-indigo-400 transition-colors" />
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        value={email}
-<<<<<<< HEAD
-                                        onChange={(e) => setEmail(e.target.value)}
-=======
->>>>>>> aa9f624 (complete deletion of bad commits)
-                                        className="w-full bg-gray-900/50 border border-gray-800 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-400 ml-1">Phone Number</label>
-                                <div className="relative group">
-                                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-indigo-400 transition-colors" />
-                                    <input
-                                        type="tel"
-                                        name="phoneNumber"
-                                        value={phoneNumber}
-<<<<<<< HEAD
-                                        onChange={(e) => setPhoneNumber(e.target.value)}
-=======
->>>>>>> aa9f624 (complete deletion of bad commits)
-                                        className="w-full bg-gray-900/50 border border-gray-800 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="mt-8 flex gap-4">
-                                <button
-                                    type="submit"
-                                    className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl px-8 py-3.5 transition-all shadow-xl shadow-indigo-500/20"
-                                >
-                                    <Save className="w-4 h-4" />
-                                    Save Changes
-                                </button>
-                                <Link
-                                    href="/dashboard"
-                                    className="flex items-center gap-2 bg-gray-800/50 hover:bg-gray-800 text-white font-bold rounded-xl px-8 py-3.5 border border-gray-700 transition-all"
-                                >
-                                    Cancel
-                                </Link>
-                            </div>
-                        </div>
-
-<<<<<<< HEAD
-                        <div className="mb-6">
-                            <label className="block text-sm text-gray-400 mb-2">Email</label>
-                            <input
-                                type="email"
-                                name="email"
-                                value={email}
-                                className="w-full bg-[#0a0a0a] border border-[#1f1f1f] rounded-lg px-4 py-2 text-white placeholder-gray-600 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600/50 transition-colors"
-                            />
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> aa9f624 (complete deletion of bad commits)
->>>>>>> f567166 (complete deletion of bad commits)
-                    {/* Avatar Upload */}
-                    <form action={changeAvatarWrapper} className="space-y-6">
-                        <div className="bg-[#0b1120]/50 border border-gray-800 rounded-[2rem] p-8 relative overflow-hidden group">
-                            <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-500/5 blur-[80px] rounded-full pointer-events-none" />
-
-                            <h2 className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-8 flex items-center gap-2">
-                                <span className="w-1 h-4 bg-blue-500 rounded-full" />
-                                Profile picture
-                            </h2>
-                            
-                            <div className="flex flex-col sm:flex-row items-center gap-10">
-                                <div className="relative group">
-                                    <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-gray-800 shadow-2xl relative">
-                                        <img
-<<<<<<< HEAD
-                                            src={avatar}
-=======
-                                            src={user.avatar}
->>>>>>> aa9f624 (complete deletion of bad commits)
-                                            alt='avatar'
-                                            className="object-cover group-hover:scale-110 transition-transform duration-500"
-                                        />
-                                    </div>
-                                    <div className="absolute inset-0 bg-indigo-500/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
-                                        <Camera className="w-8 h-8 text-white" />
-                                    </div>
-                                </div>
-
-                                <div className="flex-1 space-y-4 w-full">
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-gray-400 ml-1">Upload new avatar</label>
-                                        <input
-                                            type="file"
-                                            name="file"
-                                            className="w-full bg-gray-900/50 border border-gray-800 rounded-xl px-4 py-3 text-sm text-gray-400 file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-500/10 file:text-indigo-400 hover:file:bg-indigo-500/20 transition-all cursor-pointer"
-                                        />
-                                    </div>
-                                    
-                                    <div className="flex gap-4 pt-2">
-                                        <button
-                                            type="submit"
-                                            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl px-8 py-3.5 transition-all shadow-xl shadow-indigo-500/20"
-                                        >
-                                            <Camera className="w-4 h-4" />
-                                            Update Photo
-                                        </button>
-                                        <Link
-                                            href="/dashboard"
-                                            className="flex items-center gap-2 bg-gray-800/50 hover:bg-gray-800 text-white font-bold rounded-xl px-8 py-3.5 border border-gray-700 transition-all"
-                                        >
-                                            Cancel
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-<<<<<<< HEAD
-
-                        <div>
-                            <label className="block text-sm text-gray-400 mb-2">Phone Number</label>
-                            <input
-                                type="tel"
-                                name="phoneNumber"
-                                value={phoneNumber}
-                                className="w-full bg-[#0a0a0a] border border-[#1f1f1f] rounded-lg px-4 py-2 text-white placeholder-gray-600 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600/50 transition-colors"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="flex gap-4">
-                        <button
-                            type="submit"
-                            className="bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg px-6 py-2.5 transition-colors"
-                        >
-                            Save Changes
-                        </button>
-                        <Link
-                            href="/dashboard"
-                            className="text-gray-400 hover:text-white border border-[#333] hover:border-gray-500 rounded-lg px-6 py-2.5 transition-colors"
-                        >
-                            Cancel
-                        </Link>
-                    </div>
-                </form>
-                <form action={changeAvatarWrapper} className="space-y-6">
-                    <div className="bg-[#111] border border-[#1f1f1f] rounded-2xl p-6">
-                        <h2 className="text-gray-400 text-xs uppercase tracking-widest mb-6">Avatar</h2>
-                        <Image
-                            src={user.avatar}
-                            alt='avatar'
-                        />
-                        <div>
-                            <label className="block text-sm text-gray-400 mb-2">Phone Number</label>
-                            <input
-                                type="file"
-                                name="file"
-                                className="w-full bg-[#0a0a0a] border border-[#1f1f1f] rounded-lg px-4 py-2 text-white placeholder-gray-600 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600/50 transition-colors"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="flex gap-4">
-                        <button
-                            type="submit"
-                            className="bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg px-6 py-2.5 transition-colors"
-                        >
-                            Change Avatar
-                        </button>
-                        <Link
-                            href="/dashboard"
-                            className="text-gray-400 hover:text-white border border-[#333] hover:border-gray-500 rounded-lg px-6 py-2.5 transition-colors"
-                        >
-                            Cancel
-                        </Link>
-                    </div>
-                </form>
-
-=======
-                    </form>
-<<<<<<< HEAD
-
-                    <section className="bg-[#0b1120]/50 border border-gray-800 rounded-[2rem] p-8 relative overflow-hidden group">
-                        <div className="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/5 blur-[80px] rounded-full pointer-events-none" />
-
+                    <div className="bg-[#0b1120]/50 border border-gray-800 rounded-[2rem] p-8 relative overflow-hidden">
+                        <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-500/5 blur-[80px] rounded-full pointer-events-none" />
+                        
                         <h2 className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-8 flex items-center gap-2">
-                            <span className="w-1 h-4 bg-emerald-500 rounded-full" />
-                            Two-factor authentication
+                            <User className="w-3.5 h-3.5" />
+                            Personal Information
                         </h2>
 
-                        <div className="rounded-2xl border border-gray-800 bg-gray-900/30 p-5 mb-6">
-                            <p className="text-white font-semibold flex items-center gap-2">
-                                <KeyRound className="w-4 h-4 text-emerald-400" />
-                                Status: {twoFactorEnabled ? 'Enabled' : 'Disabled'}
-                            </p>
-                            <p className="text-sm text-gray-400 mt-2">
-                                {twoFactorEnabled
-                                    ? 'You will be asked for an email verification code when signing in.'
-                                    : 'Enable 2FA to add an email verification step to your login.'}
-                            </p>
-                        </div>
-
-                        {twoFactorStatus && (
-                            <div className="mb-4 rounded-lg bg-green-900/30 border border-green-700/60 text-green-300 text-sm px-4 py-3">
-                                {twoFactorStatus}
-                            </div>
-                        )}
-
-                        {twoFactorError && (
-                            <div className="mb-4 rounded-lg bg-red-900/30 border border-red-700/60 text-red-300 text-sm px-4 py-3">
-                                {twoFactorError}
-                            </div>
-                        )}
-
-                        <div className="grid gap-3 mb-4">
-                            <label className="text-sm text-gray-400">Current password (required for password-based accounts)</label>
-=======
-<<<<<<< HEAD
-                        <div className="mb-6">
-                            <label className="block text-sm text-gray-400 mb-2">Email</label>
->>>>>>> 9f39a9a (removing the commits)
-                            <input
-                                type="password"
-                                value={twoFactorPassword}
-                                onChange={(e) => setTwoFactorPassword(e.target.value)}
-                                className="w-full bg-gray-900/50 border border-gray-800 rounded-xl px-4 py-3 text-white"
-                                placeholder="Enter current password"
-                            />
-=======
-                    {/* Avatar Upload */}
-                    <form action={changeAvatarWrapper} className="space-y-6">
-                        <div className="bg-[#0b1120]/50 border border-gray-800 rounded-[2rem] p-8 relative overflow-hidden group">
-                            <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-500/5 blur-[80px] rounded-full pointer-events-none" />
-
-                            <h2 className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-8 flex items-center gap-2">
-                                <span className="w-1 h-4 bg-blue-500 rounded-full" />
-                                Profile picture
-                            </h2>
-                            
-                            <div className="flex flex-col sm:flex-row items-center gap-10">
+                        <div className="grid sm:grid-cols-2 gap-6 mb-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-400 ml-1">First Name</label>
                                 <div className="relative group">
-                                    <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-gray-800 shadow-2xl relative">
-                                        <img
-                                            src={user.avatar}
-                                            alt='avatar'
-                                            fill
-                                            className="object-cover group-hover:scale-110 transition-transform duration-500"
-                                        />
-                                    </div>
-                                    <div className="absolute inset-0 bg-indigo-500/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
-                                        <Camera className="w-8 h-8 text-white" />
-                                    </div>
-                                </div>
-
-                                <div className="flex-1 space-y-4 w-full">
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-gray-400 ml-1">Upload new avatar</label>
-                                        <input
-                                            type="file"
-                                            name="file"
-                                            className="w-full bg-gray-900/50 border border-gray-800 rounded-xl px-4 py-3 text-sm text-gray-400 file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-500/10 file:text-indigo-400 hover:file:bg-indigo-500/20 transition-all cursor-pointer"
-                                        />
-                                    </div>
-                                    
-                                    <div className="flex gap-4 pt-2">
-                                        <button
-                                            type="submit"
-                                            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl px-8 py-3.5 transition-all shadow-xl shadow-indigo-500/20"
-                                        >
-                                            <Camera className="w-4 h-4" />
-                                            Update Photo
-                                        </button>
-                                        <Link
-                                            href="/dashboard"
-                                            className="flex items-center gap-2 bg-gray-800/50 hover:bg-gray-800 text-white font-bold rounded-xl px-8 py-3.5 border border-gray-700 transition-all"
-                                        >
-                                            Cancel
-                                        </Link>
-                                    </div>
+                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-indigo-400 transition-colors" />
+                                    <input
+                                        type="text"
+                                        name="firstname"
+                                        value={firstname}
+                                        onChange={(e) => setFirstname(e.target.value)}
+                                        className="w-full bg-gray-900/50 border border-gray-800 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                                    />
                                 </div>
                             </div>
->>>>>>> 4895c80 (fixed the HTTPS and file upload problems, what remains now is testing and code review)
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-400 ml-1">Last Name</label>
+                                <div className="relative group">
+                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-indigo-400 transition-colors" />
+                                    <input
+                                        type="text"
+                                        name="lastname"
+                                        value={lastname}
+                                        onChange={(e) => setLastname(e.target.value)}
+                                        className="w-full bg-gray-900/50 border border-gray-800 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                                    />
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="flex flex-wrap gap-3 mb-6">
-                            <button
-                                type="button"
-                                onClick={() => requestTwoFactorChange('enable')}
-                                disabled={twoFactorLoading || twoFactorEnabled}
-                                className="bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-semibold rounded-xl px-5 py-3"
-                            >
-                                Enable 2FA
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => requestTwoFactorChange('disable')}
-                                disabled={twoFactorLoading || !twoFactorEnabled}
-                                className="bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-white font-semibold rounded-xl px-5 py-3"
-                            >
-                                Disable 2FA
-                            </button>
-                        </div>
-
-                        {twoFactorPendingAction && (
-                            <div className="grid gap-3">
-                                <label className="text-sm text-gray-400">Verification code</label>
+                        <div className="space-y-2 mb-6">
+                            <label className="text-sm font-medium text-gray-400 ml-1">Email Address</label>
+                            <div className="relative group">
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-indigo-400 transition-colors" />
                                 <input
-                                    type="text"
-                                    inputMode="numeric"
-                                    maxLength={8}
-                                    value={twoFactorCode}
-                                    onChange={(e) => setTwoFactorCode(e.target.value.replace(/\D/g, ''))}
-                                    className="w-full bg-gray-900/50 border border-gray-800 rounded-xl px-4 py-3 text-white tracking-[0.25em]"
-                                    placeholder="000000"
+                                    type="email"
+                                    name="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="w-full bg-gray-900/50 border border-gray-800 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
                                 />
-                                <button
-                                    type="button"
-                                    onClick={confirmTwoFactorChange}
-                                    disabled={twoFactorLoading || twoFactorCode.length < 4}
-                                    className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-semibold rounded-xl px-5 py-3"
-                                >
-                                    Confirm {twoFactorPendingAction === 'enable' ? 'enable' : 'disable'}
-                                </button>
                             </div>
-                        )}
-                    </section>
-                </div>
+                        </div>
+
+                        <div className="space-y-2 mb-8">
+                            <label className="text-sm font-medium text-gray-400 ml-1">Phone Number</label>
+                            <div className="relative group">
+                                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-indigo-400 transition-colors" />
+                                <input
+                                    type="tel"
+                                    name="phoneNumber"
+                                    value={phoneNumber}
+                                    onChange={(e) => setPhoneNumber(e.target.value)}
+                                    className="w-full bg-gray-900/50 border border-gray-800 rounded-xl pl-11 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex gap-4">
+                            <button
+                                type="submit"
+                                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl px-8 py-3.5 transition-all shadow-xl shadow-indigo-500/20"
+                            >
+                                <Save className="w-4 h-4" />
+                                Save Changes
+                            </button>
+                            <Link
+                                href="/dashboard"
+                                className="flex items-center gap-2 bg-gray-800/50 hover:bg-gray-800 text-white font-bold rounded-xl px-8 py-3.5 border border-gray-700 transition-all"
+                            >
+                                Cancel
+                            </Link>
+                        </div>
+                    </div>
+                </form>
+
+                {/* Avatar Upload */}
+                <form action={changeAvatarWrapper} className="space-y-6">
+                    <div className="bg-[#0b1120]/50 border border-gray-800 rounded-[2rem] p-8 relative overflow-hidden group">
+                        <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-500/5 blur-[80px] rounded-full pointer-events-none" />
+
+                        <h2 className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-8 flex items-center gap-2">
+                            <Camera className="w-3.5 h-3.5" />
+                            Profile Picture
+                        </h2>
+                        
+                        <div className="flex flex-col sm:flex-row items-center gap-10">
+                            <div className="relative group">
+                                <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-gray-800 shadow-2xl relative">
+                                    <img
+                                        src={avatar}
+                                        alt="profile avatar"
+                                        className="object-cover group-hover:scale-110 transition-transform duration-500"
+                                    />
+                                </div>
+                                <div className="absolute inset-0 bg-indigo-500/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                                    <Camera className="w-8 h-8 text-white" />
+                                </div>
+                            </div>
+
+                            <div className="flex-1 space-y-4 w-full">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-gray-400 ml-1">Upload new avatar</label>
+                                    <input
+                                        type="file"
+                                        name="file"
+                                        className="w-full bg-gray-900/50 border border-gray-800 rounded-xl px-4 py-3 text-sm text-gray-400 file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-500/10 file:text-indigo-400 hover:file:bg-indigo-500/20 transition-all cursor-pointer"
+                                    />
+                                </div>
+                                
+                                <div className="flex gap-4 pt-2">
+                                    <button
+                                        type="submit"
+                                        className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl px-8 py-3.5 transition-all shadow-xl shadow-indigo-500/20"
+                                    >
+                                        <Camera className="w-4 h-4" />
+                                        Update Photo
+                                    </button>
+                                    <Link
+                                        href="/dashboard"
+                                        className="flex items-center gap-2 bg-gray-800/50 hover:bg-gray-800 text-white font-bold rounded-xl px-8 py-3.5 border border-gray-700 transition-all"
+                                    >
+                                        Cancel
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <section className="bg-[#0b1120]/50 border border-gray-800 rounded-[2rem] p-8 relative overflow-hidden group">
+                    <div className="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/5 blur-[80px] rounded-full pointer-events-none" />
+
+                    <h2 className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-8 flex items-center gap-2">
+                        <KeyRound className="w-3.5 h-3.5" />
+                        Two-factor Authentication
+                    </h2>
+
+                    <div className="rounded-2xl border border-gray-800 bg-gray-900/30 p-5 mb-6">
+                        <p className="text-white font-semibold flex items-center gap-2">
+                            <KeyRound className="w-4 h-4 text-emerald-400" />
+                            Status: {twoFactorEnabled ? 'Enabled' : 'Disabled'}
+                        </p>
+                        <p className="text-sm text-gray-400 mt-2">
+                            {twoFactorEnabled
+                                ? 'You will be asked for an email verification code when signing in.'
+                                : 'Enable 2FA to add an email verification step to your login.'}
+                        </p>
+                    </div>
+
+                    {twoFactorStatus && (
+                        <div className="mb-4 rounded-lg bg-green-900/30 border border-green-700/60 text-green-300 text-sm px-4 py-3">
+                            {twoFactorStatus}
+                        </div>
+                    )}
+
+                    {twoFactorError && (
+                        <div className="mb-4 rounded-lg bg-red-900/30 border border-red-700/60 text-red-300 text-sm px-4 py-3">
+                            {twoFactorError}
+                        </div>
+                    )}
+
+                    <div className="grid gap-3 mb-4">
+                        <label className="text-sm text-gray-400">Current password (required for password-based accounts)</label>
+                        <input
+                            type="password"
+                            value={twoFactorPassword}
+                            onChange={(e) => setTwoFactorPassword(e.target.value)}
+                            className="w-full bg-gray-900/50 border border-gray-800 rounded-xl px-4 py-3 text-white"
+                            placeholder="Enter current password"
+                        />
+                    </div>
+
+                    <div className="flex flex-wrap gap-3 mb-6">
+                        <button
+                            type="button"
+                            onClick={() => requestTwoFactorChange('enable')}
+                            disabled={twoFactorLoading || twoFactorEnabled}
+                            className="bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-semibold rounded-xl px-5 py-3"
+                        >
+                            Enable 2FA
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => requestTwoFactorChange('disable')}
+                            disabled={twoFactorLoading || !twoFactorEnabled}
+                            className="bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-white font-semibold rounded-xl px-5 py-3"
+                        >
+                            Disable 2FA
+                        </button>
+                    </div>
+
+                    {twoFactorPendingAction && (
+                        <div className="grid gap-3">
+                            <label className="text-sm text-gray-400">Verification code</label>
+                            <input
+                                type="text"
+                                inputMode="numeric"
+                                maxLength={8}
+                                value={twoFactorCode}
+                                onChange={(e) => setTwoFactorCode(e.target.value.replace(/\D/g, ''))}
+                                className="w-full bg-gray-900/50 border border-gray-800 rounded-xl px-4 py-3 text-white tracking-[0.25em]"
+                                placeholder="000000"
+                            />
+                            <button
+                                type="button"
+                                onClick={confirmTwoFactorChange}
+                                disabled={twoFactorLoading || twoFactorCode.length < 4}
+                                className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-semibold rounded-xl px-5 py-3"
+                            >
+                                Confirm {twoFactorPendingAction === 'enable' ? 'enable' : 'disable'}
+                            </button>
+                        </div>
+                    )}
+                </section>
             </main>
         </div>
-=======
-                </div>
-            </main>
-        </div>
->>>>>>> 000abc7 (removed all console.error()s and added redirect to the login and register pages)
->>>>>>> aa9f624 (complete deletion of bad commits)
     );
 }

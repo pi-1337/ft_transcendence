@@ -64,35 +64,6 @@ export default function AdminDashboard({ firstname, lastname, email, totalUsers,
                     </div>
                 </div>
 
-                {/* Actions */}
-                <div className="bg-[#111] border border-[#1f1f1f] rounded-2xl p-6">
-                    <h2 className="text-gray-400 text-xs uppercase tracking-widest mb-4">Quick actions</h2>
-                    <div className="flex flex-col gap-3">
-                        <div className="flex items-center justify-between py-2">
-                            <span className="text-sm text-gray-300">Manage users</span>
-                            <Link href="/admin/users" className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
-                                View all →
-                            </Link>
-                        </div>
-
-<<<<<<< HEAD
-                        <div className="h-px bg-[#1f1f1f]" />
-                        <div className="flex items-center justify-between py-2">
-                            <span className="text-sm text-gray-300">Manage organizations</span>
-                            <Link href="/admin/orgs" className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
-                                View all →
-                            </Link>
-                        </div>
-
-                        <div className="h-px bg-[#1f1f1f]" />
-                        <div className="flex items-center justify-between py-2">
-                            <span className="text-sm text-gray-300">Manage RFC Readers</span>
-                            <Link href="/admin/rfcReaders" className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
-                                View all →
-                            </Link>
-                        </div>
-                        
-=======
                 {/* Management Sections */}
                 <div className="bg-[#0b1120]/50 border border-gray-800 rounded-[2rem] p-8 relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 blur-[100px] rounded-full pointer-events-none" />
@@ -126,7 +97,7 @@ export default function AdminDashboard({ firstname, lastname, email, totalUsers,
                                         <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
                                     </Link>
                                 </div>
-                                {idx < 3 && <div className="h-px bg-gray-800/50 mx-6" />}
+                                {idx < 4 && <div className="h-px bg-gray-800/50 mx-6" />}
                             </div>
                         ))}
                     </div>

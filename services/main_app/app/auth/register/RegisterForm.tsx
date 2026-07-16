@@ -1,165 +1,199 @@
-"use client"
+"use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { get42OAuthURL } from "@/lib/42school_Oauth";
+export default function RegisterForm({ ftAuthUrl }: { ftAuthUrl: string }) {
+  const router = useRouter();
+  const ft_auth_url = get42OAuthURL();
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
-type FieldErrors = {
-    email?: string;
-    password?: string;
-    firstname?: string;
-    lastname?: string;
-    phoneNumber?: string;
-};
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstname,
+          lastname,
+          email,
+          phoneNumber,
+          password,
+        }),
+      });
 
-export default function RegisterForm({ ft_auth_url }: { ft_auth_url: string }) {
-    const router = useRouter();
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [firstname, setFirstname] = useState("");
-    const [lastname, setLastname] = useState("");
-    const [phoneNumber, setPhoneNumber] = useState("");
-    const [errors, setErrors] = useState<FieldErrors>({});
-    const [serverError, setServerError] = useState("");
-    const [loading, setLoading] = useState(false);
+      const data = await res.json();
 
-    const validate = (): FieldErrors => {
-        const e: FieldErrors = {};
-        if (!firstname.trim()) e.firstname = "First name is required.";
-        if (!lastname.trim()) e.lastname = "Last name is required.";
-        if (!email) e.email = "Email is required.";
-        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = "Invalid email format.";
-        if (!password) e.password = "Password is required.";
-        else if (password.length < 8) e.password = "Password must be at least 8 characters.";
-        if (!phoneNumber) e.phoneNumber = "Phone number is required.";
-        else if (!/^\+[1-9]\d{7,14}$/.test(phoneNumber)) e.phoneNumber = "Must start with + and country code (e.g. +1234567890).";
-        return e;
-    };
+      if (!res.ok) {
+        setError(data.error || "An error occurred!");
+        setLoading(false);
+        return;
+      }
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setServerError("");
+      if (data.success) {
+        router.push("/auth/login");
+      }
+    } catch {
+      setError("Network error. Try again!");
+      setLoading(false);
+    }
+  };
 
-        const validationErrors = validate();
-        if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
-            return;
-        }
-        setErrors({});
-
-        setLoading(true);
-        try {
-            const response = await fetch('/api/auth/register', {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password, firstname, lastname, phoneNumber }),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                setServerError(data.error || "Something went wrong.");
-                return;
-            }
-
-            router.push('/dashboard');
-        } catch {
-            setServerError("Network error. Please try again.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a]">
-            <div className="bg-[#111] rounded-2xl p-8 w-full max-w-sm shadow-lg">
-                <h1 className="text-white text-2xl font-semibold mb-6 text-center">Create Account</h1>
-
-                {serverError && (
-                    <div className="mb-4 rounded-lg bg-red-900/40 border border-red-600 text-red-400 text-sm px-4 py-3">
-                        {serverError}
-                    </div>
-                )}
-
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-                    <div className="flex gap-3">
-                        <div className="flex flex-col gap-1 flex-1">
-                            <label className="text-gray-400 text-sm">First name</label>
-                            <input
-                                type="text"
-                                placeholder="John"
-                                value={firstname}
-                                onChange={(e) => setFirstname(e.target.value)}
-                                className="bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-600"
-                            />
-                            {errors.firstname && <span className="text-red-400 text-xs">{errors.firstname}</span>}
-                        </div>
-                        <div className="flex flex-col gap-1 flex-1">
-                            <label className="text-gray-400 text-sm">Last name</label>
-                            <input
-                                type="text"
-                                placeholder="Doe"
-                                value={lastname}
-                                onChange={(e) => setLastname(e.target.value)}
-                                className="bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-600"
-                            />
-                            {errors.lastname && <span className="text-red-400 text-xs">{errors.lastname}</span>}
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col gap-1">
-                        <label className="text-gray-400 text-sm">Email</label>
-                        <input
-                            type="email"
-                            placeholder="you@example.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-600"
-                        />
-                        {errors.email && <span className="text-red-400 text-xs">{errors.email}</span>}
-                    </div>
-
-                    <div className="flex flex-col gap-1">
-                        <label className="text-gray-400 text-sm">Password</label>
-                        <input
-                            type="password"
-                            placeholder="••••••••"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-600"
-                        />
-                        {errors.password && <span className="text-red-400 text-xs">{errors.password}</span>}
-                    </div>
-
-                    <div className="flex flex-col gap-1">
-                        <label className="text-gray-400 text-sm">Phone number</label>
-                        <input
-                            type="tel"
-                            placeholder="+1234567890"
-                            value={phoneNumber}
-                            onChange={(e) => setPhoneNumber(e.target.value)}
-                            className="bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-600"
-                        />
-                        {errors.phoneNumber && <span className="text-red-400 text-xs">{errors.phoneNumber}</span>}
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="mt-2 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 disabled:cursor-not-allowed text-white rounded-lg py-2.5 text-sm font-medium transition-colors"
-                    >
-                        {loading ? "Creating account…" : "Register"}
-                    </button>
-                </form>
-
-                <p className="text-gray-500 text-sm text-center mt-6">
-                    Already have an account?{" "}
-                    <a href="/auth/login" className="text-blue-400 hover:text-blue-300 transition-colors">
-                        Login
-                    </a>
-                </p>
-                <Link href={ft_auth_url}>Authenticate using 42 Oauth</Link>
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-950">
+      <main className="flex-1 flex flex-col items-center justify-center gap-4 px-4 py-6">
+        <Card className="w-full max-w-md bg-gray-900 border-gray-800">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold text-white">
+              Create an Account
+            </CardTitle>
+            <div className="flex items-center gap-2 mt-1">
+              <p className="text-gray-400 text-sm">Already have an account?</p>
+              <Link
+                href="/auth/login"
+                className="text-gray-300 hover:text-white transition text-sm font-medium"
+              >
+                Log In
+              </Link>
             </div>
-        </div>
-    );
+          </CardHeader>
+          <CardContent>
+            {error ? (
+              <div className="mb-4 rounded-lg border border-red-700 bg-red-950/40 px-4 py-3 text-sm text-red-300">
+                {error}
+              </div>
+            ) : null}
+            <form onSubmit={handleRegister} className="flex flex-col gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <label className="text-sm text-white" htmlFor="firstname">
+                    First Name
+                  </label>
+                  <Input
+                    id="firstname"
+                    value={firstname}
+                    onChange={(e) => setFirstname(e.target.value)}
+                    className="border border-gray-600 rounded-lg w-full h-10 bg-gray-800 text-white"
+                    placeholder="Bandit"
+                    required
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <label className="text-sm text-white" htmlFor="lastname">
+                    Last Name
+                  </label>
+                  <Input
+                    id="lastname"
+                    value={lastname}
+                    onChange={(e) => setLastname(e.target.value)}
+                    className="border border-gray-600 rounded-lg w-full h-10 bg-gray-800 text-white"
+                    placeholder="Klm"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <label className="text-sm text-white" htmlFor="email">
+                  Email Address
+                </label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="border border-gray-600 rounded-lg w-full h-10 bg-gray-800 text-white"
+                  placeholder="bandit@example.com"
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <label className="text-sm text-white" htmlFor="phoneNumber">
+                  Phone Number
+                </label>
+                <Input
+                  id="phoneNumber"
+                  type="tel"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  className="border border-gray-600 rounded-lg w-full h-10 bg-gray-800 text-white"
+                  placeholder="+212600000000"
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <label className="text-sm text-white" htmlFor="password">
+                  Password
+                </label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="border border-gray-600 rounded-lg w-full h-10 bg-gray-800 text-white"
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+
+              <Button
+                type="submit"
+                disabled={loading}
+                className="bg-red-700 hover:bg-red-800 w-full h-12 mt-4 text-lg text-white"
+              >
+                {loading ? "Creating account..." : "Sign Up"}
+              </Button>
+            </form>
+            <div className="flex items-center gap-2 mt-3">
+              <div className="h-px flex-1 bg-gray-800 my-4"></div>
+              <p className="text-gray-400 font-bold text-xs">
+                OR CONTINUE WITH
+              </p>
+              <div className="h-px flex-1 bg-gray-800 my-4"></div>
+            </div>
+            <div className="flex items-center justify-center mt-2 mb-3 gap-6 w-full">
+              <Link href={ftAuthUrl} className="w-full sm:w-64">
+                <Button
+                  type="button"
+                  className="w-full bg-gray-900 hover:bg-gray-800 border border-gray-800"
+                >
+                  42 Auth
+                </Button>
+              </Link>
+            </div>
+
+            <div className="mt-6 text-center text-xs text-gray-500">
+              By signing up, you agree to our{" "}
+              <Link
+                href="/auth/terms-of-service"
+                className="underline hover:text-gray-300"
+              >
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link
+                href="/auth/privacy-policy"
+                className="underline hover:text-gray-300"
+              >
+                Privacy Policy
+              </Link>
+              .
+            </div>
+          </CardContent>
+        </Card>
+      </main>
+    </div>
+  );
 }

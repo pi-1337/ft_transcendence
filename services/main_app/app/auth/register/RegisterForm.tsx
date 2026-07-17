@@ -72,7 +72,7 @@ export default function RegisterForm({ ftAuthUrl }: { ftAuthUrl: string }) {
           </CardHeader>
           <CardContent>
             {error ? (
-              <div className="mb-4 rounded-lg border border-red-700 bg-red-950/40 px-4 py-3 text-sm text-red-300">
+              <div className="mb-4 rounded-lg border border-green-700 bg-green-950/40 px-4 py-3 text-sm text-green-300">
                 {error}
               </div>
             ) : null}
@@ -151,7 +151,7 @@ export default function RegisterForm({ ftAuthUrl }: { ftAuthUrl: string }) {
               <Button
                 type="submit"
                 disabled={loading}
-                className="bg-red-700 hover:bg-red-800 w-full h-12 mt-4 text-lg text-white"
+                className="bg-green-700 hover:bg-green-800 w-full h-12 mt-4 text-lg text-white"
               >
                 {loading ? "Creating account..." : "Sign Up"}
               </Button>

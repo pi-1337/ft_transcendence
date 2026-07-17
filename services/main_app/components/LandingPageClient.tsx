@@ -1,71 +1,89 @@
 'use client'
 
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 export default function LandingPageClient() {
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white">
-            {/* Navigation */}
-            <header className="border-b border-[#1f1f1f] px-8 py-4 flex items-center justify-between">
+        <div className="min-h-screen bg-gray-950 text-white">
+            <header className="border-b border-gray-800 bg-gray-950 px-8 py-4 flex items-center justify-between sticky top-0 z-10">
                 <div className="flex items-center gap-3">
-                    <span className="text-white font-semibold text-lg">BadgeHub</span>
+                    <span className="text-white font-bold text-xl tracking-tight">
+                        Badge<span className="text-green-700">Hub</span>
+                    </span>
                 </div>
-                <Link
-                    href="/auth/login"
-                    className="text-sm text-gray-400 hover:text-blue-400 border border-[#333] hover:border-blue-600 rounded-lg px-4 py-1.5 transition-colors"
-                >
-                    Log in
+                <Link href="/auth/login">
+                    <Button 
+                        variant="outline" 
+                        className="bg-transparent border-gray-800 text-gray-300 hover:text-white hover:bg-green-950 hover:border-green-800 h-9 px-5 transition-all"
+                    >
+                        Log in
+                    </Button>
                 </Link>
             </header>
 
-            <main className="max-w-4xl mx-auto px-8 py-20">
-                {/* Hero Section */}
-                <div className="text-center mb-16">
-                    <h1 className="text-5xl font-bold mb-4">Badge Management System</h1>
-                    <p className="text-xl text-gray-400 mb-8">
+            <main className="max-w-5xl mx-auto px-6 py-20">
+                <div className="text-center mb-24 mt-10">
+                    <h1 className="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight text-white">
+                        Badge Management <span className="text-green-600">System</span>
+                    </h1>
+                    <p className="text-xl text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
                         Track, manage, and monitor user badges across your organizations with ease.
                     </p>
-                    <Link
-                        href="/auth/login"
-                        className="inline-block bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg px-8 py-3 transition-colors"
-                    >
-                        Get Started
+                    <Link href="/auth/login">
+                        <Button className="bg-green-700 hover:bg-green-800 text-white px-8 py-6 text-lg rounded-lg transition-colors shadow-lg shadow-green-900/20">
+                            Get Started
+                        </Button>
                     </Link>
                 </div>
 
-                {/* Features */}
-                <div className="grid grid-cols-3 gap-6 mb-16">
-                    <div className="bg-[#111] border border-[#1f1f1f] rounded-2xl p-6">
-                        <h3 className="text-lg font-semibold mb-3">User Dashboard</h3>
-                        <p className="text-gray-400 text-sm">
-                            View your profile, manage your organizations, and track your activities.
-                        </p>
-                    </div>
-                    <div className="bg-[#111] border border-[#1f1f1f] rounded-2xl p-6">
-                        <h3 className="text-lg font-semibold mb-3">Badge Tracking</h3>
-                        <p className="text-gray-400 text-sm">
-                            Create badges for your organizations and track all records in real-time.
-                        </p>
-                    </div>
-                    <div className="bg-[#111] border border-[#1f1f1f] rounded-2xl p-6">
-                        <h3 className="text-lg font-semibold mb-3">Organization Management</h3>
-                        <p className="text-gray-400 text-sm">
-                            Manage multiple organizations and their associated badges with ease.
-                        </p>
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-24">
+                    <Card className="bg-gray-900 border-gray-800 hover:border-gray-700 transition-colors">
+                        <CardHeader>
+                            <CardTitle className="text-lg font-semibold text-white">User Dashboard</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-gray-400 text-sm leading-relaxed">
+                                View your profile, manage your organizations, and track your activities.
+                            </p>
+                        </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-gray-900 border-gray-800 hover:border-gray-700 transition-colors">
+                        <CardHeader>
+                            <CardTitle className="text-lg font-semibold text-white">Badge Tracking</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-gray-400 text-sm leading-relaxed">
+                                Create badges for your organizations and track all records in real-time.
+                            </p>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="bg-gray-900 border-gray-800 hover:border-gray-700 transition-colors">
+                        <CardHeader>
+                            <CardTitle className="text-lg font-semibold text-white">Organization Management</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-gray-400 text-sm leading-relaxed">
+                                Manage multiple organizations and their associated badges with ease.
+                            </p>
+                        </CardContent>
+                    </Card>
                 </div>
 
-                {/* CTA Section */}
-                <div className="bg-[#111] border border-[#1f1f1f] rounded-2xl p-12 text-center">
-                    <h2 className="text-2xl font-semibold mb-4">Ready to get started?</h2>
-                    <p className="text-gray-400 mb-6">Sign in to your account to access your dashboard and manage your badges.</p>
-                    <Link
-                        href="/auth/login"
-                        className="inline-block bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg px-6 py-2.5 transition-colors"
-                    >
-                        Log in to Dashboard
+                <Card className="bg-gray-900 border-gray-800 text-center py-16 px-6">
+                    <h2 className="text-3xl font-bold text-white mb-4">Ready to get started?</h2>
+                    <p className="text-gray-400 mb-8 max-w-xl mx-auto text-lg">
+                        Sign in to your account to access your dashboard and manage your badges.
+                    </p>
+                    <Link href="/auth/login">
+                        <Button className="bg-green-700 hover:bg-green-800 text-white px-8 py-6 text-md rounded-lg transition-colors">
+                            Log in to Dashboard
+                        </Button>
                     </Link>
-                </div>
+                </Card>
             </main>
         </div>
     );

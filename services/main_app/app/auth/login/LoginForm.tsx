@@ -26,20 +26,22 @@ export default function LoginForm({ ftAuthUrl }: { ftAuthUrl: string }) {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "an error occurred!");
-        setLoading(false);
+        setError(data.error || "an error occurgreen!");
         return;
       }
       if (data.requiresTwoFactor) {
         router.push("/auth/2fa");
         return;
       }
-      if (data.succses) {
+      if (data.success) {
         if (data.user?.role === "ADMIN") router.push("/admin/dashboard");
         else router.push("/dashboard");
+        return;
       }
+      setError("Unexpected login response.");
     } catch {
       setError("Network error. Try again!");
+    } finally {
       setLoading(false);
     }
   };
@@ -66,7 +68,7 @@ export default function LoginForm({ ftAuthUrl }: { ftAuthUrl: string }) {
           </CardHeader>
           <CardContent>
             {error ? (
-              <div className="mb-4 rounded-lg border border-red-700 bg-red-950/40 px-4 py-3 text-sm text-red-300">
+              <div className="mb-4 rounded-lg border border-green-700 bg-green-950/40 px-4 py-3 text-sm text-green-300">
                 {error}
               </div>
             ) : null}
@@ -120,7 +122,7 @@ export default function LoginForm({ ftAuthUrl }: { ftAuthUrl: string }) {
               <Button
                 type="submit"
                 disabled={loading}
-                className="bg-red-700 hover:bg-red-800 w-full h-12 mt-6 text-lg"
+                className="bg-green-700 hover:bg-green-800 w-full h-12 mt-6 text-lg"
                 size="lg"
               >
                 {loading ? "Logging in..." : "Log In"}

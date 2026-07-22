@@ -22,3 +22,10 @@ export type OrgsFrontend = {
     active: Active,
     createdAt: Date
 };
+
+export type notification = {
+    id: number,
+    read: boolean,
+    message: string,
+    createdAt: Date
+}

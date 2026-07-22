@@ -1,5 +1,3 @@
-
-
 import { getSession } from "@/lib/sessionManage";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
@@ -7,41 +5,60 @@ import { Notification } from "@prisma/client";
 import Notifications from "./client";
 
 export default async function ServerSide() {
-    const session = await getSession();
+  const session = await getSession();
 
-    if (!session)
-        redirect('/auth/login');
+  if (!session) redirect("/auth/login");
 
-    if (session.role === 'ADMIN')
-        redirect('/admin/dashboard');
+  if (session.role === "ADMIN") redirect("/admin/dashboard");
 
-    const { id } = session;
-    const user = await prisma.user.findUnique({
-        where: { id },
+  const { id } = session;
+  const user = await prisma.user.findUnique({
+    where: { id },
+  });
+
+  if (!user) redirect("/auth/login");
+
+  const unreadNotifications: Notification[] =
+    await prisma.notification.findMany({
+      where: {
+        unreadUsers: { some: { id } },
+      },
     });
+  const readNotifications: Notification[] = await prisma.notification.findMany({
+    where: {
+      readUsers: { some: { id } },
+    },
+  });
 
-    if (!user)
-        redirect('/auth/login');
+  const notifications = [
+    ...unreadNotifications.map((n) => ({
+      id: n.id,
+      read: false,
+      message: n.message,
+      createdAt: n.createdAt,
+    })),
+    ...readNotifications.map((n) => ({
+      id: n.id,
+      read: true,
+      message: n.message,
+      createdAt: n.createdAt,
+    })),
+  ];
 
-    const unreadNotifications: Notification[] = await prisma.notification.findMany({
-        where: {
-            unreadUsers: { some: { id } }
-        }
-    });
-    const readNotifications: Notification[] = await prisma.notification.findMany({
-        where: {
-            readUsers: { some: { id } }
-        }
-    });
-
-    const notifications = [
-        ...unreadNotifications.map(n => ({ id: n.id, read: false, message: n.message, createdAt: n.createdAt })),
-        ...readNotifications.map(n => ({ id: n.id, read:  true, message: n.message, createdAt: n.createdAt }))
-    ];
-
-    return (
-        <Notifications
-            notifications={notifications}
-        />
-    );
+  return (
+    <Notifications
+      notifications={notifications}
+      user={{
+        id: user.id,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+        avatar: user.avatar,
+        twoFactorEnabled: user.twoFactorEnabled,
+        twoFactorEmail: user.twoFactorEmail,
+      }}
+    />
+  );
 }

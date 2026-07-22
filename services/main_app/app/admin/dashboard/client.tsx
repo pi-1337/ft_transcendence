@@ -1,108 +1,217 @@
-'use client'
+"use client";
 
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { Shield, Users, Building2, Radio, LogOut, ArrowRight, Activity, LayoutGrid, Megaphone } from 'lucide-react';
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import {
+  Users,
+  Building2,
+  Radio,
+  LayoutGrid,
+  Megaphone,
+  Shield,
+} from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuGroup,
+} from "@/components/ui/dropdown-menu";
 
 type Props = {
-    firstname: string;
-    lastname: string;
-    email: string;
-    totalUsers: number;
-    totalOrgs: number;
-    totalReaders: number;
+  firstname: string;
+  lastname: string;
+  email: string;
+  totalUsers: number;
+  totalOrgs: number;
+  totalReaders: number;
 };
 
-export default function AdminDashboard({ firstname, lastname, email, totalUsers, totalOrgs, totalReaders }: Props) {
-    const router = useRouter();
+export default function AdminDashboard({
+  firstname,
+  lastname,
+  email,
+  totalUsers,
+  totalOrgs,
+  totalReaders,
+}: Props) {
+  const router = useRouter();
 
-    const handleLogout = async () => {
-        await fetch('/api/auth/logout', { method: 'POST' });
-        router.push('/auth/login');
-    };
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.push("/auth/login");
+  };
+  const managementLinks = [
+    {
+      title: "Manage user accounts",
+      description: "View, edit, and manage all user accounts in the system",
+      link: "/admin/users",
+      icon: Users,
+      action: "Manage Users",
+    },
+    {
+      title: "Organizations",
+      description: "View general organizational activity and metrics",
+      link: "/organizations",
+      icon: Building2,
+      action: "See Organizations",
+    },
+    {
+      title: "System organizations",
+      description: "Manage core system organizational structures",
+      link: "/admin/orgs",
+      icon: Building2,
+      action: "Manage Organizations",
+    },
+    {
+      title: "RFC Reader hardware",
+      description: "Monitor and configure RFC reader devices",
+      link: "/admin/rfcReaders",
+      icon: Radio,
+      action: "Manage Readers",
+    },
+    {
+      title: "Announcements",
+      description: "Create and broadcast system-wide announcements",
+      link: "/admin/announcements",
+      icon: Megaphone,
+      action: "Manage Announcements",
+    },
+  ];
 
-    return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white">
-            {/* Top bar */}
-            <header className="border-b border-[#1f1f1f] px-8 py-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <span className="text-white font-semibold text-lg">Admin Panel</span>
-                    <span className="text-xs bg-blue-600/20 text-blue-400 border border-blue-600/30 rounded-full px-2.5 py-0.5">
-                        ADMIN
-                    </span>
-                </div>
-                <button
-                    onClick={handleLogout}
-                    className="text-sm text-gray-400 hover:text-red-400 border border-[#333] hover:border-red-600 rounded-lg px-4 py-1.5 transition-colors"
-                >
-                    Log out
-                </button>
-            </header>
-
-            <main className="max-w-4xl mx-auto px-8 py-12">
-                {/* Greeting */}
-                <div className="mb-10">
-                    <h1 className="text-2xl font-semibold mb-1">
-                        Welcome, {firstname} {lastname}
-                    </h1>
-                    <p className="text-gray-500 text-sm">{email}</p>
-                </div>
-
-                {/* Stats */}
-                <div className="grid grid-cols-3 gap-4 mb-10">
-                    <div className="bg-[#111] border border-[#1f1f1f] rounded-2xl p-6">
-                        <p className="text-gray-500 text-xs uppercase tracking-widest mb-2">Total users</p>
-                        <p className="text-4xl font-bold text-white">{totalUsers}</p>
-                    </div>
-                    <div className="bg-[#111] border border-[#1f1f1f] rounded-2xl p-6">
-                        <p className="text-gray-500 text-xs uppercase tracking-widest mb-2">Total organizations</p>
-                        <p className="text-4xl font-bold text-white">{totalOrgs}</p>
-                    </div>
-                    <div className="bg-[#111] border border-[#1f1f1f] rounded-2xl p-6">
-                        <p className="text-gray-500 text-xs uppercase tracking-widest mb-2">Total RFC readers</p>
-                        <p className="text-4xl font-bold text-white">{totalReaders}</p>
-                    </div>
-                </div>
-
-                {/* Management Sections */}
-                <div className="bg-[#0b1120]/50 border border-gray-800 rounded-[2rem] p-8 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 blur-[100px] rounded-full pointer-events-none" />
-                    
-                    <h2 className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-8 flex items-center gap-2">
-                        <LayoutGrid className="w-3.5 h-3.5" />
-                        System Management
-                    </h2>
-                    
-                    <div className="grid gap-4">
-                        {[
-                            { title: 'Manage user accounts', link: '/admin/users', icon: Users, action: 'Manage Users' },
-                            { title: 'Organizations', link: '/organizations', icon: Building2, action: 'See Orgs' },
-                            { title: 'System organizations', link: '/admin/orgs', icon: Building2, action: 'Manage Orgs' },
-                            { title: 'RFC Reader hardware', link: '/admin/rfcReaders', icon: Radio, action: 'Manage Readers' },
-                            { title: 'Announcements', link: '/admin/announcements', icon: Megaphone, action: 'Manage Announcements' }
-                        ].map((item, idx) => (
-                            <div key={item.title} className="group">
-                                <div className="flex items-center justify-between p-5 rounded-2xl hover:bg-white/5 transition-all border border-transparent hover:border-gray-800">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 bg-gray-800/50 rounded-xl flex items-center justify-center border border-gray-700 group-hover:border-indigo-500/50 transition-colors">
-                                            <item.icon className="w-5 h-5 text-gray-400 group-hover:text-indigo-400 transition-colors" />
-                                        </div>
-                                        <span className="text-gray-200 font-bold">{item.title}</span>
-                                    </div>
-                                    <Link 
-                                        href={item.link} 
-                                        className="flex items-center gap-2 text-sm font-black text-indigo-400 hover:text-indigo-300 transition-colors group/link"
-                                    >
-                                        {item.action}
-                                        <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
-                                    </Link>
-                                </div>
-                                {idx < 4 && <div className="h-px bg-gray-800/50 mx-6" />}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </main>
+  return (
+    <div className="min-h-screen bg-gray-950 text-white">
+      <header className="border-b border-gray-800 bg-gray-950 px-8 py-4 flex items-center justify-between sticky top-0 z-10">
+        <div className="flex items-center gap-3">
+          <span className="text-white font-bold text-xl tracking-tight">
+            Badge<span className="text-green-700">Hub</span>
+          </span>
+          <span className="text-xs bg-green-950/40 text-green-400 border border-green-800/50 rounded-full px-2.5 py-0.5 font-medium flex items-center gap-1">
+            <Shield className="w-3 h-3" /> ADMIN
+          </span>
         </div>
-    );
+
+        <div className="flex items-center gap-4">
+          <DropdownMenu>
+            <DropdownMenuTrigger className="focus:outline-none">
+              <Avatar className="h-9 w-9 border border-gray-800 hover:border-gray-700 transition-colors">
+                <AvatarFallback className="bg-gray-800 text-green-400 font-semibold">
+                  {firstname?.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="w-56 bg-gray-900 border-gray-800 text-gray-200"
+            >
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none text-white">
+                      {firstname} {lastname}
+                    </p>
+                    <p className="text-xs leading-none text-gray-500">
+                      {email}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator className="bg-gray-800" />
+              <DropdownMenuItem
+                className="text-red-400 focus:bg-gray-800 focus:text-red-300 cursor-pointer"
+                onClick={handleLogout}
+              >
+                Log out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </header>
+
+      <main className="max-w-5xl mx-auto px-6 py-10">
+        <div className="mb-10">
+          <h1 className="text-3xl font-bold text-white mb-2">
+            Welcome back, {firstname} {lastname}!
+          </h1>
+          <p className="text-gray-400 text-sm">
+            Signed in as <span className="text-gray-300">{email}</span>
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          <Card className="bg-gray-900 border-gray-800">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-gray-400 text-xs font-semibold uppercase tracking-wider">
+                Total Users
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-4xl font-bold text-white">{totalUsers}</p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gray-900 border-gray-800">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-gray-400 text-xs font-semibold uppercase tracking-wider">
+                Total Organizations
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-4xl font-bold text-white">{totalOrgs}</p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gray-900 border-gray-800">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-gray-400 text-xs font-semibold uppercase tracking-wider">
+                Total RFC Readers
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-4xl font-bold text-white">{totalReaders}</p>
+            </CardContent>
+          </Card>
+        </div>
+        <Card className="bg-gray-900 border-gray-800">
+          <CardHeader>
+            <CardTitle className="text-gray-200 text-lg font-semibold flex items-center gap-2">
+              <LayoutGrid className="w-5 h-5 text-green-600" />
+              System Management
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
+            {managementLinks.map((item, idx) => (
+              <div
+                key={idx}
+                className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-lg bg-gray-950/50 border border-gray-800 hover:border-gray-700 transition-colors gap-4 sm:gap-0"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-gray-900 rounded-lg flex items-center justify-center border border-gray-800 flex-shrink-0">
+                    <item.icon className="w-5 h-5 text-green-500" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium text-white">
+                      {item.title}
+                    </span>
+                    <span className="text-xs text-gray-400 mt-1">
+                      {item.description}
+                    </span>
+                  </div>
+                </div>
+                <Link href={item.link}>
+                  <Button className="bg-green-700 hover:bg-green-800 text-white h-8 text-xs w-full sm:w-auto">
+                    {item.action}
+                  </Button>
+                </Link>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </main>
+    </div>
+  );
 }

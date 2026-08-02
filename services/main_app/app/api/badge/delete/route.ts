@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
             },
                 { status: 401 });
         }
-        const id: number = sessionData.id;
+        const id: number = sessionData.id; // TODO auth not secure, check if user is owner of badge
 
         if (!badgeNumber) {
             return NextResponse.json({

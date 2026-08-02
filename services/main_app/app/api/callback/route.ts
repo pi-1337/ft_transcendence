@@ -33,6 +33,8 @@ export async function GET(req: NextRequest) {
         const { email, first_name, last_name, login } = user;
 
 
+        // TODO ISSA --> password required for user to do 2fa
+
         // email && login       ---> login
         // !email && !login     ---> create
         // email && !login      ---> link

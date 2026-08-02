@@ -1,9 +1,15 @@
-"use client";
-
 import Link from "next/link";
-import { useState } from "react";
-import { ClipboardList, ArrowRight, Filter } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { redirect } from "next/navigation";
+import {
+  ClipboardList,
+  ArrowRight,
+  BadgeCheck,
+  Hourglass,
+  XCircle,
+} from "lucide-react";
+import { prisma } from "@/lib/prisma";
+import { getSession } from "@/lib/sessionManage";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -14,74 +20,82 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-const mockRecords = [
-  {
-    id: 1,
-    badgeNumber: "BADGE-001",
-    orgName: "Acme Corporation",
-    action: "Entry",
-    timestamp: new Date("2024-01-20 10:30:00"),
-  },
-  {
-    id: 2,
-    badgeNumber: "BADGE-001",
-    orgName: "Acme Corporation",
-    action: "Exit",
-    timestamp: new Date("2024-01-20 17:00:00"),
-  },
-  {
-    id: 3,
-    badgeNumber: "BADGE-001",
-    orgName: "Acme Corporation",
-    action: "Entry",
-    timestamp: new Date("2024-01-21 09:15:00"),
-  },
-  {
-    id: 4,
-    badgeNumber: "BADGE-001",
-    orgName: "Acme Corporation",
-    action: "Exit",
-    timestamp: new Date("2024-01-21 18:45:00"),
-  },
-  {
-    id: 5,
-    badgeNumber: "BADGE-002",
-    orgName: "Tech Startup Inc",
-    action: "Entry",
-    timestamp: new Date("2024-01-22 08:00:00"),
-  },
-  {
-    id: 6,
-    badgeNumber: "BADGE-002",
-    orgName: "Tech Startup Inc",
-    action: "Exit",
-    timestamp: new Date("2024-01-22 17:30:00"),
-  },
-  {
-    id: 7,
-    badgeNumber: "BADGE-001",
-    orgName: "Acme Corporation",
-    action: "Entry",
-    timestamp: new Date("2024-01-22 09:00:00"),
-  },
-  {
-    id: 8,
-    badgeNumber: "BADGE-001",
-    orgName: "Acme Corporation",
-    action: "Exit",
-    timestamp: new Date("2024-01-22 18:00:00"),
-  },
-];
+function formatDateTime(value: Date) {
+  return new Intl.DateTimeFormat("en-GB", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(value);
+}
 
-export default function Records() {
-  const [records] = useState(mockRecords);
-  const [filterBadge, setFilterBadge] = useState("");
+function getStatusStyle(status: string) {
+  if (status === "ACCEPTED") {
+    return "bg-green-950/40 text-green-400 border-green-800/50";
+  }
 
-  const filteredRecords = filterBadge
-    ? records.filter((r) => r.badgeNumber === filterBadge)
-    : records;
+  if (status === "REJECTED") {
+    return "bg-red-950/40 text-red-400 border-red-800/50";
+  }
 
-  const uniqueBadges = Array.from(new Set(records.map((r) => r.badgeNumber)));
+  return "bg-yellow-950/40 text-yellow-300 border-yellow-800/50";
+}
+
+function getStatusIcon(status: string) {
+  if (status === "ACCEPTED") {
+    return <BadgeCheck className="h-4 w-4" />;
+  }
+
+  if (status === "REJECTED") {
+    return <XCircle className="h-4 w-4" />;
+  }
+
+  return <Hourglass className="h-4 w-4" />;
+}
+
+export default async function RecordsPage() {
+  const session = await getSession();
+
+  if (!session) {
+    redirect("/auth/login");
+  }
+
+  const scans = await prisma.badgeScan.findMany({
+    where:
+      session.role === "ADMIN"
+        ? {}
+        : {
+            badge: {
+              userId: session.id,
+            },
+          },
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: 50,
+    select: {
+      id: true,
+      status: true,
+      createdAt: true,
+      badgeId: true,
+      meal: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      rfidReader: {
+        select: {
+          id: true,
+          location: true,
+        },
+      },
+    },
+  });
+
+  const totalScans = scans.length;
+  const acceptedScans = scans.filter(
+    (scan) => scan.status === "ACCEPTED",
+  ).length;
+  const pendingScans = scans.filter((scan) => scan.status === "PENDING").length;
 
   return (
     <div className="min-h-screen bg-gray-950 text-white pb-12">
@@ -92,64 +106,79 @@ export default function Records() {
       </header>
 
       <main className="max-w-6xl mx-auto px-6 mt-10">
-        <div className="flex items-center gap-3 mb-8">
+        <div className="flex items-start gap-3 mb-8">
           <div className="p-2 bg-green-950/30 rounded-lg border border-green-900/50">
             <ClipboardList className="w-6 h-6 text-green-500" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white">Your Records</h1>
+            <h1 className="text-2xl font-bold text-white">Scan history</h1>
             <p className="text-sm text-gray-400">
-              Showing {filteredRecords.length} activity logs based on your
-              selection.
+              Showing real BadgeScan entries with status, badge, meal, reader,
+              and timestamp.
             </p>
           </div>
         </div>
-        <div className="mb-6 flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 mr-2 text-gray-400 text-sm font-medium">
-            <Filter className="w-4 h-4" /> Filter by:
-          </div>
-          <Button
-            onClick={() => setFilterBadge("")}
-            variant={filterBadge === "" ? "default" : "outline"}
-            className={
-              filterBadge === ""
-                ? "bg-green-700 hover:bg-green-800 text-white h-9"
-                : "bg-gray-900 border-gray-800 text-gray-400 hover:text-white hover:bg-gray-800 h-9"
-            }
-          >
-            All Badges
-          </Button>
-          {uniqueBadges.map((badge) => (
-            <Button
-              key={badge}
-              onClick={() => setFilterBadge(badge)}
-              variant={filterBadge === badge ? "default" : "outline"}
-              className={`font-mono h-9 ${
-                filterBadge === badge
-                  ? "bg-green-700 hover:bg-green-800 text-white"
-                  : "bg-gray-900 border-gray-800 text-gray-400 hover:text-white hover:bg-gray-800"
-              }`}
-            >
-              {badge}
-            </Button>
-          ))}
+
+        <div className="grid gap-4 md:grid-cols-3 mb-6">
+          <Card className="bg-gray-900 border-gray-800">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-gray-400 text-xs font-semibold uppercase tracking-wider flex items-center gap-2">
+                <ClipboardList className="h-4 w-4 text-green-500" />
+                Total scans
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-white">{totalScans}</p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gray-900 border-gray-800">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-gray-400 text-xs font-semibold uppercase tracking-wider flex items-center gap-2">
+                <BadgeCheck className="h-4 w-4 text-green-500" />
+                Accepted
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-white">{acceptedScans}</p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gray-900 border-gray-800">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-gray-400 text-xs font-semibold uppercase tracking-wider flex items-center gap-2">
+                <Hourglass className="h-4 w-4 text-yellow-400" />
+                Pending
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-white">{pendingScans}</p>
+            </CardContent>
+          </Card>
         </div>
+
         <Card className="bg-gray-900 border-gray-800 overflow-hidden">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader className="bg-gray-950/50">
                 <TableRow className="border-gray-800 hover:bg-transparent">
                   <TableHead className="text-gray-400 font-semibold h-12 px-6">
+                    Scan
+                  </TableHead>
+                  <TableHead className="text-gray-400 font-semibold h-12">
                     Badge
                   </TableHead>
                   <TableHead className="text-gray-400 font-semibold h-12">
-                    Organization
+                    Meal
                   </TableHead>
                   <TableHead className="text-gray-400 font-semibold h-12">
-                    Action
+                    Reader
                   </TableHead>
                   <TableHead className="text-gray-400 font-semibold h-12">
-                    Timestamp
+                    Status
+                  </TableHead>
+                  <TableHead className="text-gray-400 font-semibold h-12">
+                    Created
                   </TableHead>
                   <TableHead className="text-gray-400 font-semibold text-right h-12 px-6">
                     Details
@@ -157,48 +186,48 @@ export default function Records() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredRecords.length === 0 ? (
+                {scans.length === 0 ? (
                   <TableRow className="border-gray-800 hover:bg-transparent">
                     <TableCell
-                      colSpan={5}
+                      colSpan={7}
                       className="h-24 text-center text-gray-500"
                     >
-                      No records found.
+                      No scans found.
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredRecords.map((record) => (
+                  scans.map((scan) => (
                     <TableRow
-                      key={record.id}
+                      key={scan.id}
                       className="border-gray-800 hover:bg-gray-800/30 transition-colors"
                     >
-                      <TableCell className="px-6 py-4">
+                      <TableCell className="px-6 py-4 font-mono text-sm text-gray-300">
+                        #{scan.id}
+                      </TableCell>
+                      <TableCell className="py-4">
                         <span className="font-mono text-sm bg-gray-950 px-2.5 py-1 rounded border border-gray-800 text-gray-300">
-                          {record.badgeNumber}
+                          {scan.badgeId}
                         </span>
                       </TableCell>
-                      <TableCell className="text-gray-300 py-4 font-medium">
-                        {record.orgName}
+                      <TableCell className="text-gray-300 py-4">
+                        {scan.meal.name}
+                      </TableCell>
+                      <TableCell className="text-gray-300 py-4">
+                        {scan.rfidReader.location}
                       </TableCell>
                       <TableCell className="py-4">
                         <span
-                          className={`inline-flex items-center text-xs border rounded-full px-2.5 py-1 font-medium ${
-                            record.action === "Entry"
-                              ? "bg-green-950/40 text-green-400 border-green-800/50"
-                              : "bg-red-950/40 text-red-400 border-red-800/50"
-                          }`}
+                          className={`inline-flex items-center gap-1.5 text-xs border rounded-full px-2.5 py-1 font-medium ${getStatusStyle(scan.status)}`}
                         >
-                          <span
-                            className={`w-1.5 h-1.5 rounded-full mr-1.5 ${record.action === "Entry" ? "bg-green-500" : "bg-red-500"}`}
-                          ></span>
-                          {record.action}
+                          {getStatusIcon(scan.status)}
+                          {scan.status}
                         </span>
                       </TableCell>
                       <TableCell className="text-gray-400 text-sm py-4">
-                        {record.timestamp.toLocaleString()}
+                        {formatDateTime(scan.createdAt)}
                       </TableCell>
                       <TableCell className="text-right px-6 py-4">
-                        <Link href={`/records/${record.id}`}>
+                        <Link href={`/records/${scan.id}`}>
                           <Button
                             variant="ghost"
                             size="sm"

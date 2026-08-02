@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
             },
                 { status: 401 });
         }
-        const id: number = sessionData.id;
+        const id: number = sessionData.id;// TODO auth not secure, check if user with is user with email
 
         if (!email) {
             return NextResponse.json({

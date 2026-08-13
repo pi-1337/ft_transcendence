@@ -1,306 +1,414 @@
-'use client'
+"use client";
 
-import { useMemo, useState } from 'react';
-import Link from 'next/link';
+import { useState } from "react";
+import Link from "next/link";
+import {
+  Megaphone,
+  ArrowLeft,
+  Send,
+  Pencil,
+  Trash2,
+  History,
+  X,
+} from "lucide-react";
 
-type Organization = {
-    id: number;
-    name: string;
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+type Org = {
+  id: number;
+  name: string;
 };
 
-type Announcement = {
+type Item = {
+  id: number;
+  title: string;
+  message: string;
+  createdAt: Date;
+  organization: {
     id: number;
-    title: string;
-    message: string;
-    createdAt: Date;
-    updatedAt: Date | null;
-    organization: {
-        id: number;
-        name: string;
-    };
-    createdBy: {
-        id: number;
-        firstname: string;
-        lastname: string;
-        email: string;
-    };
+    name: string;
+  };
+  createdBy: {
+    id: number;
+    firstname: string;
+    lastname: string;
+  };
 };
 
 type Props = {
-    organizations: Organization[];
-    announcements: Announcement[];
+  organizations: Org[];
+  announcements: Item[];
 };
 
-type FormState = {
-    organizationId: string;
-    title: string;
-    message: string;
-};
+export default function AnnouncementsClient({
+  organizations,
+  announcements: initialList,
+}: Props) {
+  const [list, setList] = useState<Item[]>(initialList);
+  const [orgId, setOrgId] = useState<string | null>("");
+  const [title, setTitle] = useState("");
+  const [message, setMessage] = useState("");
 
-const defaultFormState: FormState = {
-    organizationId: '',
-    title: '',
-    message: '',
-};
+  const [editId, setEditId] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [delId, setDelId] = useState<number | null>(null);
+  const [info, setInfo] = useState("");
+  const [error, setError] = useState("");
 
-export default function AnnouncementsClient({ organizations, announcements: initialAnnouncements }: Props) {
-    const [announcements, setAnnouncements] = useState(initialAnnouncements);
-    const [form, setForm] = useState<FormState>(defaultFormState);
-    const [editingId, setEditingId] = useState<number | null>(null);
-    const [loading, setLoading] = useState(false);
-    const [deletingId, setDeletingId] = useState<number | null>(null);
-    const [info, setInfo] = useState('');
-    const [error, setError] = useState('');
+  const isEditing = editId !== null;
 
-    const submitLabel = useMemo(() => editingId === null ? 'Send announcement' : 'Save changes', [editingId]);
+  const clearForm = () => {
+    setOrgId("");
+    setTitle("");
+    setMessage("");
+    setEditId(null);
+    setError("");
+    setInfo("");
+  };
 
-    const resetForm = () => {
-        setForm(defaultFormState);
-        setEditingId(null);
-    };
+  const handleEdit = (item: Item) => {
+    // console.log("Edit clicked for item:", item.id);
+    setEditId(item.id);
+    setOrgId(String(item.organization.id));
+    setTitle(item.title);
+    setMessage(item.message);
+    setError("");
+    setInfo("");
+  };
 
-    const startEdit = (announcement: Announcement) => {
-        setEditingId(announcement.id);
-        setForm({
-            organizationId: String(announcement.organization.id),
-            title: announcement.title,
-            message: announcement.message,
-        });
-        setInfo('');
-        setError('');
-    };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title.trim() || !message.trim() || (!isEditing && !orgId)) {
+      setError("Please fill in all required fields.");
+      return;
+    }
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setLoading(true);
-        setInfo('');
-        setError('');
+    setLoading(true);
+    setError("");
+    setInfo("");
 
-        try {
-            const endpoint = editingId === null
-                ? '/api/admin/announcements'
-                : `/api/admin/announcements/${editingId}`;
-            const method = editingId === null ? 'POST' : 'PATCH';
+    try {
+      const url = isEditing
+        ? `/api/admin/announcements/${editId}`
+        : "/api/admin/announcements";
+      const method = isEditing ? "PATCH" : "POST";
 
-            const body = editingId === null
-                ? form
-                : { title: form.title, message: form.message };
+      const payload = isEditing
+        ? { title, message }
+        : { organizationId: orgId, title, message };
 
-            const res = await fetch(endpoint, {
-                method,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(body),
-            });
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-            const data = await res.json();
-            if (!res.ok) {
-                setError(data.error || 'Failed to save announcement.');
-                return;
-            }
+      const data = await res.json();
 
-            if (editingId === null) {
-                setAnnouncements((prev) => [data.announcement, ...prev]);
-                setInfo(`Announcement sent to ${data.sentToUsers ?? 0} users.`);
-            } else {
-                setAnnouncements((prev) => prev.map((item) => item.id === editingId ? data.announcement : item));
-                setInfo('Announcement updated successfully.');
-            }
+      if (!res.ok) {
+        setError(data.error || "Operation failed.");
+        return;
+      }
 
-            resetForm();
-        } catch {
-            setError('Network error. Please try again.');
-        } finally {
-            setLoading(false);
-        }
-    };
+      if (isEditing) {
+        setList((prev) =>
+          prev.map((el) => (el.id === editId ? data.announcement : el)),
+        );
+        setInfo("Announcement updated successfully.");
+      } else {
+        setList((prev) => [data.announcement, ...prev]);
+        setInfo("Announcement sent successfully.");
+      }
 
-    const handleDelete = async (id: number) => {
-        if (!confirm('Delete this announcement? Existing notifications already sent to users will remain.'))
-            return;
+      clearForm();
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        setDeletingId(id);
-        setInfo('');
-        setError('');
-        try {
-            const res = await fetch(`/api/admin/announcements/${id}`, {
-                method: 'DELETE',
-            });
+  const handleDelete = async (id: number) => {
+    if (!window.confirm("Are you sure you want to delete this announcement?"))
+      return;
 
-            const data = await res.json();
-            if (!res.ok) {
-                setError(data.error || 'Failed to delete announcement.');
-                return;
-            }
+    setDelId(id);
+    setError("");
+    setInfo("");
 
-            setAnnouncements((prev) => prev.filter((item) => item.id !== id));
-            setInfo('Announcement deleted.');
+    try {
+      const res = await fetch(`/api/admin/announcements/${id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
 
-            if (editingId === id)
-                resetForm();
-        } catch {
-            setError('Network error. Please try again.');
-        } finally {
-            setDeletingId(null);
-        }
-    };
+      if (!res.ok) {
+        setError(data.error || "Failed to delete.");
+        return;
+      }
 
-    return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white">
-            <header className="border-b border-[#1f1f1f] px-8 py-4 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                    <Link href="/admin/dashboard" className="text-gray-500 hover:text-white text-sm transition-colors">
-                        ← Admin Panel
-                    </Link>
-                    <span className="text-[#333]">/</span>
-                    <span className="text-white font-semibold">Announcements</span>
-                </div>
-            </header>
+      setList((prev) => prev.filter((el) => el.id !== id));
+      setInfo("Announcement deleted.");
+      if (editId === id) clearForm();
+    } catch {
+      setError("Network error.");
+    } finally {
+      setDelId(null);
+    }
+  };
 
-            <main className="max-w-6xl mx-auto px-8 py-10 grid gap-8">
-                <section className="bg-[#111] border border-[#1f1f1f] rounded-2xl p-6">
-                    <h1 className="text-xl font-semibold mb-5">
-                        {editingId === null ? 'New announcement' : 'Edit announcement'}
-                    </h1>
-
-                    {error && (
-                        <div className="mb-4 rounded-lg bg-red-900/30 border border-red-700/60 text-red-300 text-sm px-4 py-3">
-                            {error}
-                        </div>
-                    )}
-
-                    {info && (
-                        <div className="mb-4 rounded-lg bg-green-900/30 border border-green-700/60 text-green-300 text-sm px-4 py-3">
-                            {info}
-                        </div>
-                    )}
-
-                    <form onSubmit={handleSubmit} className="grid gap-4">
-                        <div className="grid gap-2">
-                            <label className="text-sm text-gray-400">Organization</label>
-                            <select
-                                value={form.organizationId}
-                                onChange={(e) => setForm((prev) => ({ ...prev, organizationId: e.target.value }))}
-                                disabled={editingId !== null}
-                                className="bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm disabled:opacity-60"
-                                required
-                            >
-                                <option value="">Select organization</option>
-                                {organizations.map((org) => (
-                                    <option key={org.id} value={org.id}>
-                                        {org.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="grid gap-2">
-                            <label className="text-sm text-gray-400">Title</label>
-                            <input
-                                type="text"
-                                value={form.title}
-                                onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))}
-                                className="bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm"
-                                placeholder="Maintenance update"
-                                required
-                            />
-                        </div>
-
-                        <div className="grid gap-2">
-                            <label className="text-sm text-gray-400">Message</label>
-                            <textarea
-                                value={form.message}
-                                onChange={(e) => setForm((prev) => ({ ...prev, message: e.target.value }))}
-                                className="bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg px-3 py-2 text-sm min-h-32"
-                                placeholder="Badge system will be unavailable from 15:00 to 15:30."
-                                required
-                            />
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className="bg-blue-600 hover:bg-blue-500 disabled:opacity-60 text-white text-sm font-medium rounded-lg px-4 py-2 transition-colors"
-                            >
-                                {loading ? 'Saving...' : submitLabel}
-                            </button>
-                            {editingId !== null && (
-                                <button
-                                    type="button"
-                                    onClick={resetForm}
-                                    className="text-sm border border-[#333] hover:border-[#555] rounded-lg px-4 py-2 transition-colors"
-                                >
-                                    Cancel edit
-                                </button>
-                            )}
-                        </div>
-                    </form>
-                </section>
-
-                <section className="bg-[#111] border border-[#1f1f1f] rounded-2xl overflow-hidden">
-                    <div className="px-5 py-4 border-b border-[#1f1f1f]">
-                        <h2 className="text-lg font-semibold">Announcement history ({announcements.length})</h2>
-                    </div>
-                    <table className="w-full text-sm">
-                        <thead>
-                            <tr className="border-b border-[#1f1f1f]">
-                                <th className="text-left text-gray-500 font-medium px-5 py-3">Title</th>
-                                <th className="text-left text-gray-500 font-medium px-5 py-3">Organization</th>
-                                <th className="text-left text-gray-500 font-medium px-5 py-3">Message</th>
-                                <th className="text-left text-gray-500 font-medium px-5 py-3">Created by</th>
-                                <th className="text-left text-gray-500 font-medium px-5 py-3">Created</th>
-                                <th className="px-5 py-3" />
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {announcements.map((item, idx) => (
-                                <tr
-                                    key={item.id}
-                                    className={idx !== announcements.length - 1 ? 'border-b border-[#1a1a1a]' : ''}
-                                >
-                                    <td className="px-5 py-3 text-white font-medium">{item.title}</td>
-                                    <td className="px-5 py-3 text-gray-300">{item.organization.name}</td>
-                                    <td className="px-5 py-3 text-gray-400 max-w-lg">
-                                        <p className="line-clamp-2">{item.message}</p>
-                                    </td>
-                                    <td className="px-5 py-3 text-gray-400">
-                                        {item.createdBy.firstname} {item.createdBy.lastname}
-                                    </td>
-                                    <td className="px-5 py-3 text-gray-500">
-                                        {new Date(item.createdAt).toLocaleDateString()}
-                                    </td>
-                                    <td className="px-5 py-3">
-                                        <div className="flex items-center justify-end gap-2">
-                                            <button
-                                                onClick={() => startEdit(item)}
-                                                className="text-xs text-gray-300 hover:text-white border border-[#333] hover:border-[#555] rounded-md px-3 py-1 transition-colors"
-                                            >
-                                                Edit
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(item.id)}
-                                                disabled={deletingId === item.id}
-                                                className="text-xs text-red-500 hover:text-red-400 border border-red-900/50 hover:border-red-600/50 rounded-md px-3 py-1 transition-colors disabled:opacity-60"
-                                            >
-                                                {deletingId === item.id ? '...' : 'Delete'}
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                            {announcements.length === 0 && (
-                                <tr>
-                                    <td colSpan={6} className="px-5 py-8 text-center text-gray-600">
-                                        No announcements yet.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </section>
-            </main>
+  return (
+    <div className="min-h-screen bg-gray-950 text-white pb-12">
+      <header className="border-b border-gray-800 bg-gray-950 px-8 py-4 flex items-center justify-between sticky top-0 z-10">
+        <div className="flex items-center gap-2 text-sm font-medium">
+          <Link
+            href="/admin/dashboard"
+            className="text-gray-400 hover:text-white transition-colors flex items-center gap-1"
+          >
+            <ArrowLeft className="w-4 h-4" /> Admin Panel
+          </Link>
+          <span className="text-gray-700">/</span>
+          <span className="text-white">Announcements</span>
         </div>
-    );
+      </header>
+
+      <main className="max-w-6xl mx-auto px-6 mt-10 grid gap-8 lg:grid-cols-12 items-start">
+        <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-24">
+          <div className="flex items-start gap-3">
+            <div className="p-2 bg-green-950/30 rounded-lg border border-green-900/50">
+              <Megaphone className="w-6 h-6 text-green-500" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-white">Announcements</h1>
+              <p className="text-sm text-gray-400">Manage system alerts.</p>
+            </div>
+          </div>
+
+          {error && (
+            <div className="rounded-lg bg-red-950/40 border border-red-800 text-red-400 text-sm px-4 py-3 font-medium">
+              {error}
+            </div>
+          )}
+          {info && (
+            <div className="rounded-lg bg-green-950/40 border border-green-800 text-green-400 text-sm px-4 py-3 font-medium">
+              {info}
+            </div>
+          )}
+
+          <Card className="bg-gray-900 border-gray-800">
+            <form onSubmit={handleSubmit}>
+              <CardHeader className="pb-4 border-b border-gray-800">
+                <CardTitle className="text-gray-200 text-lg font-semibold flex items-center gap-2">
+                  {isEditing ? (
+                    <Pencil className="w-4 h-4 text-green-500" />
+                  ) : (
+                    <Send className="w-4 h-4 text-green-500" />
+                  )}
+                  {isEditing ? "Edit Announcement" : "New Announcement"}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6 space-y-5">
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-gray-400">
+                    Organization
+                  </label>
+                  <Select
+                    value={orgId}
+                    onValueChange={(val) => setOrgId(val)}
+                    disabled={isEditing}
+                  >
+                    <SelectTrigger className="bg-gray-950/50 border-gray-800 text-white focus:ring-green-600 disabled:opacity-50">
+                      <SelectValue placeholder="Select organization" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-900 border-gray-800 text-gray-200">
+                      {organizations.map((org) => (
+                        <SelectItem
+                          key={org.id}
+                          value={org.name}
+                          className=" focus:text-white cursor-pointer"
+                        >
+                          {org.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-gray-400">
+                    Title
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="Maintenance update"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    className="bg-gray-950/50 border-gray-800 text-white focus-visible:ring-green-600"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-gray-400">
+                    Message
+                  </label>
+                  <Textarea
+                    placeholder="System offline..."
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    className="bg-gray-950/50 border-gray-800 text-white focus-visible:ring-green-600 min-h-[120px] resize-none"
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  {isEditing && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={clearForm}
+                      className="w-12 bg-transparent border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white px-0"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  )}
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    className="flex-1 bg-green-700 hover:bg-green-800 text-white gap-2"
+                  >
+                    {loading
+                      ? "Saving..."
+                      : isEditing
+                        ? "Save changes"
+                        : "Send"}
+                  </Button>
+                </div>
+              </CardContent>
+            </form>
+          </Card>
+        </div>
+        <div className="lg:col-span-8">
+          <Card className="bg-gray-900 border-gray-800 overflow-hidden">
+            <CardHeader className="pb-4 border-b border-gray-800 bg-gray-950/20">
+              <CardTitle className="text-gray-200 text-lg font-semibold flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <History className="w-5 h-5 text-green-500" />
+                  History
+                </div>
+                <span className="text-xs font-medium bg-gray-800 text-gray-400 px-2.5 py-0.5 rounded-full">
+                  {list.length} Total
+                </span>
+              </CardTitle>
+            </CardHeader>
+
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader className="bg-gray-950/50">
+                  <TableRow className="border-gray-800 hover:bg-transparent">
+                    <TableHead className="text-gray-400 font-semibold h-12 px-6">
+                      Details
+                    </TableHead>
+                    <TableHead className="text-gray-400 font-semibold h-12">
+                      Organization
+                    </TableHead>
+                    <TableHead className="text-gray-400 font-semibold h-12">
+                      Created
+                    </TableHead>
+                    <TableHead className="text-right h-12 px-6">
+                      Actions
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {list.length === 0 ? (
+                    <TableRow className="border-gray-800 hover:bg-transparent">
+                      <TableCell
+                        colSpan={4}
+                        className="h-32 text-center text-gray-500"
+                      >
+                        No announcements found.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    list.map((item) => (
+                      <TableRow
+                        key={item.id}
+                        className="border-gray-800 hover:bg-gray-800/30 transition-colors"
+                      >
+                        <TableCell className="px-6 py-4 align-top">
+                          <div className="flex flex-col gap-1 max-w-sm">
+                            <span className="font-medium text-white">
+                              {item.title}
+                            </span>
+                            <span className="text-gray-400 text-xs line-clamp-2 leading-relaxed">
+                              {item.message}
+                            </span>
+                            <span className="text-gray-600 text-[10px] uppercase tracking-wider mt-1">
+                              By {item.createdBy.firstname}{" "}
+                              {item.createdBy.lastname}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-4 align-top">
+                          <span className="inline-flex items-center text-xs bg-gray-800 text-gray-300 border border-gray-700 rounded-md px-2.5 py-1">
+                            {item.organization.name}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-gray-400 text-sm py-4 align-top whitespace-nowrap">
+                          {new Date(item.createdAt).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell className="px-6 py-4 align-top">
+                          <div className="flex items-center justify-end gap-2">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="icon"
+                              onClick={() => handleEdit(item)}
+                              className="h-8 w-8 bg-transparent border-gray-700 text-gray-300 hover:text-white hover:bg-gray-800"
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="icon"
+                              onClick={() => handleDelete(item.id)}
+                              disabled={delId === item.id}
+                              className="h-8 w-8 bg-red-900/80 hover:bg-red-900 text-red-200 border border-red-800"
+                            >
+                              {delId === item.id ? (
+                                "..."
+                              ) : (
+                                <Trash2 className="w-3.5 h-3.5" />
+                              )}
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </Card>
+        </div>
+      </main>
+    </div>
+  );
 }

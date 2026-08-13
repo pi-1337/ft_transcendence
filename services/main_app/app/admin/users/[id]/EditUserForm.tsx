@@ -3,6 +3,28 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { 
+    UserCog, 
+    ArrowLeft, 
+    Save, 
+    IdCard, 
+    Plus, 
+    Pencil, 
+    Trash2, 
+    X
+} from 'lucide-react';
+
+// Shadcn UI Imports
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type Badge = {
     number: string;
@@ -33,44 +55,51 @@ type Props = {
 
 export default function EditUserForm({ user, isSelf }: Props) {
     const router = useRouter();
+    
+    // User Form State
     const [firstname, setFirstname] = useState(user.firstname);
     const [lastname, setLastname] = useState(user.lastname);
     const [email, setEmail] = useState(user.email);
     const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber);
     const [role, setRole] = useState<'USER' | 'ADMIN'>(user.role as 'USER' | 'ADMIN');
+    
     const [errors, setErrors] = useState<FieldErrors>({});
     const [serverError, setServerError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    // Badge state
+    // Badge State
     const [badge, setBadge] = useState<Badge | null>(user.badge);
     const [badgeNumber, setBadgeNumber] = useState('');
     const [badgeError, setBadgeError] = useState('');
     const [badgeLoading, setBadgeLoading] = useState(false);
+    
     const [editingBadge, setEditingBadge] = useState(false);
     const [editBadgeNumber, setEditBadgeNumber] = useState('');
 
-    const validate = (): FieldErrors => {
+    // ─── 1. Refactored User Functions ──────────────────────────────────────────
+    const validateForm = (): boolean => {
         const e: FieldErrors = {};
+        let isValid = true;
+        
         if (!firstname.trim()) e.firstname = 'First name is required.';
         if (!lastname.trim()) e.lastname = 'Last name is required.';
+        
         if (!email) e.email = 'Email is required.';
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = 'Invalid email format.';
+        
         if (!phoneNumber) e.phoneNumber = 'Phone number is required.';
         else if (!/^\+[1-9]\d{7,14}$/.test(phoneNumber)) e.phoneNumber = 'Must start with + and country code.';
-        return e;
+        
+        if (Object.keys(e).length > 0) isValid = false;
+        setErrors(e);
+        return isValid;
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setServerError('');
 
-        const validationErrors = validate();
-        if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
-            return;
-        }
-        setErrors({});
+        if (!validateForm()) return;
 
         setLoading(true);
         try {
@@ -80,8 +109,9 @@ export default function EditUserForm({ user, isSelf }: Props) {
                 body: JSON.stringify({ firstname, lastname, email, phoneNumber, role }),
             });
             const data = await res.json();
+            
             if (!res.ok) {
-                setServerError(data.error || 'Something went wrong.');
+                setServerError(data.error || 'Failed to update user.');
                 return;
             }
             router.push('/admin/users');
@@ -92,14 +122,13 @@ export default function EditUserForm({ user, isSelf }: Props) {
         }
     };
 
-    // ── Badge handlers ─────────────────────────────────────────
+    // ─── 2. Refactored Badge Functions ─────────────────────────────────────────
     const handleAddBadge = async () => {
-        if (!badgeNumber.trim()) {
-            setBadgeError('Badge number is required.');
-            return;
-        }
+        if (!badgeNumber.trim()) return setBadgeError('Badge number is required.');
+        
         setBadgeError('');
         setBadgeLoading(true);
+        
         try {
             const res = await fetch(`/api/admin/users/${user.id}/badges`, {
                 method: 'POST',
@@ -107,12 +136,69 @@ export default function EditUserForm({ user, isSelf }: Props) {
                 body: JSON.stringify({ number: badgeNumber.trim() }),
             });
             const data = await res.json();
+            
             if (!res.ok) {
                 setBadgeError(data.error || 'Failed to add badge.');
                 return;
             }
+            
             setBadge(data.badge);
             setBadgeNumber('');
+        } catch {
+            setBadgeError('Network error. Please try again.');
+        } finally {
+            setBadgeLoading(false);
+        }
+    };
+
+    const handleSaveBadge = async () => {
+        if (!editBadgeNumber.trim()) return setBadgeError('Badge number is required.');
+        
+        setBadgeError('');
+        setBadgeLoading(true);
+        
+        try {
+            const res = await fetch(`/api/admin/users/${user.id}/badges`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ number: editBadgeNumber.trim() }),
+            });
+            const data = await res.json();
+            
+            if (!res.ok) {
+                setBadgeError(data.error || 'Failed to edit badge.');
+                return;
+            }
+            
+            setBadge(data.badge);
+            handleCancelEditBadge();
+        } catch {
+            setBadgeError('Network error. Please try again.');
+        } finally {
+            setBadgeLoading(false);
+        }
+    };
+
+    const handleDeleteBadge = async () => {
+        if (!window.confirm('Are you sure you want to remove this badge?')) return;
+        
+        setBadgeError('');
+        setBadgeLoading(true);
+        
+        try {
+            const res = await fetch(`/api/admin/users/${user.id}/badges`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+            });
+            const data = await res.json();
+            
+            if (!res.ok) {
+                setBadgeError(data.error || 'Failed to delete badge.');
+                return;
+            }
+            
+            setBadge(null);
+            handleCancelEditBadge();
         } catch {
             setBadgeError('Network error. Please try again.');
         } finally {
@@ -134,243 +220,227 @@ export default function EditUserForm({ user, isSelf }: Props) {
         setBadgeError('');
     };
 
-    const handleSaveBadge = async () => {
-        if (!editBadgeNumber.trim()) {
-            setBadgeError('Badge number is required.');
-            return;
-        }
-        setBadgeError('');
-        setBadgeLoading(true);
-        try {
-            const res = await fetch(`/api/admin/users/${user.id}/badges`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ number: editBadgeNumber.trim() }),
-            });
-            const data = await res.json();
-            if (!res.ok) {
-                setBadgeError(data.error || 'Failed to edit badge.');
-                return;
-            }
-            setBadge(data.badge);
-            handleCancelEditBadge();
-        } catch {
-            setBadgeError('Network error. Please try again.');
-        } finally {
-            setBadgeLoading(false);
-        }
-    };
-
-    const handleDeleteBadge = async () => {
-        setBadgeError('');
-        setBadgeLoading(true);
-        try {
-            const res = await fetch(`/api/admin/users/${user.id}/badges`, {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-            });
-            const data = await res.json();
-            if (!res.ok) {
-                setBadgeError(data.error || 'Failed to delete badge.');
-                return;
-            }
-            setBadge(null);
-            handleCancelEditBadge();
-        } catch {
-            setBadgeError('Network error. Please try again.');
-        } finally {
-            setBadgeLoading(false);
-        }
-    };
-
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white">
-            <header className="border-b border-[#1f1f1f] px-8 py-4 flex items-center gap-4">
-                <Link href="/admin/users" className="text-gray-500 hover:text-white text-sm transition-colors">
-                    ← Users
+        <div className="min-h-screen bg-gray-950 text-white pb-12">
+            {/* Top bar */}
+            <header className="border-b border-gray-800 bg-gray-950 px-8 py-4 flex items-center gap-4 sticky top-0 z-10">
+                <Link href="/admin/users" className="text-gray-400 hover:text-white text-sm font-medium transition-colors flex items-center gap-1">
+                    <ArrowLeft className="w-4 h-4" /> Users
                 </Link>
-                <span className="text-[#333]">/</span>
-                <span className="text-white font-semibold">Edit user</span>
+                <span className="text-gray-700">/</span>
+                <span className="text-white text-sm font-medium">Edit user</span>
                 {isSelf && (
-                    <span className="text-xs text-gray-500 border border-[#333] rounded-full px-2.5 py-0.5">you</span>
+                    <span className="text-[10px] uppercase tracking-wider bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full font-bold ml-2">
+                        You
+                    </span>
                 )}
             </header>
 
-            <main className="max-w-lg mx-auto px-8 py-12">
-                <h1 className="text-xl font-semibold mb-2">
-                    {user.firstname} {user.lastname}
-                </h1>
-                <p className="text-gray-500 text-sm mb-8">{user.email}</p>
+            <main className="max-w-2xl mx-auto px-6 mt-10 space-y-6">
+                
+                {/* Header Section */}
+                <div className="flex items-start gap-3">
+                    <div className="p-2 bg-green-950/30 rounded-lg border border-green-900/50">
+                        <UserCog className="w-6 h-6 text-green-500" />
+                    </div>
+                    <div>
+                        <h1 className="text-2xl font-bold text-white">{user.firstname} {user.lastname}</h1>
+                        <p className="text-sm text-gray-400">{user.email}</p>
+                    </div>
+                </div>
 
                 {serverError && (
-                    <div className="mb-6 rounded-lg bg-red-900/40 border border-red-600 text-red-400 text-sm px-4 py-3">
+                    <div className="rounded-lg bg-red-950/40 border border-red-800 text-red-400 text-sm px-4 py-3 font-medium">
                         {serverError}
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-                    <div className="flex gap-3">
-                        <div className="flex flex-col gap-1 flex-1">
-                            <label className="text-gray-400 text-sm">First name</label>
-                            <input
-                                type="text"
-                                value={firstname}
-                                onChange={(e) => setFirstname(e.target.value)}
-                                className="bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
-                            />
-                            {errors.firstname && <span className="text-red-400 text-xs">{errors.firstname}</span>}
-                        </div>
-                        <div className="flex flex-col gap-1 flex-1">
-                            <label className="text-gray-400 text-sm">Last name</label>
-                            <input
-                                type="text"
-                                value={lastname}
-                                onChange={(e) => setLastname(e.target.value)}
-                                className="bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
-                            />
-                            {errors.lastname && <span className="text-red-400 text-xs">{errors.lastname}</span>}
-                        </div>
-                    </div>
+                {/* Main User Info Form */}
+                <Card className="bg-gray-900 border-gray-800">
+                    <form onSubmit={handleSubmit} noValidate>
+                        <CardHeader className="pb-4 border-b border-gray-800">
+                            <CardTitle className="text-gray-200 text-lg font-semibold">User Information</CardTitle>
+                        </CardHeader>
+                        <CardContent className="pt-6 space-y-5">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                <div className="space-y-1.5">
+                                    <label className="text-sm font-medium text-gray-400">First name</label>
+                                    <Input
+                                        type="text"
+                                        value={firstname}
+                                        onChange={(e) => setFirstname(e.target.value)}
+                                        className={`bg-gray-950/50 border-gray-800 text-white focus-visible:ring-green-600 ${errors.firstname ? 'border-red-500 focus-visible:ring-red-600' : ''}`}
+                                    />
+                                    {errors.firstname && <span className="text-red-400 text-xs font-medium">{errors.firstname}</span>}
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-sm font-medium text-gray-400">Last name</label>
+                                    <Input
+                                        type="text"
+                                        value={lastname}
+                                        onChange={(e) => setLastname(e.target.value)}
+                                        className={`bg-gray-950/50 border-gray-800 text-white focus-visible:ring-green-600 ${errors.lastname ? 'border-red-500 focus-visible:ring-red-600' : ''}`}
+                                    />
+                                    {errors.lastname && <span className="text-red-400 text-xs font-medium">{errors.lastname}</span>}
+                                </div>
+                            </div>
 
-                    <div className="flex flex-col gap-1">
-                        <label className="text-gray-400 text-sm">Email</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
-                        />
-                        {errors.email && <span className="text-red-400 text-xs">{errors.email}</span>}
-                    </div>
+                            <div className="space-y-1.5">
+                                <label className="text-sm font-medium text-gray-400">Email</label>
+                                <Input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className={`bg-gray-950/50 border-gray-800 text-white focus-visible:ring-green-600 ${errors.email ? 'border-red-500 focus-visible:ring-red-600' : ''}`}
+                                />
+                                {errors.email && <span className="text-red-400 text-xs font-medium">{errors.email}</span>}
+                            </div>
 
-                    <div className="flex flex-col gap-1">
-                        <label className="text-gray-400 text-sm">Phone number</label>
-                        <input
-                            type="tel"
-                            value={phoneNumber}
-                            onChange={(e) => setPhoneNumber(e.target.value)}
-                            className="bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
-                        />
-                        {errors.phoneNumber && <span className="text-red-400 text-xs">{errors.phoneNumber}</span>}
-                    </div>
+                            <div className="space-y-1.5">
+                                <label className="text-sm font-medium text-gray-400">Phone number</label>
+                                <Input
+                                    type="tel"
+                                    value={phoneNumber}
+                                    onChange={(e) => setPhoneNumber(e.target.value)}
+                                    className={`bg-gray-950/50 border-gray-800 text-white font-mono focus-visible:ring-green-600 ${errors.phoneNumber ? 'border-red-500 focus-visible:ring-red-600' : ''}`}
+                                />
+                                {errors.phoneNumber && <span className="text-red-400 text-xs font-medium">{errors.phoneNumber}</span>}
+                            </div>
 
-                    <div className="flex flex-col gap-1">
-                        <label className="text-gray-400 text-sm">Role</label>
-                        <select
-                            value={role}
-                            onChange={(e) => setRole(e.target.value as 'USER' | 'ADMIN')}
-                            disabled={isSelf}
-                            className="bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <option value="USER">USER</option>
-                            <option value="ADMIN">ADMIN</option>
-                        </select>
-                        {isSelf && (
-                            <span className="text-gray-600 text-xs">You cannot change your own role.</span>
+                            <div className="space-y-1.5">
+                                <label className="text-sm font-medium text-gray-400">Role</label>
+                                <Select 
+                                    value={role} 
+                                    onValueChange={(val) => setRole(val as 'USER' | 'ADMIN')}
+                                    disabled={isSelf}
+                                >
+                                    <SelectTrigger className="bg-gray-950/50 border-gray-800 text-white focus:ring-green-600 disabled:opacity-50">
+                                        <SelectValue placeholder="Select a role" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-gray-900 border-gray-800 text-gray-200">
+                                        <SelectItem value="USER" className="focus:bg-gray-800 focus:text-white cursor-pointer">USER</SelectItem>
+                                        <SelectItem value="ADMIN" className="focus:bg-gray-800 focus:text-white cursor-pointer text-green-400">ADMIN</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                {isSelf && (
+                                    <p className="text-yellow-500/80 text-xs font-medium mt-1">You cannot change your own role.</p>
+                                )}
+                            </div>
+                        </CardContent>
+
+                        <CardFooter className="bg-gray-950/50 border-t border-gray-800 px-6 py-4 flex gap-3">
+                            <Link href="/admin/users" className="flex-1">
+                                <Button type="button" variant="outline" className="w-full bg-transparent border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white">
+                                    Cancel
+                                </Button>
+                            </Link>
+                            <Button type="submit" disabled={loading} className="flex-1 bg-green-700 hover:bg-green-800 text-white gap-2">
+                                {loading ? 'Saving...' : <><Save className="w-4 h-4" /> Save changes</>}
+                            </Button>
+                        </CardFooter>
+                    </form>
+                </Card>
+
+                {/* Badge Management Section */}
+                <Card className="bg-gray-900 border-gray-800">
+                    <CardHeader className="pb-4 border-b border-gray-800 flex flex-row items-center justify-between">
+                        <CardTitle className="text-gray-200 text-lg font-semibold flex items-center gap-2">
+                            <IdCard className="w-5 h-5 text-green-500" />
+                            Assigned Badge
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-6">
+                        {badgeError && (
+                            <div className="mb-4 rounded-lg bg-red-950/40 border border-red-800 text-red-400 text-sm px-4 py-2 font-medium">
+                                {badgeError}
+                            </div>
                         )}
-                    </div>
 
-                    {/* ── Badge section ─────────────────────────────────── */}
-                    <div className="border-t border-[#1f1f1f] pt-4">
-                        <label className="text-gray-400 text-xs uppercase tracking-widest mb-3 block">Badge</label>
-                        
                         {badge ? (
                             <div className="flex flex-col gap-3">
                                 {editingBadge ? (
-                                    <div className="flex gap-2">
-                                        <input
+                                    <div className="flex gap-2 items-center">
+                                        <Input
                                             type="text"
                                             value={editBadgeNumber}
                                             onChange={(e) => setEditBadgeNumber(e.target.value)}
-                                            className="flex-1 bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
-                                            placeholder="Badge number"
+                                            className="flex-1 bg-gray-950/50 border-gray-800 text-white font-mono focus-visible:ring-green-600"
+                                            placeholder="Enter new badge number"
                                         />
-                                        <button
-                                            onClick={handleSaveBadge}
+                                        <Button 
+                                            type="button" // DAROURI bach may-submitich l-form l-kbir
+                                            onClick={handleSaveBadge} 
                                             disabled={badgeLoading}
-                                            className="text-xs text-green-400 hover:text-green-300 border border-green-900/50 hover:border-green-600/50 rounded-md px-3 py-2 transition-colors disabled:opacity-50"
+                                            className="bg-green-700 hover:bg-green-800 text-white px-4"
                                         >
-                                            {badgeLoading ? '…' : 'Save'}
-                                        </button>
-                                        <button
-                                            onClick={handleCancelEditBadge}
+                                            {badgeLoading ? '...' : <Save className="w-4 h-4" />}
+                                        </Button>
+                                        <Button 
+                                            type="button"
+                                            variant="outline"
+                                            onClick={handleCancelEditBadge} 
                                             disabled={badgeLoading}
-                                            className="text-xs text-gray-300 hover:text-white border border-[#333] rounded-md px-3 py-2 transition-colors disabled:opacity-50"
+                                            className="bg-transparent border-gray-700 text-gray-300 hover:bg-gray-800 px-4"
                                         >
-                                            Cancel
-                                        </button>
+                                            <X className="w-4 h-4" />
+                                        </Button>
                                     </div>
                                 ) : (
-                                    <div className="flex items-center justify-between p-3 bg-[#1a1a1a] border border-[#333] rounded-lg">
+                                    <div className="flex items-center justify-between p-4 bg-gray-950/50 border border-gray-800 rounded-lg">
                                         <div>
-                                            <p className="text-white text-sm font-medium">{badge.number}</p>
-                                            <p className="text-gray-500 text-xs">
-                                                Created {new Date(badge.createdAt).toLocaleDateString()}
+                                            <p className="text-white text-sm font-mono font-bold text-green-400">{badge.number}</p>
+                                            <p className="text-gray-500 text-xs mt-1">
+                                                Assigned on {new Date(badge.createdAt).toLocaleDateString()}
                                             </p>
                                         </div>
                                         <div className="flex gap-2">
-                                            <button
+                                            <Button 
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
                                                 onClick={handleStartEditBadge}
-                                                className="text-xs text-blue-400 hover:text-blue-300 border border-blue-900/50 hover:border-blue-600/50 rounded-md px-3 py-1 transition-colors"
+                                                className="bg-gray-900 border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white h-8"
                                             >
-                                                Edit
-                                            </button>
-                                            <button
+                                                <Pencil className="w-3.5 h-3.5 mr-1.5" /> Edit
+                                            </Button>
+                                            <Button 
+                                                type="button"
+                                                variant="destructive"
+                                                size="sm"
                                                 onClick={handleDeleteBadge}
                                                 disabled={badgeLoading}
-                                                className="text-xs text-red-500 hover:text-red-400 border border-red-900/50 hover:border-red-600/50 rounded-md px-3 py-1 transition-colors disabled:opacity-50"
+                                                className="bg-red-900/80 hover:bg-red-900 text-red-200 border border-red-800 h-8"
                                             >
-                                                {badgeLoading ? '…' : 'Remove'}
-                                            </button>
+                                                {badgeLoading ? '...' : <><Trash2 className="w-3.5 h-3.5 mr-1.5" /> Remove</>}
+                                            </Button>
                                         </div>
                                     </div>
                                 )}
-                                {badgeError && (
-                                    <p className="text-red-400 text-xs px-1">{badgeError}</p>
-                                )}
                             </div>
                         ) : (
-                            <div className="flex flex-col gap-2">
-                                <p className="text-gray-500 text-xs mb-2">No badge assigned</p>
+                            <div className="flex flex-col gap-3">
+                                <p className="text-gray-500 text-sm">This user currently has no badge assigned.</p>
                                 <div className="flex gap-2">
-                                    <input
+                                    <Input
                                         type="text"
                                         value={badgeNumber}
                                         onChange={(e) => setBadgeNumber(e.target.value)}
-                                        placeholder="Badge number"
-                                        className="flex-1 bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-600"
+                                        placeholder="Enter badge number..."
+                                        className="flex-1 bg-gray-950/50 border-gray-800 text-white font-mono focus-visible:ring-green-600"
                                     />
-                                    <button
+                                    <Button 
+                                        type="button"
                                         onClick={handleAddBadge}
                                         disabled={badgeLoading}
-                                        className="bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 disabled:cursor-not-allowed text-white rounded-lg px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap"
+                                        className="bg-gray-800 hover:bg-gray-700 text-white border border-gray-700 whitespace-nowrap"
                                     >
-                                        {badgeLoading ? '…' : 'Add Badge'}
-                                    </button>
+                                        {badgeLoading ? '...' : <><Plus className="w-4 h-4 mr-1.5" /> Add Badge</>}
+                                    </Button>
                                 </div>
-                                {badgeError && (
-                                    <p className="text-red-400 text-xs px-1">{badgeError}</p>
-                                )}
                             </div>
                         )}
-                    </div>
-
-                    <div className="flex gap-3 mt-2">
-                        <Link
-                            href="/admin/users"
-                            className="flex-1 text-center border border-[#333] text-gray-400 hover:text-white hover:border-[#555] rounded-lg py-2.5 text-sm transition-colors"
-                        >
-                            Cancel
-                        </Link>
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="flex-1 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 disabled:cursor-not-allowed text-white rounded-lg py-2.5 text-sm font-medium transition-colors"
-                        >
-                            {loading ? 'Saving…' : 'Save changes'}
-                        </button>
-                    </div>
-                </form>
+                    </CardContent>
+                </Card>
             </main>
         </div>
     );

@@ -69,6 +69,7 @@ model Notification {
 	createdAt 		DateTime 	@default(now())
 }
 
+// TODO review table, some unnecessary things !!
 model Organization {
 	id				Int			@id @default(autoincrement())
 

@@ -39,24 +39,6 @@ services:
       - "3002:3002"
     env_file: ./services/main_app/.env
 
-  public_api:
-    build: ./services/public_api
-    image: public_api:ft_transcendence
-    container_name: public_api
-    networks:
-      - my_network
-    depends_on:
-      - mariadb
-
-  # mariadb:
-  #   build: ./services/mariadb
-  #   image: mariadb:ft_transcendence
-  #   container_name: mariadb
-  #   networks:
-  #     - my_network
-  #   volumes:
-  #     - db:/var/lib/mysql
-
   avatar_server:
     build: ./services/avatar_server
     image: avatar_server:ft_transcendence

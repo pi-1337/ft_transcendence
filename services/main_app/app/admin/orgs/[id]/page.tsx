@@ -7,16 +7,16 @@ type Params = { params: Promise<{ id: string }> };
 
 export default async function EditOrgPage({ params }: Params) {
     const session = await getSession();
-
-    if (!session)
-        redirect('/auth/login');
-    if (session.role !== 'ADMIN')
+    if (!session || session.role !== 'ADMIN') {
         redirect('/dashboard');
+    }
 
-    const { id: rawId } = await params;
-    const orgId = parseInt(rawId);
-    if (isNaN(orgId))
+    const { id } = await params;
+    const orgId = parseInt(id, 10);
+    
+    if (isNaN(orgId)) {
         redirect('/admin/orgs');
+    }
 
     const org = await prisma.organization.findUnique({
         where: { id: orgId },
@@ -30,8 +30,9 @@ export default async function EditOrgPage({ params }: Params) {
         },
     });
 
-    if (!org)
+    if (!org) {
         redirect('/admin/orgs');
+    }
 
     return <EditOrgForm org={org} />;
 }

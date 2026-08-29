@@ -4,15 +4,19 @@ import TwoFactorClient from "./client";
 
 export default async function TwoFactorPage() {
     const session = await getSession();
+    
     if (session) {
-        if (session.role === 'ADMIN')
+        if (session.role === 'ADMIN') {
             redirect('/admin/dashboard');
+        }
         redirect('/dashboard');
     }
 
     const pending = await getPendingTwoFactorSession();
-    if (!pending)
+    
+    if (!pending) {
         redirect('/auth/login');
+    }
 
     return <TwoFactorClient />;
 }

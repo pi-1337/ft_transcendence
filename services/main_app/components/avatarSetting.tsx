@@ -1,103 +1,101 @@
 'use client'
 
+import { useState, useRef } from "react";
 import { changeAvatar } from "@/lib/changeAvatar";
-import { Camera } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
-
+import { Camera, AlertCircle, CheckCircle2, Upload } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export default function AvatarSetting({ initialAvatar }: { initialAvatar: string }) {
-
-    const [avatar, setAvatar] = useState(initialAvatar)
+    const [avatar, setAvatar] = useState(initialAvatar);
     const [saved, setSaved] = useState(false);
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const changeAvatarWrapper = async (formdata: FormData) => {
-        const {
-            success,
-            error,
-            avatarLink
-        }: {
-            success: boolean;
-            error: string;
-            avatarLink: string | null;
-        } = await changeAvatar(formdata);
+    const handleAvatarChange = async (formData: FormData) => {
+        setLoading(true);
+        setError("");
+        setSaved(false);
 
-        setSaved(success);
-        if (success)
-            setAvatar(avatarLink as string)
-        setError(error);
+        try {
+            const { success, error: apiError, avatarLink } = await changeAvatar(formData);
+
+            if (success && avatarLink) {
+                setAvatar(avatarLink);
+                setSaved(true);
+                setTimeout(() => setSaved(false), 3000);
+                
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = "";
+                }
+            } else {
+                setError(apiError || "Failed to upload avatar.");
+            }
+        } catch (err) {
+            setError("Network error. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     };
 
-
     return (
-        <>
-            {saved && (
-                <div className="mb-6 rounded-lg bg-green-900/40 border border-green-600 text-green-400 text-sm px-4 py-3">
-                    Settings saved successfully!
-                </div>
-            )}
-            {error !== "" && (
-                <div className="mb-6 rounded-lg bg-red-900/40 border border-red-600 text-red-400 text-sm px-4 py-3">
-                    {error}
-                </div>
-            )}
+        <Card className="bg-gray-900 border-gray-800 mb-8">
+            <CardHeader className="pb-4 border-b border-gray-800">
+                <CardTitle className="text-gray-200 text-lg font-semibold flex items-center gap-2">
+                    <Camera className="w-4 h-4 text-green-500" /> Profile Picture
+                </CardTitle>
+            </CardHeader>
+            
+            <CardContent className="pt-6">
+                {saved && (
+                    <div className="mb-6 rounded-lg bg-green-950/40 border border-green-800 text-green-400 text-sm px-4 py-3 font-medium flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4" /> Photo updated successfully!
+                    </div>
+                )}
+                {error && (
+                    <div className="mb-6 rounded-lg bg-red-950/40 border border-red-800 text-red-400 text-sm px-4 py-3 font-medium flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4" /> {error}
+                    </div>
+                )}
 
-            <form action={changeAvatarWrapper} className="space-y-6">
-                <div className="bg-[#0b1120]/50 border border-gray-800 rounded-[2rem] p-8 relative overflow-hidden group">
-                    <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-500/5 blur-[80px] rounded-full pointer-events-none" />
-
-                    <h2 className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-8 flex items-center gap-2">
-                        <Camera className="w-3.5 h-3.5" />
-                        Profile Picture
-                    </h2>
-
-                    <div className="flex flex-col sm:flex-row items-center gap-10">
-                        <div className="relative group">
-                            <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-gray-800 shadow-2xl relative">
-                                <img
-                                    src={avatar}
-                                    alt="profile avatar"
-                                    className="object-cover group-hover:scale-110 transition-transform duration-500 h-full"
-                                />
-                            </div>
-                            <div className="absolute inset-0 bg-indigo-500/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
-                                <Camera className="w-8 h-8 text-white" />
-                            </div>
+                <form action={handleAvatarChange} className="flex flex-col sm:flex-row items-center gap-8">
+                    <div className="relative group shrink-0">
+                        <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-gray-800 bg-gray-950 shadow-xl relative">
+                            <img
+                                src={avatar}
+                                alt="profile avatar"
+                                className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+                            />
                         </div>
-
-                        <div className="flex-1 space-y-4 w-full">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-400 ml-1">
-                                    Upload new avatar
-                                </label>
-                                <input
-                                    type="file"
-                                    name="file"
-                                    className="w-full bg-gray-900/50 border border-gray-800 rounded-xl px-4 py-3 text-sm text-gray-400 file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-indigo-500/10 file:text-indigo-400 hover:file:bg-indigo-500/20 transition-all cursor-pointer"
-                                />
-                            </div>
-
-                            <div className="flex gap-4 pt-2">
-                                <button
-                                    type="submit"
-                                    className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl px-8 py-3.5 transition-all shadow-xl shadow-indigo-500/20"
-                                >
-                                    <Camera className="w-4 h-4" />
-                                    Update Photo
-                                </button>
-                                <Link
-                                    href="/dashboard"
-                                    className="flex items-center gap-2 bg-gray-800/50 hover:bg-gray-800 text-white font-bold rounded-xl px-8 py-3.5 border border-gray-700 transition-all"
-                                >
-                                    Cancel
-                                </Link>
-                            </div>
+                        <div className="absolute inset-0 bg-gray-950/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[1px] pointer-events-none">
+                            <Camera className="w-8 h-8 text-white/80" />
                         </div>
                     </div>
-                </div>
-            </form>
-        </>
+                    <div className="flex-1 space-y-4 w-full">
+                        <div className="space-y-1.5">
+                            <label className="text-sm font-medium text-gray-400">Upload new avatar</label>
+                            <input
+                                type="file"
+                                name="file"
+                                accept="image/*"
+                                ref={fileInputRef}
+                                className="w-full bg-gray-950/50 border border-gray-800 rounded-xl px-4 py-2.5 text-sm text-gray-400 
+                                file:mr-4 file:py-1.5 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold 
+                                file:bg-gray-800 file:text-gray-300 hover:file:bg-gray-700 hover:file:text-white transition-all cursor-pointer focus:outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600"
+                            />
+                        </div>
 
+                        <Button 
+                            type="submit" 
+                            disabled={loading}
+                            className="bg-green-700 hover:bg-green-800 text-white w-full sm:w-auto gap-2"
+                        >
+                            {loading ? "Uploading..." : <><Upload className="w-4 h-4" /> Update Photo</>}
+                        </Button>
+                    </div>
+                </form>
+            </CardContent>
+        </Card>
     );
 }

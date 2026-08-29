@@ -29,6 +29,12 @@ services:
     volumes:
       - avatar:/app/public/avatars
     env_file: ./services/main_app/.env
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z 127.0.0.1 3000"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 20s
 
   reverse_proxy:
     build: ./services/reverse_proxy
@@ -38,6 +44,11 @@ services:
       - "3000:3000"
       - "3002:3002"
     env_file: ./services/main_app/.env
+    depends_on:
+      main_app:
+        condition: service_healthy
+    networks:
+      - my_network
 
   avatar_server:
     build: ./services/avatar_server

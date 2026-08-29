@@ -55,13 +55,6 @@ export default function AdminDashboard({
       action: "Manage Users",
     },
     {
-      title: "Organizations",
-      description: "View general organizational activity and metrics",
-      link: "/organizations",
-      icon: Building2,
-      action: "See Organizations",
-    },
-    {
       title: "System organizations",
       description: "Manage core system organizational structures",
       link: "/admin/orgs",

@@ -8,15 +8,16 @@ type Params = { params: Promise<{ id: string }> };
 export default async function EditReaderPage({ params }: Params) {
     const session = await getSession();
 
-    if (!session)
-        redirect('/auth/login');
-    if (session.role !== 'ADMIN')
+    if (!session || session.role !== 'ADMIN') {
         redirect('/dashboard');
+    }
 
-    const { id: rawId } = await params;
-    const readerId = parseInt(rawId);
-    if (isNaN(readerId))
+    const { id } = await params;
+    const readerId = parseInt(id, 10);
+    
+    if (isNaN(readerId)) {
         redirect('/admin/rfcReaders');
+    }
 
     const [reader, organizations] = await Promise.all([
         prisma.rfidReaders.findUnique({
@@ -29,8 +30,9 @@ export default async function EditReaderPage({ params }: Params) {
         }),
     ]);
 
-    if (!reader)
+    if (!reader) {
         redirect('/admin/rfcReaders');
+    }
 
     return <EditReaderForm reader={reader} organizations={organizations} />;
 }

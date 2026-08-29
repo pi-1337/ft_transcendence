@@ -6,10 +6,9 @@ import OrgsTable from "./OrgsTable";
 export default async function AdminOrgsPage() {
     const session = await getSession();
 
-    if (!session)
-        redirect('/auth/login');
-    if (session.role !== 'ADMIN')
+    if (!session || session.role !== 'ADMIN') {
         redirect('/dashboard');
+    }
 
     const orgs = await prisma.organization.findMany({
         select: {

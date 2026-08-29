@@ -32,6 +32,13 @@ export async function GET(req: NextRequest) {
 
         const { email, first_name, last_name, login } = user;
 
+        if (!email || !first_name || !last_name || !login) {
+            return NextResponse.json({
+                status: 500,
+                error: "Invalid code !"
+            });
+        }
+
 
         // TODO ISSA --> password required for user to do 2fa
 

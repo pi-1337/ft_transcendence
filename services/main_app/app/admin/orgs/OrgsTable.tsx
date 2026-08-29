@@ -101,7 +101,7 @@ export default function OrgsTable({ orgs }: Props) {
                       colSpan={6}
                       className="h-24 text-center text-gray-500"
                     >
-                      No organizations found[cite: 12].
+                      No organizations found.
                     </TableCell>
                   </TableRow>
                 ) : (

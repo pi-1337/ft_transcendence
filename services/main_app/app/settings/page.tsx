@@ -1,20 +1,17 @@
-import { prisma } from "@/lib/prisma";
-import { getSession } from "@/lib/sessionManage";
 import { redirect } from "next/navigation";
+import { getSession } from "@/lib/sessionManage";
+import { prisma } from "@/lib/prisma";
 import Settings from "./client";
 
-export default async function ServerSide() {
+export default async function SettingsPage() {
     const session = await getSession();
 
-    if (!session)
+    if (!session) {
         redirect('/auth/login');
+    }
 
-    // if (session.role === 'ADMIN')
-    //     redirect('/admin/dashboard');
-
-    const { id } = session;
     const user = await prisma.user.findUnique({
-        where: { id },
+        where: { id: session.id },
         select: {
             id: true,
             firstname: true,
@@ -28,12 +25,9 @@ export default async function ServerSide() {
         }
     });
 
-    if (!user)
+    if (!user) {
         redirect('/auth/login');
+    }
 
-    return (
-        <Settings
-            user={user}
-        />
-    );
+    return <Settings user={user} />;
 }

@@ -182,7 +182,7 @@ export default function Dashboard({
               </Link>
             </div>
 
-            <div className="flex items-center justify-between p-4 rounded-lg bg-gray-950/50 border border-gray-800 hover:border-gray-700 transition-colors">
+            {/* <div className="flex items-center justify-between p-4 rounded-lg bg-gray-950/50 border border-gray-800 hover:border-gray-700 transition-colors">
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-white">
                   Create a new badge
@@ -196,7 +196,7 @@ export default function Dashboard({
                   Create
                 </Button>
               </Link>
-            </div>
+            </div> */}
 
             <div className="flex items-center justify-between p-4 rounded-lg bg-gray-950/50 border border-gray-800 hover:border-gray-700 transition-colors">
               <div className="flex flex-col">

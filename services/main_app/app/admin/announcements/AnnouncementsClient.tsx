@@ -242,7 +242,7 @@ export default function AnnouncementsClient({
                       {organizations.map((org) => (
                         <SelectItem
                           key={org.id}
-                          value={org.name}
+                          value={org.id}
                           className=" focus:text-white cursor-pointer"
                         >
                           {org.name}

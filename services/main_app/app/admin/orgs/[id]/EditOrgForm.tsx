@@ -91,7 +91,11 @@ export default function EditOrgForm({ org }: { org: Org }) {
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      const success = data.success || null;
+      if (!success) {
+        setError(data.error);
+        return;
+      }
       setInfo("Organization updated successfully.");
     } catch (err: any) {
       setError(err.message || "Error updating organization.");
@@ -112,7 +116,11 @@ export default function EditOrgForm({ org }: { org: Org }) {
         body: JSON.stringify({ email: memberEmail.trim() }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      const success = data.success || null;
+      if (!success) {
+        setError(data.error);
+        return;
+      }
 
       setMembers((prev) => [...prev, data.user]);
       setMemberEmail("");
@@ -137,7 +145,12 @@ export default function EditOrgForm({ org }: { org: Org }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
-      if (!res.ok) throw new Error((await res.json()).error);
+      const data = await res.json();
+      const success = data.success || null;
+      if (!success) {
+        setError(data.error);
+        return;
+      }
 
       setMembers((prev) => prev.filter((m) => m.email !== email));
     } catch (err: any) {
@@ -158,7 +171,11 @@ export default function EditOrgForm({ org }: { org: Org }) {
         body: JSON.stringify({ email: adminEmail.trim() }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      const success = data.success || null;
+      if (!success) {
+        setError(data.error);
+        return;
+      }
 
       setAdmins((prev) => [...prev, data.user]);
       if (!members.find((m) => m.id === data.user.id)) {
@@ -182,7 +199,12 @@ export default function EditOrgForm({ org }: { org: Org }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
-      if (!res.ok) throw new Error((await res.json()).error);
+      const data = await res.json();
+      const success = data.success || null;
+      if (!success) {
+        setError(data.error);
+        return;
+      }
 
       setAdmins((prev) => prev.filter((a) => a.email !== email));
     } catch (err: any) {
@@ -208,7 +230,11 @@ export default function EditOrgForm({ org }: { org: Org }) {
         ),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      const success = data.success || null;
+      if (!success) {
+        setError(data.error);
+        return;
+      }
 
       if (isEdit) {
         setMeals((prev) => prev.map((m) => (m.id === mealId ? data.meal : m)));
@@ -235,7 +261,12 @@ export default function EditOrgForm({ org }: { org: Org }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mealId }),
       });
-      if (!res.ok) throw new Error((await res.json()).error);
+      const data = await res.json();
+      const success = data.success || null;
+      if (!success) {
+        setError(data.error);
+        return;
+      }
 
       setMeals((prev) => prev.filter((m) => m.id !== mealId));
     } catch (err: any) {

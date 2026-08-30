@@ -38,17 +38,17 @@ export default async function OrgAdminEditPage({ params }: Params) {
     return (
         <EditOrgForm
             org={org}
-            config={{
-                backHref: `/organizations/${orgId}`,
-                backLabel: org.name,
-                title: 'Edit organization',
-                saveFieldsUrl: '/api/organization/edit',
-                addMemberUrl: '/api/organization/addUser',
-                removeMemberUrl: '/api/organization/removeUser',
-                mealsUrl: '/api/organization/meals',
-                showAdminSection: false,
-                blockAdminMemberRemoval: true,
-            }}
+            // config={{
+            //     backHref: `/organizations/${orgId}`,
+            //     backLabel: org.name,
+            //     title: 'Edit organization',
+            //     saveFieldsUrl: '/api/organization/edit',
+            //     addMemberUrl: '/api/organization/addUser',
+            //     removeMemberUrl: '/api/organization/removeUser',
+            //     mealsUrl: '/api/organization/meals',
+            //     showAdminSection: false,
+            //     blockAdminMemberRemoval: true,
+            // }}
         />
     );
 }

@@ -7,11 +7,11 @@ type DecisionStatus = 'ACCEPTED' | 'REJECTED';
 function authorize(request: Request) {
     const scannerApiKey = process.env.SCANNER_API_KEY;
     if (!scannerApiKey)
-        return NextResponse.json({ error: 'Server is not configured' }, { status: 500 });
+        return NextResponse.json({ error: 'Server is not configured' }/* IN_CASE_OF_BAD_IDEA , { status: 500 } IN_CASE_OF_BAD_IDEA */);
 
     const authHeader = request.headers.get('authorization');
     if (authHeader !== `Bearer ${scannerApiKey}`)
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        return NextResponse.json({ error: 'Unauthorized' }/* IN_CASE_OF_BAD_IDEA , { status: 401 } IN_CASE_OF_BAD_IDEA */);
 
     return null;
 }
@@ -36,12 +36,12 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         const { id } = await params;
         const scanId = parseId(id);
         if (!scanId)
-            return NextResponse.json({ error: 'Invalid scan id' }, { status: 400 });
+            return NextResponse.json({ error: 'Invalid scan id' }/* IN_CASE_OF_BAD_IDEA , { status: 400 } IN_CASE_OF_BAD_IDEA */);
 
         const body = await request.json();
         const decision = body?.decision;
         if (!isDecisionStatus(decision))
-            return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
+            return NextResponse.json({ error: 'Invalid payload' }/* IN_CASE_OF_BAD_IDEA , { status: 400 } IN_CASE_OF_BAD_IDEA */);
 
         const currentState = await prisma.badgeScan.findUnique({
             where: { id: scanId },
@@ -57,7 +57,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         });
 
         if (!currentState)
-            return NextResponse.json({ error: 'Scan not found' }, { status: 404 });
+            return NextResponse.json({ error: 'Scan not found' }/* IN_CASE_OF_BAD_IDEA , { status: 404 } IN_CASE_OF_BAD_IDEA */);
 
 
         if (decision === RequestStatus.ACCEPTED) {
@@ -90,6 +90,6 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         return NextResponse.json({ success: true, decision });
     } catch (error) {
         console.error('Failed to decide scan:', error);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        return NextResponse.json({ error: 'Internal server error' }/* IN_CASE_OF_BAD_IDEA , { status: 500 } IN_CASE_OF_BAD_IDEA */);
     }
 }

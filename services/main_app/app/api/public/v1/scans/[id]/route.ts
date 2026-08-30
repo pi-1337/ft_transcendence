@@ -5,11 +5,11 @@ import { RequestStatus } from '@prisma/client';
 function authorize(request: Request) {
     const scannerApiKey = process.env.SCANNER_API_KEY;
     if (!scannerApiKey)
-        return NextResponse.json({ error: 'Server is not configured' }, { status: 500 });
+        return NextResponse.json({ error: 'Server is not configured' }/* IN_CASE_OF_BAD_IDEA , { status: 500 } IN_CASE_OF_BAD_IDEA */);
 
     const authHeader = request.headers.get('authorization');
     if (authHeader !== `Bearer ${scannerApiKey}`)
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        return NextResponse.json({ error: 'Unauthorized' }/* IN_CASE_OF_BAD_IDEA , { status: 401 } IN_CASE_OF_BAD_IDEA */);
 
     return null;
 }
@@ -30,7 +30,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         const { id } = await params;
         const scanId = parseId(id);
         if (!scanId)
-            return NextResponse.json({ error: 'Invalid scan id' }, { status: 400 });
+            return NextResponse.json({ error: 'Invalid scan id' }/* IN_CASE_OF_BAD_IDEA , { status: 400 } IN_CASE_OF_BAD_IDEA */);
 
         const scan = await prisma.badgeScan.findUnique({
             where: { id: scanId },
@@ -45,12 +45,12 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         });
 
         if (!scan)
-            return NextResponse.json({ error: 'Scan not found' }, { status: 404 });
+            return NextResponse.json({ error: 'Scan not found' }/* IN_CASE_OF_BAD_IDEA , { status: 404 } IN_CASE_OF_BAD_IDEA */);
 
         return NextResponse.json({ scan });
     } catch (error) {
         console.error('Failed to fetch scan:', error);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        return NextResponse.json({ error: 'Internal server error' }/* IN_CASE_OF_BAD_IDEA , { status: 500 } IN_CASE_OF_BAD_IDEA */);
     }
 }
 
@@ -63,7 +63,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
         const { id } = await params;
         const scanId = parseId(id);
         if (!scanId)
-            return NextResponse.json({ error: 'Invalid scan id' }, { status: 400 });
+            return NextResponse.json({ error: 'Invalid scan id' }/* IN_CASE_OF_BAD_IDEA , { status: 400 } IN_CASE_OF_BAD_IDEA */);
 
         const scan = await prisma.badgeScan.findUnique({
             where: { id: scanId },
@@ -71,7 +71,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
         });
 
         if (!scan)
-            return NextResponse.json({ error: 'Scan not found' }, { status: 404 });
+            return NextResponse.json({ error: 'Scan not found' }/* IN_CASE_OF_BAD_IDEA , { status: 404 } IN_CASE_OF_BAD_IDEA */);
 
 
         await prisma.badgeScan.delete({ where: { id: scanId } });
@@ -79,6 +79,6 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
         return NextResponse.json({ success: true, id: scanId });
     } catch (error) {
         console.error('Failed to delete scan:', error);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        return NextResponse.json({ error: 'Internal server error' }/* IN_CASE_OF_BAD_IDEA , { status: 500 } IN_CASE_OF_BAD_IDEA */);
     }
 }

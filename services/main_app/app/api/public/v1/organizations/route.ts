@@ -7,7 +7,7 @@ export async function GET(request: NextRequest)
 	{
 		const authHeader = request.headers.get('authorization');
         if (authHeader !== `Bearer ${process.env.SCANNER_API_KEY}`)
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return NextResponse.json({ error: 'Unauthorized' }/* IN_CASE_OF_BAD_IDEA , { status: 401 } IN_CASE_OF_BAD_IDEA */);
 
         const organizations = await prisma.organization.findMany({
             where: { active: 'TRUE' },
@@ -31,6 +31,6 @@ export async function GET(request: NextRequest)
 
         return NextResponse.json({ organizations });
     } catch {
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        return NextResponse.json({ error: 'Internal server error' }/* IN_CASE_OF_BAD_IDEA , { status: 500 } IN_CASE_OF_BAD_IDEA */);
     }
 }

@@ -9,19 +9,19 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         const session = await getSession();
 
         if (!session)
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+            return NextResponse.json({ error: "Unauthorized" }/* IN_CASE_OF_BAD_IDEA , { status: 401 } IN_CASE_OF_BAD_IDEA */);
         if (session.role !== 'ADMIN')
-            return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+            return NextResponse.json({ error: "Forbidden" }/* IN_CASE_OF_BAD_IDEA , { status: 403 } IN_CASE_OF_BAD_IDEA */);
 
         const { id: rawId } = await params;
         const orgId = parseInt(rawId);
         if (isNaN(orgId))
-            return NextResponse.json({ error: "Invalid organization ID" }, { status: 400 });
+            return NextResponse.json({ error: "Invalid organization ID" }/* IN_CASE_OF_BAD_IDEA , { status: 400 } IN_CASE_OF_BAD_IDEA */);
 
         const { name, type, service, badgeTimes, active, callBackURL } = await req.json();
 
         if (!name && !type && !service && badgeTimes === undefined && active === undefined && callBackURL === undefined)
-            return NextResponse.json({ error: "No fields provided" }, { status: 400 });
+            return NextResponse.json({ error: "No fields provided" }/* IN_CASE_OF_BAD_IDEA , { status: 400 } IN_CASE_OF_BAD_IDEA */);
 
         const data: Record<string, unknown> = {};
         if (name !== undefined) data.name = name;
@@ -30,12 +30,12 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         if (badgeTimes !== undefined) {
             const bt = parseInt(badgeTimes);
             if (isNaN(bt) || bt < 1)
-                return NextResponse.json({ error: "badgeTimes must be a positive integer" }, { status: 400 });
+                return NextResponse.json({ error: "badgeTimes must be a positive integer" }/* IN_CASE_OF_BAD_IDEA , { status: 400 } IN_CASE_OF_BAD_IDEA */);
             data.badgeTimes = bt;
         }
         if (active !== undefined) {
             if (active !== 'TRUE' && active !== 'FALSE')
-                return NextResponse.json({ error: "active must be TRUE or FALSE" }, { status: 400 });
+                return NextResponse.json({ error: "active must be TRUE or FALSE" }/* IN_CASE_OF_BAD_IDEA , { status: 400 } IN_CASE_OF_BAD_IDEA */);
             data.active = active;
         }
         if (callBackURL !== undefined) data.callBackURL = callBackURL || null;
@@ -45,11 +45,11 @@ export async function PATCH(req: NextRequest, { params }: Params) {
             data,
         });
 
-        return NextResponse.json({ success: true, org }, { status: 200 });
+        return NextResponse.json({ success: true, org }/* IN_CASE_OF_BAD_IDEA , { status: 200 } IN_CASE_OF_BAD_IDEA */);
 
     } catch (error: unknown) {
         if ((error as { code?: string }).code === 'P2025')
-            return NextResponse.json({ error: "Organization not found" }, { status: 404 });
-        return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+            return NextResponse.json({ error: "Organization not found" }/* IN_CASE_OF_BAD_IDEA , { status: 404 } IN_CASE_OF_BAD_IDEA */);
+        return NextResponse.json({ error: "Something went wrong" }/* IN_CASE_OF_BAD_IDEA , { status: 500 } IN_CASE_OF_BAD_IDEA */);
     }
 }

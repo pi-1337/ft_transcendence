@@ -85,7 +85,7 @@ async function handleRemove(req: NextRequest) {
             return NextResponse.json({
                 success: false,
                 error: "Org admins cannot be removed from this page !!"
-            }, { status: 403 });
+            }/* IN_CASE_OF_BAD_IDEA , { status: 403 } IN_CASE_OF_BAD_IDEA */);
         }
 
         await prisma.user.update({

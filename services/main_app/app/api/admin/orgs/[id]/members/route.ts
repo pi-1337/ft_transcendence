@@ -9,18 +9,18 @@ export async function POST(req: NextRequest, { params }: Params) {
         const session = await getSession();
 
         if (!session)
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+            return NextResponse.json({ error: "Unauthorized" }/* IN_CASE_OF_BAD_IDEA , { status: 401 } IN_CASE_OF_BAD_IDEA */);
         if (session.role !== 'ADMIN')
-            return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+            return NextResponse.json({ error: "Forbidden" }/* IN_CASE_OF_BAD_IDEA , { status: 403 } IN_CASE_OF_BAD_IDEA */);
 
         const { id: rawId } = await params;
         const orgId = parseInt(rawId);
         if (isNaN(orgId))
-            return NextResponse.json({ error: "Invalid organization ID" }, { status: 400 });
+            return NextResponse.json({ error: "Invalid organization ID" }/* IN_CASE_OF_BAD_IDEA , { status: 400 } IN_CASE_OF_BAD_IDEA */);
 
         const { email } = await req.json();
         if (!email)
-            return NextResponse.json({ error: "Email is required" }, { status: 400 });
+            return NextResponse.json({ error: "Email is required" }/* IN_CASE_OF_BAD_IDEA , { status: 400 } IN_CASE_OF_BAD_IDEA */);
 
         const [org, user] = await Promise.all([
             prisma.organization.findUnique({ where: { id: orgId } }),
@@ -28,16 +28,16 @@ export async function POST(req: NextRequest, { params }: Params) {
         ]);
 
         if (!org)
-            return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+            return NextResponse.json({ error: "Organization not found" }/* IN_CASE_OF_BAD_IDEA , { status: 404 } IN_CASE_OF_BAD_IDEA */);
         if (!user)
-            return NextResponse.json({ error: "No user found with that email" }, { status: 404 });
+            return NextResponse.json({ error: "No user found with that email" }/* IN_CASE_OF_BAD_IDEA , { status: 404 } IN_CASE_OF_BAD_IDEA */);
 
         const alreadyMember = await prisma.organization.findFirst({
             where: { id: orgId, users: { some: { email } } },
         });
 
         if (alreadyMember)
-            return NextResponse.json({ error: "User is already a member of this organization" }, { status: 409 });
+            return NextResponse.json({ error: "User is already a member of this organization" }/* IN_CASE_OF_BAD_IDEA , { status: 409 } IN_CASE_OF_BAD_IDEA */);
 
         await prisma.user.update({
             where: { email },
@@ -47,11 +47,11 @@ export async function POST(req: NextRequest, { params }: Params) {
         return NextResponse.json({
             success: true,
             user: { id: user.id, firstname: user.firstname, lastname: user.lastname, email: user.email },
-        }, { status: 200 });
+        }/* IN_CASE_OF_BAD_IDEA , { status: 200 } IN_CASE_OF_BAD_IDEA */);
 
     } catch (error) {
         // console.error(error);
-        return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+        return NextResponse.json({ error: "Something went wrong" }/* IN_CASE_OF_BAD_IDEA , { status: 500 } IN_CASE_OF_BAD_IDEA */);
     }
 }
 
@@ -60,18 +60,18 @@ export async function DELETE(req: NextRequest, { params }: Params) {
         const session = await getSession();
 
         if (!session)
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+            return NextResponse.json({ error: "Unauthorized" }/* IN_CASE_OF_BAD_IDEA , { status: 401 } IN_CASE_OF_BAD_IDEA */);
         if (session.role !== 'ADMIN')
-            return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+            return NextResponse.json({ error: "Forbidden" }/* IN_CASE_OF_BAD_IDEA , { status: 403 } IN_CASE_OF_BAD_IDEA */);
 
         const { id: rawId } = await params;
         const orgId = parseInt(rawId);
         if (isNaN(orgId))
-            return NextResponse.json({ error: "Invalid organization ID" }, { status: 400 });
+            return NextResponse.json({ error: "Invalid organization ID" }/* IN_CASE_OF_BAD_IDEA , { status: 400 } IN_CASE_OF_BAD_IDEA */);
 
         const { email } = await req.json();
         if (!email)
-            return NextResponse.json({ error: "Email is required" }, { status: 400 });
+            return NextResponse.json({ error: "Email is required" }/* IN_CASE_OF_BAD_IDEA , { status: 400 } IN_CASE_OF_BAD_IDEA */);
 
         const [org, user] = await Promise.all([
             prisma.organization.findUnique({ where: { id: orgId } }),
@@ -79,16 +79,16 @@ export async function DELETE(req: NextRequest, { params }: Params) {
         ]);
 
         if (!org)
-            return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+            return NextResponse.json({ error: "Organization not found" }/* IN_CASE_OF_BAD_IDEA , { status: 404 } IN_CASE_OF_BAD_IDEA */);
         if (!user)
-            return NextResponse.json({ error: "No user found with that email" }, { status: 404 });
+            return NextResponse.json({ error: "No user found with that email" }/* IN_CASE_OF_BAD_IDEA , { status: 404 } IN_CASE_OF_BAD_IDEA */);
 
         const isMember = await prisma.organization.findFirst({
             where: { id: orgId, users: { some: { email } } },
         });
 
         if (!isMember)
-            return NextResponse.json({ error: "User is not a member of this organization" }, { status: 404 });
+            return NextResponse.json({ error: "User is not a member of this organization" }/* IN_CASE_OF_BAD_IDEA , { status: 404 } IN_CASE_OF_BAD_IDEA */);
 
         await prisma.organization.update({
             where: { id: orgId },
@@ -98,10 +98,10 @@ export async function DELETE(req: NextRequest, { params }: Params) {
             },
         });
 
-        return NextResponse.json({ success: true }, { status: 200 });
+        return NextResponse.json({ success: true }/* IN_CASE_OF_BAD_IDEA , { status: 200 } IN_CASE_OF_BAD_IDEA */);
 
     } catch (error) {
         // console.error(error);
-        return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+        return NextResponse.json({ error: "Something went wrong" }/* IN_CASE_OF_BAD_IDEA , { status: 500 } IN_CASE_OF_BAD_IDEA */);
     }
 }

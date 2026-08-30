@@ -8,11 +8,11 @@ export async function POST(req: NextRequest)
     try {
         const session = await getSession();
         if (!session)
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return NextResponse.json({ error: 'Unauthorized' }/* IN_CASE_OF_BAD_IDEA , { status: 401 } IN_CASE_OF_BAD_IDEA */);
 
         const { requestId, decision } = await req.json();
         if (!requestId || ![RequestStatus.ACCEPTED, RequestStatus.REJECTED].includes(decision))
-            return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
+            return NextResponse.json({ error: 'Invalid payload' }/* IN_CASE_OF_BAD_IDEA , { status: 400 } IN_CASE_OF_BAD_IDEA */);
 
         const currentState = await prisma.badgeScan.findFirst({
             where: {id: requestId },
@@ -27,10 +27,10 @@ export async function POST(req: NextRequest)
             }
         });
         if (!currentState)
-            return NextResponse.json({ error: 'Scan not found' }, { status: 404 });
+            return NextResponse.json({ error: 'Scan not found' }/* IN_CASE_OF_BAD_IDEA , { status: 404 } IN_CASE_OF_BAD_IDEA */);
 
         if (currentState.status !== RequestStatus.PENDING)
-            return NextResponse.json({ error: 'Request is no longer pending' }, { status: 409 });
+            return NextResponse.json({ error: 'Request is no longer pending' }/* IN_CASE_OF_BAD_IDEA , { status: 409 } IN_CASE_OF_BAD_IDEA */);
 
         if (session.role !== 'ADMIN') {
         
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest)
                 }
             });
             if (!isOrgAdmin)
-                return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+                return NextResponse.json({ error: 'Unauthorized' }/* IN_CASE_OF_BAD_IDEA , { status: 403 } IN_CASE_OF_BAD_IDEA */);
         }
         if (decision === RequestStatus.ACCEPTED) {
             const now = new Date();
@@ -83,6 +83,6 @@ export async function POST(req: NextRequest)
         return NextResponse.json({ success: true, decision });
 
     } catch (error) {
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        return NextResponse.json({ error: 'Internal server error' }/* IN_CASE_OF_BAD_IDEA , { status: 500 } IN_CASE_OF_BAD_IDEA */);
     }
 }

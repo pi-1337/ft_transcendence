@@ -7,7 +7,7 @@ export async function POST() {
     try {
         const pending = await getPendingTwoFactorSession();
         if (!pending)
-            return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+            return NextResponse.json({ success: false, error: "Unauthorized" }/* IN_CASE_OF_BAD_IDEA , { status: 401 } IN_CASE_OF_BAD_IDEA */);
 
         const user = await prisma.user.findUnique({
             where: { id: pending.id },
@@ -19,16 +19,16 @@ export async function POST() {
         });
 
         if (!user || !user.twoFactorEnabled)
-            return NextResponse.json({ success: false, error: "2FA is not enabled" }, { status: 400 });
+            return NextResponse.json({ success: false, error: "2FA is not enabled" }/* IN_CASE_OF_BAD_IDEA , { status: 400 } IN_CASE_OF_BAD_IDEA */);
 
         const destinationEmail = user.twoFactorEmail || user.email;
         const resendResult = await resendTwoFactorChallenge(pending.id, destinationEmail, 'LOGIN');
 
         if (!resendResult.ok)
-            return NextResponse.json({ success: false, error: resendResult.error, retryAfter: 'retryAfter' in resendResult ? resendResult.retryAfter : undefined }, { status: 400 });
+            return NextResponse.json({ success: false, error: resendResult.error, retryAfter: 'retryAfter' in resendResult ? resendResult.retryAfter : undefined }/* IN_CASE_OF_BAD_IDEA , { status: 400 } IN_CASE_OF_BAD_IDEA */);
 
-        return NextResponse.json({ success: true, ...resendResult }, { status: 200 });
+        return NextResponse.json({ success: true, ...resendResult }/* IN_CASE_OF_BAD_IDEA , { status: 200 } IN_CASE_OF_BAD_IDEA */);
     } catch {
-        return NextResponse.json({ success: false, error: "Something went wrong" }, { status: 500 });
+        return NextResponse.json({ success: false, error: "Something went wrong" }/* IN_CASE_OF_BAD_IDEA , { status: 500 } IN_CASE_OF_BAD_IDEA */);
     }
 }

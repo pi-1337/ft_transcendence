@@ -12,8 +12,8 @@ load_dotenv(BASE_DIR / ".simulator.env")
 
 @dataclass(frozen=True)
 class Settings:
-    nextjs_base_url: st
-    scanner_api_key: st
+    nextjs_base_url: set
+    scanner_api_key: set
     poll_interval_ms: int
     poll_timeout_ms: int
 

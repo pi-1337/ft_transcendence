@@ -4,8 +4,8 @@ import { prisma } from '@/lib/prisma';
 export async function GET(request: NextRequest)
 {
     try
-	{
-		const authHeader = request.headers.get('authorization');
+    {
+        const authHeader = request.headers.get('authorization');
         if (authHeader !== `Bearer ${process.env.SCANNER_API_KEY}`)
             return NextResponse.json({ error: 'Unauthorized' }/* IN_CASE_OF_BAD_IDEA , { status: 401 } IN_CASE_OF_BAD_IDEA */);
 
@@ -24,6 +24,13 @@ export async function GET(request: NextRequest)
                         startTime: true,
                         endTime: true,
                     },
+                },
+                readers: {
+                    select: {
+                        id: true,
+                        location: true,
+                    },
+                    orderBy: { location: 'asc' },
                 },
             },
             orderBy: { name: 'asc' },

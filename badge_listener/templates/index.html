@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Local RFID reader simulator for badge-system testing">
+  <title>RFID Reader Simulator</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}">
+  <script defer src="{{ url_for('static', path='app.js') }}"
+    data-poll-interval="{{ poll_interval_ms }}" data-poll-timeout="{{ poll_timeout_ms }}"></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand"><div class="logo" aria-hidden="true">)))</div><div><p class="eyebrow">BADGE LAB</p><h1>RFID Reader Simulator</h1></div></div>
+      <div class="connection"><i></i><div><b>Simulator ready</b><span>{{ nextjs_url }}</span></div></div>
+    </header>
+
+    <section class="workspace">
+      <article class="panel controls">
+        <header class="panel-head"><div><p class="eyebrow">01 / INPUT</p><h2>Run a badge scan</h2></div><span class="pill"><i></i> Live</span></header>
+        <form id="scan-form">
+          <label for="organization-id">Organization</label>
+          <div class="select-wrap"><select id="organization-id" required disabled><option value="">Loading organizations…</option></select></div>
+          <label for="reader-id">RFID reader</label>
+          <div class="select-wrap"><select id="reader-id" required disabled><option value="">Select an organization first</option></select></div>
+          <p id="reader-help" class="field-help">Available readers are loaded from the selected organization.</p>
+          <label for="badge-id">Badge identifier</label>
+          <input id="badge-id" type="text" placeholder="e.g. 04A23B91" maxlength="128" autocomplete="off" required>
+          <div class="quick"><span>Quick test</span><button type="button" data-badge="UNKNOWN-BADGE">Unknown badge</button><button type="button" data-badge="">Clear</button></div>
+          <button id="scan-button" class="scan" type="submit"><span>)))</span><b>Simulate badge scan</b><kbd>Enter</kbd></button>
+        </form>
+        <div id="message" class="message" role="alert" hidden></div>
+      </article>
+    </section>
+
+    <section class="panel history">
+      <header class="panel-head"><div><p class="eyebrow">02 / EVENT LOG</p><h2>Recent simulations</h2></div><button id="refresh-history" class="ghost">Refresh</button></header>
+      <div class="table-wrap"><table><thead><tr><th>Time</th><th>Scan</th><th>Reader</th><th>Badge</th><th>Status</th></tr></thead><tbody id="history-body"><tr class="no-events"><td colspan="5">No simulated scans in this session.</td></tr></tbody></table></div>
+    </section>
+  </main>
+</body>
+</html>

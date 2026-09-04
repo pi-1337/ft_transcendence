@@ -204,7 +204,7 @@ export default function Dashboard({
                   View your records
                 </span>
                 <span className="text-xs text-gray-400 mt-1">
-                  Track all badge records and issuances history
+                  Track all badge records
                 </span>
               </div>
               <Link href="/records">

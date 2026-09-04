@@ -58,6 +58,9 @@ export default function Organizations({ orgs }: { orgs: OrgsFrontend[] }) {
                   <TableHead className="text-gray-400 font-semibold h-12">
                     Status
                   </TableHead>
+                  <TableHead className="text-gray-400 font-semibold text-right h-12 px-6">
+                    Actions
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -93,6 +96,16 @@ export default function Organizations({ orgs }: { orgs: OrgsFrontend[] }) {
                           <span className="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5"></span>
                           Active
                         </span>
+                      </TableCell>
+                      <TableCell className="py-4 px-6 text-right">
+                        {org.isAdmin && (
+                          <Link
+                            href={`/organizations/${org.id}`}
+                            className="inline-flex h-7 items-center gap-1 rounded-md border border-gray-700 px-2.5 text-[0.8rem] font-medium text-gray-200 transition-colors hover:bg-gray-800 hover:text-white"
+                          >
+                            Open
+                          </Link>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))

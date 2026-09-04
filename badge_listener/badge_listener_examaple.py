@@ -36,7 +36,7 @@ async def receive_and_enrich_scan(request: Request):
     print("="*50 + "\n")
     # TODO: move into a .env file
     # 4. FORWARD TO NEXT.JS (Inside the function!)
-    NEXTJS_URL = "https://localhost:3000/api/public/v1/scans"
+    NEXTJS_URL = "http://localhost:3000/api/public/v1/scans"
     SECRET_KEY = "Bearer Zoom123"
 
     headers = {
@@ -49,7 +49,7 @@ async def receive_and_enrich_scan(request: Request):
             response = await client.post(NEXTJS_URL, json=enriched_metadata, headers=headers)
             if response.status_code == 200 or response.status_code == 201:
                 data = response.json()
-                print(f"[SUCCESS] Data saved to Next.js database!, ID: {data["id"]}")
+                print(f"[SUCCESS] Data saved to Next.js database!, ID: {data}")
             else:
                 print(f"[ERROR] Next.js rejected the payload: {response.status_code} — {response.text}")
         except httpx.RequestError as e:

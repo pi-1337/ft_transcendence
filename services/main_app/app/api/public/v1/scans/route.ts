@@ -5,6 +5,10 @@ import { RequestStatus, Active } from '@prisma/client';
 export async function POST(request: Request) {
     try
     {
+
+
+        console.log("teststsetsetsetst")
+
         const authHeader = request.headers.get('authorization');
         if (authHeader !== `Bearer ${process.env.SCANNER_API_KEY}`)
             return NextResponse.json({ error: 'Unauthorized' }/* IN_CASE_OF_BAD_IDEA , { status: 401 } IN_CASE_OF_BAD_IDEA */);

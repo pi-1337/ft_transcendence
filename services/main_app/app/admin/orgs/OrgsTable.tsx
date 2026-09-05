@@ -78,13 +78,13 @@ export default function OrgsTable({ orgs }: Props) {
                     Name
                   </TableHead>
                   <TableHead className="text-gray-400 font-semibold h-12">
-                    Type & Service
+                    Type
+                  </TableHead>
+                  <TableHead className="text-gray-400 font-semibold h-12">
+                    Service
                   </TableHead>
                   <TableHead className="text-gray-400 font-semibold h-12">
                     Status
-                  </TableHead>
-                  <TableHead className="text-gray-400 font-semibold h-12">
-                    Stats
                   </TableHead>
                   <TableHead className="text-gray-400 font-semibold h-12">
                     Admins
@@ -111,15 +111,16 @@ export default function OrgsTable({ orgs }: Props) {
                       className="border-gray-800 hover:bg-gray-800/30 transition-colors"
                     >
                       <TableCell className="px-6 py-4 whitespace-nowrap">
-                        <div className="font-medium text-white">{org.name}</div>
-                        <div className="text-xs text-gray-500 mt-1">
-                          Created {new Date(org.createdAt).toLocaleDateString()}
-                        </div>
+                        <div className="text-gray-100">{org.name}</div>
                       </TableCell>
 
                       <TableCell className="py-4 whitespace-nowrap">
                         <div className="text-gray-300">{org.type}</div>
-                        <div className="text-xs text-gray-500 mt-1">
+                        
+                      </TableCell>
+
+                      <TableCell className="py-4 whitespace-nowrap">
+                        <div className="text-gray-300">
                           {org.service}
                         </div>
                       </TableCell>
@@ -134,11 +135,6 @@ export default function OrgsTable({ orgs }: Props) {
                             <XCircle className="w-3 h-3" /> Inactive
                           </span>
                         )}
-                      </TableCell>
-
-                      <TableCell className="py-4 text-gray-300 whitespace-nowrap">
-                        <span className="font-medium">{org._count.users}</span>{" "}
-                        members
                       </TableCell>
 
                       <TableCell className="py-4">
@@ -161,13 +157,18 @@ export default function OrgsTable({ orgs }: Props) {
                       </TableCell>
 
                       <TableCell className="px-6 py-4 text-right whitespace-nowrap">
-                        <Link href={`/admin/orgs/${org.id}`}>
+                        <Link
+                          href={{
+                            pathname: `/organizations/${org.id}`,
+                            query: { from: "/admin/orgs" },
+                          }}
+                        >
                           <Button
                             variant="outline"
                             size="sm"
                             className="h-8 bg-transparent border-gray-700 text-gray-300 hover:text-white hover:bg-gray-800 gap-1.5"
                           >
-                            <Pencil className="w-3.5 h-3.5" /> Edit
+                            <Pencil className="w-3.5 h-3.5" /> Open
                           </Button>
                         </Link>
                       </TableCell>

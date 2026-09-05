@@ -12,6 +12,7 @@ export default async function OrgScansPage({ params }: Params) {
 
     const { id: rawId } = await params;
     const orgId = parseInt(rawId, 10);
+    
     if (isNaN(orgId)) redirect('/organizations');
 
     const org = await prisma.organization.findFirst({
@@ -21,11 +22,13 @@ export default async function OrgScansPage({ params }: Params) {
         },
         include: { meals: true }
     });
+    
     if (!org) redirect(`/organizations/${orgId}`);
 
     try {
         const now = new Date();
         const currentMinutes = now.getHours() * 60 + now.getMinutes();
+        
         const activeMeal = org.meals.find(meal => {
             const start = new Date(meal.startTime);
             const end = new Date(meal.endTime);
@@ -52,17 +55,7 @@ export default async function OrgScansPage({ params }: Params) {
                 id: true,
                 createdAt: true,
                 status: true,
-                badge: {
-                    select: {
-                        user: {
-                            select: {
-                                firstname: true,
-                                lastname: true,
-                                role: true,
-                            }
-                        }
-                    }
-                }
+                badge: { select: { user: { select: { firstname: true, lastname: true, role: true } } } }
             }
         });
 
@@ -84,17 +77,7 @@ export default async function OrgScansPage({ params }: Params) {
                 id: true,
                 createdAt: true,
                 status: true,
-                badge: {
-                    select: {
-                        user: {
-                            select: {
-                                firstname: true,
-                                lastname: true,
-                                role: true,
-                            }
-                        }
-                    }
-                }
+                badge: { select: { user: { select: { firstname: true, lastname: true, role: true } } } }
             }
         });
 
@@ -108,8 +91,7 @@ export default async function OrgScansPage({ params }: Params) {
                 activeMeal={activeMeal ? { name: activeMeal.name, startTime: activeMeal.startTime, endTime: activeMeal.endTime } : null}
             />
         );
-    }
-    catch (error) {
+    } catch (error) {
         redirect(`/organizations/${orgId}`);
     }
 }

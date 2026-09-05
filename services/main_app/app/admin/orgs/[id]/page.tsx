@@ -34,5 +34,5 @@ export default async function EditOrgPage({ params }: Params) {
         redirect('/admin/orgs');
     }
 
-    return <EditOrgForm org={org} />;
+    return <EditOrgForm org={org} backHref="/admin/orgs" backLabel="Organizations" />;
 }

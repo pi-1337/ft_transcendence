@@ -20,7 +20,8 @@ export type OrgsFrontend = {
     service: string,
     badgeTimes: number,
     active: Active,
-    createdAt: Date
+    createdAt: Date,
+    isAdmin?: boolean
 };
 
 export type notification = {

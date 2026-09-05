@@ -2,7 +2,7 @@
 
 import { OrgsFrontend } from "@/lib/types";
 import Link from "next/link";
-import { Building2 } from "lucide-react";
+import { Building2, ArrowLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,8 +18,15 @@ export default function Organizations({ orgs }: { orgs: OrgsFrontend[] }) {
   return (
     <div className="min-h-screen bg-gray-950 text-white pb-12">
       <header className="border-b border-gray-800 bg-gray-950 px-8 py-4 flex items-center justify-between sticky top-0 z-10">
-        <div className="flex items-center gap-2 text-sm font-medium text-white">
-          Organizations
+        <div className="flex items-center gap-2 text-sm font-medium">
+          <Link
+            href="/dashboard"
+            className="text-gray-400 hover:text-white transition-colors flex items-center gap-1"
+          >
+            <ArrowLeft className="w-4 h-4" /> Dashboard
+          </Link>
+          <span className="text-gray-700">/</span>
+          <span className="text-white">Organizations</span>
         </div>
       </header>
 
@@ -100,7 +107,10 @@ export default function Organizations({ orgs }: { orgs: OrgsFrontend[] }) {
                       <TableCell className="py-4 px-6 text-right">
                         {org.isAdmin && (
                           <Link
-                            href={`/organizations/${org.id}`}
+                            href={{
+                              pathname: `/organizations/${org.id}`,
+                              query: { from: "/organizations" },
+                            }}
                             className="inline-flex h-7 items-center gap-1 rounded-md border border-gray-700 px-2.5 text-[0.8rem] font-medium text-gray-200 transition-colors hover:bg-gray-800 hover:text-white"
                           >
                             Open

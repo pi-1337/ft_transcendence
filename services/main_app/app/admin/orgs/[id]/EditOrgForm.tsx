@@ -45,12 +45,22 @@ type Org = {
   meals: Meal[];
 };
 
+type EditOrgFormProps = {
+  org: Org;
+  backHref?: string;
+  backLabel?: string;
+};
+
 const formatTime = (val: string | Date) => {
   const d = new Date(val);
   return isNaN(d.getTime()) ? "" : d.toISOString().substring(11, 16);
 };
 
-export default function EditOrgForm({ org }: { org: Org }) {
+export default function EditOrgForm({
+  org,
+  backHref = "/admin/orgs",
+  backLabel = "Organizations",
+}: EditOrgFormProps) {
   const [name, setName] = useState(org.name);
   const [type, setType] = useState(org.type);
   const [service, setService] = useState(org.service);
@@ -288,10 +298,10 @@ export default function EditOrgForm({ org }: { org: Org }) {
       <header className="border-b border-gray-800 bg-gray-950 px-8 py-4 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-2 text-sm font-medium">
           <Link
-            href="/admin/orgs"
+            href={backHref}
             className="text-gray-400 hover:text-white transition-colors flex items-center gap-1"
           >
-            <ArrowLeft className="w-4 h-4" /> Organizations
+            <ArrowLeft className="w-4 h-4" /> {backLabel}
           </Link>
           <span className="text-gray-700">/</span>
           <span className="text-white">Edit Org</span>

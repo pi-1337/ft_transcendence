@@ -64,10 +64,10 @@ function randomTimeOnly(hour: number, minute = 0): Date {
 }
 
 async function main() {
-  // console.log('🌱 Seeding database...');
+  console.log('🌱 Seeding database...');
 
   // ---- CLEANUP (children first, respecting FKs) -------------------------
-  // console.log('🧹 Cleaning existing data...');
+  console.log('🧹 Cleaning existing data...');
   await prisma.badgeScan.deleteMany();
   await prisma.rfidReaders.deleteMany();
   await prisma.usersOnNotificationsRead.deleteMany();
@@ -82,7 +82,7 @@ async function main() {
   await prisma.user.deleteMany();
 
   // ---- USERS --------------------------------------------------------
-  // console.log('👤 Creating users...');
+  console.log('👤 Creating users...');
   const totalUsers =
     NUM_ORGANIZATIONS * USERS_PER_ORG_MAX + EXTRA_UNAFFILIATED_USERS; // upper bound pool
 
@@ -115,10 +115,10 @@ async function main() {
     
     allUsers.push(user);
   }
-  // console.log(`   -> ${allUsers.length} users created`);
+  console.log(`   -> ${allUsers.length} users created`);
 
   // ---- ORGANIZATIONS --------------------------------------------------
-  // console.log('🏢 Creating organizations...');
+  console.log('🏢 Creating organizations...');
   const orgTypes = ['School', 'Company', 'University', 'Nonprofit', 'Gym'];
   const orgServices = ['Cafeteria', 'Canteen', 'Access Control', 'Meal Plan'];
 
@@ -152,10 +152,10 @@ async function main() {
 
     organizations.push({ org, members, admin });
   }
-  // console.log(`   -> ${organizations.length} organizations created`);
+  console.log(`   -> ${organizations.length} organizations created`);
 
   // ---- BADGES (one per user, unique) -----------------------------------
-  // console.log('🎫 Creating badges...');
+  console.log('🎫 Creating badges...');
   // Only give badges to users who belong to at least one org (realistic: badges are for org members)
   const orgMemberIds = new Set(organizations.flatMap((o) => o.members.map((u) => u.id)));
   const usersWithBadges = allUsers.filter((u) => orgMemberIds.has(u.id));
@@ -181,10 +181,10 @@ async function main() {
     });
     badges.push(badge);
   }
-  // console.log(`   -> ${badges.length} badges created`);
+  console.log(`   -> ${badges.length} badges created`);
 
   // ---- MEALS --------------------------------------------------------
-  // console.log('🍽️  Creating meals...');
+  console.log('🍽️  Creating meals...');
   const mealTemplates = [
     { name: 'Breakfast', start: 7, end: 9 },
     { name: 'Lunch', start: 12, end: 14 },
@@ -210,10 +210,10 @@ async function main() {
       orgMeals[org.id].push(meal);
     }
   }
-  // console.log(`   -> ${Object.values(orgMeals).flat().length} meals created`);
+  console.log(`   -> ${Object.values(orgMeals).flat().length} meals created`);
 
   // ---- RFID READERS ---------------------------------------------------
-  // console.log('📡 Creating RFID readers...');
+  console.log('📡 Creating RFID readers...');
   const locations = ['Main Entrance', 'Cafeteria Door', 'Side Gate', 'Library', 'Gym Entrance', 'Parking Lot'];
   const orgReaders: Record<number, any[]> = {};
   for (const { org } of organizations) {
@@ -229,10 +229,10 @@ async function main() {
       orgReaders[org.id].push(reader);
     }
   }
-  // console.log(`   -> ${Object.values(orgReaders).flat().length} RFID readers created`);
+  console.log(`   -> ${Object.values(orgReaders).flat().length} RFID readers created`);
 
   // ---- ANNOUNCEMENTS ---------------------------------------------------
-  // console.log('📢 Creating announcements...');
+  console.log('📢 Creating announcements...');
   let announcementCount = 0;
   for (const { org, admin, members } of organizations) {
     const count = randInt(ANNOUNCEMENTS_PER_ORG_MIN, ANNOUNCEMENTS_PER_ORG_MAX);
@@ -250,10 +250,10 @@ async function main() {
       announcementCount++;
     }
   }
-  // console.log(`   -> ${announcementCount} announcements created`);
+  console.log(`   -> ${announcementCount} announcements created`);
 
   // ---- BADGE SCANS (the analytics-rich table) --------------------------
-  // console.log('📊 Creating badge scans...');
+  console.log('📊 Creating badge scans...');
   const statusWeights: { status: RequestStatus; weight: number }[] = [
     { status: RequestStatus.ACCEPTED, weight: 75 },
     { status: RequestStatus.REJECTED, weight: 15 },
@@ -321,10 +321,10 @@ async function main() {
     await prisma.badgeScan.createMany({ data: batch });
     scanCount += batch.length;
   }
-  // console.log(`   -> ${scanCount} badge scans created`);
+  console.log(`   -> ${scanCount} badge scans created`);
 
   // ---- NOTIFICATIONS ---------------------------------------------------
-  // console.log('🔔 Creating notifications...');
+  console.log('🔔 Creating notifications...');
   for (let i = 0; i < NOTIFICATIONS_TOTAL; i++) {
     const recipients = pickSome(allUsers, 1, 8);
     const readCount = randInt(0, recipients.length);
@@ -353,10 +353,10 @@ async function main() {
       });
     }
   }
-  // console.log(`   -> ${NOTIFICATIONS_TOTAL} notifications created`);
+  console.log(`   -> ${NOTIFICATIONS_TOTAL} notifications created`);
 
   // ---- TWO-FACTOR CHALLENGES (history for 2FA-enabled users) ------------
-  // console.log('🔐 Creating two-factor challenges...');
+  console.log('🔐 Creating two-factor challenges...');
   const twoFactorUsers = allUsers.filter((u) => u.twoFactorEnabled);
   let challengeCount = 0;
   const purposes = [TwoFactorPurpose.LOGIN, TwoFactorPurpose.ENABLE, TwoFactorPurpose.DISABLE];
@@ -384,10 +384,10 @@ async function main() {
       challengeCount++;
     }
   }
-  // console.log(`   -> ${challengeCount} two-factor challenges created`);
+  console.log(`   -> ${challengeCount} two-factor challenges created`);
 
-  // console.log('✅ Seeding complete!');
-  // console.log({
+  console.log('✅ Seeding complete!');
+  console.log({
     users: allUsers.length,
     organizations: organizations.length,
     badges: badges.length,
@@ -402,7 +402,7 @@ async function main() {
 
 main()
   .catch((e) => {
-    // console.error('❌ Seeding failed:', e);
+    console.error('❌ Seeding failed:', e);
     process.exit(1);
   })
   .finally(async () => {

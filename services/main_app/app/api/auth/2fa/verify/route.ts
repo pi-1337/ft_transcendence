@@ -9,16 +9,16 @@ export async function POST(req: NextRequest) {
     try {
         const pending = await getPendingTwoFactorSession();
         if (!pending)
-            return NextResponse.json({ success: false, error: "Unauthorized" }/* IN_CASE_OF_BAD_IDEA , { status: 401 } IN_CASE_OF_BAD_IDEA */);
+            return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
 
         const { code } = await req.json();
 
         if (typeof code !== 'string' || !/^\d{4,8}$/.test(code))
-            return NextResponse.json({ success: false, error: "Invalid code format" }/* IN_CASE_OF_BAD_IDEA , { status: 400 } IN_CASE_OF_BAD_IDEA */);
+            return NextResponse.json({ success: false, error: "Invalid code format" }, { status: 400 });
 
         const verification = await verifyTwoFactorChallenge(pending.id, code, 'LOGIN');
         if (!verification.ok)
-            return NextResponse.json({ success: false, error: verification.error }/* IN_CASE_OF_BAD_IDEA , { status: 400 } IN_CASE_OF_BAD_IDEA */);
+            return NextResponse.json({ success: false, error: verification.error }, { status: 400 });
 
         const user = await prisma.user.findUnique({
             where: { id: pending.id },
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
         });
 
         if (!user)
-            return NextResponse.json({ success: false, error: "User not found" }/* IN_CASE_OF_BAD_IDEA , { status: 404 } IN_CASE_OF_BAD_IDEA */);
+            return NextResponse.json({ success: false, error: "User not found" }, { status: 404 });
 
         const sessionToken = ft_sign({ id: user.id, role: user.role });
         const cookieStorage = await cookies();
@@ -36,8 +36,8 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({
             success: true,
             user,
-        }/* IN_CASE_OF_BAD_IDEA , { status: 200 } IN_CASE_OF_BAD_IDEA */);
+        }, { status: 200 });
     } catch {
-        return NextResponse.json({ success: false, error: "Something went wrong" }/* IN_CASE_OF_BAD_IDEA , { status: 500 } IN_CASE_OF_BAD_IDEA */);
+        return NextResponse.json({ success: false, error: "Something went wrong" }, { status: 500 });
     }
 }

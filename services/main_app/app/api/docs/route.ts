@@ -51,7 +51,7 @@ export async function GET() {
             headers: { 'Content-Type': 'text/html; charset=utf-8' },
         });
     } catch (error) {
-        console.error('Failed to load API documentation:', error);
+        // console.error('Failed to load API documentation:', error);
         return NextResponse.json(
             { error: 'Failed to load API documentation' },
             { status: 500 }

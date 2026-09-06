@@ -8,7 +8,7 @@ export async function POST(request: Request) {
 
         const authHeader = request.headers.get('authorization');
         if (authHeader !== `Bearer ${process.env.SCANNER_API_KEY}`)
-            return NextResponse.json({ error: 'Unauthorized' }/* IN_CASE_OF_BAD_IDEA , { status: 401 } IN_CASE_OF_BAD_IDEA */);
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
         const body = await request.json();
 
@@ -16,13 +16,13 @@ export async function POST(request: Request) {
             where: { number: body.badge_id }
         });
         if (!badge)
-            return NextResponse.json({ error: 'Badge not registered' }/* IN_CASE_OF_BAD_IDEA , { status: 404 } IN_CASE_OF_BAD_IDEA */);
+            return NextResponse.json({ error: 'Badge not registered' }, { status: 404 });
 
         const rfReader = await prisma.rfidReaders.findUnique({
             where: { id: parseInt(body.reader_id, 10) }
         });
         if (!rfReader)
-            return NextResponse.json({ error: 'rfReader not registered' }/* IN_CASE_OF_BAD_IDEA , { status: 404 } IN_CASE_OF_BAD_IDEA */);
+            return NextResponse.json({ error: 'rfReader not registered' }, { status: 404 });
 
         const organization = await prisma.organization.findFirst({
             where: {
@@ -32,9 +32,9 @@ export async function POST(request: Request) {
             include: { meals: true }
         });
         if (!organization)
-            return NextResponse.json({ error: 'User not in this organization' }/* IN_CASE_OF_BAD_IDEA , { status: 403 } IN_CASE_OF_BAD_IDEA */);
+            return NextResponse.json({ error: 'User not in this organization' }, { status: 403 });
         if (organization.active === Active.FALSE)
-            return NextResponse.json({ error: 'Organization is not active' }/* IN_CASE_OF_BAD_IDEA , { status: 403 } IN_CASE_OF_BAD_IDEA */);
+            return NextResponse.json({ error: 'Organization is not active' }, { status: 403 });
 
         const pendingRequestsCount = await prisma.badgeScan.count({
             where: {
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
             }
         });
         if (pendingRequestsCount >= 5)
-            return NextResponse.json({ error: "Gate is currently processing a request" }/* IN_CASE_OF_BAD_IDEA , { status: 409 } IN_CASE_OF_BAD_IDEA */);
+            return NextResponse.json({ error: "Gate is currently processing a request" }, { status: 409 });
 
         const now = new Date();
         const currentMinutes = now.getHours() * 60 + now.getMinutes();
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
         });
 
         if (!activeMeal)
-            return NextResponse.json({ error: 'No active meal window' }/* IN_CASE_OF_BAD_IDEA , { status: 403 } IN_CASE_OF_BAD_IDEA */);
+            return NextResponse.json({ error: 'No active meal window' }, { status: 403 });
 
         const userPendingCount = await prisma.badgeScan.count({
             where: {
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
             }
         });
         if (userPendingCount >= 1)
-            return NextResponse.json({ error: "Server is currently processing this user's request" }/* IN_CASE_OF_BAD_IDEA , { status: 409 } IN_CASE_OF_BAD_IDEA */);
+            return NextResponse.json({ error: "Server is currently processing this user's request" }, { status: 409 });
         
         const startOfDay = new Date();
         startOfDay.setHours(0, 0, 0, 0);
@@ -99,12 +99,12 @@ export async function POST(request: Request) {
             }
         });
 
-        return NextResponse.json({ success: true, id: entry.id }/* IN_CASE_OF_BAD_IDEA , { status: 201 } IN_CASE_OF_BAD_IDEA */);
+        return NextResponse.json({ success: true, id: entry.id }, { status: 201 });
 
     }
     catch (error)
     {
-        console.error("Database Insert Error:", error);
-        return NextResponse.json({ error: "Failed to save scan" }/* IN_CASE_OF_BAD_IDEA , { status: 500 } IN_CASE_OF_BAD_IDEA */);
+        // console.error("Database Insert Error:", error);
+        return NextResponse.json({ error: "Failed to save scan" }, { status: 500 });
     }
 }

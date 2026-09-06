@@ -66,7 +66,7 @@ async function handleEdit(req: NextRequest) {
                 return NextResponse.json({
                     success: false,
                     error: "Badge times must be a positive integer !!"
-                }/* IN_CASE_OF_BAD_IDEA , { status: 400 } IN_CASE_OF_BAD_IDEA */);
+                }, { status: 400 });
             }
             data.badgeTimes = parsedBadgeTimes;
         }
@@ -75,7 +75,7 @@ async function handleEdit(req: NextRequest) {
                 return NextResponse.json({
                     success: false,
                     error: "Active must be TRUE or FALSE !!"
-                }/* IN_CASE_OF_BAD_IDEA , { status: 400 } IN_CASE_OF_BAD_IDEA */);
+                }, { status: 400 });
             }
             data.active = active;
         }

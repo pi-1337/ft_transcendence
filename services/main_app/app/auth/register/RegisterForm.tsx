@@ -72,7 +72,7 @@ export default function RegisterForm({ ftAuthUrl }: { ftAuthUrl: string }) {
           </CardHeader>
           <CardContent>
             {error ? (
-              <div className="mb-4 rounded-lg border border-green-700 bg-green-950/40 px-4 py-3 text-sm text-green-300">
+              <div className="mb-4 rounded-lg border border-red-700 bg-red-950/40 px-4 py-3 text-sm text-red-300">
                 {error}
               </div>
             ) : null}

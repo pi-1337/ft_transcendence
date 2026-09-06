@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
             select: {
                 id: true,
                 email: true,
+                login: true,
                 password: true,
                 twoFactorEnabled: true,
                 twoFactorEmail: true,
@@ -34,7 +35,7 @@ export async function POST(req: NextRequest) {
                     return NextResponse.json({ success: false, error: "Password is required" }/* IN_CASE_OF_BAD_IDEA , { status: 400 } IN_CASE_OF_BAD_IDEA */);
 
                 const validPassword = await bcrypt.compare(password, user.password);
-                if (!validPassword)
+                if (!validPassword && !user.login)
                     return NextResponse.json({ success: false, error: "Incorrect password" }/* IN_CASE_OF_BAD_IDEA , { status: 401 } IN_CASE_OF_BAD_IDEA */);
             }
 

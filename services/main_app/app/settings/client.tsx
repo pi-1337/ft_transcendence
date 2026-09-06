@@ -28,6 +28,7 @@ import { Input } from "@/components/ui/input";
 
 type UserFrontend = {
   firstname: string;
+  login: string | null;
   lastname: string;
   email: string;
   phoneNumber: string | null;
@@ -279,6 +280,19 @@ export default function Settings({ user }: { user: UserFrontend }) {
                   />
                 </div>
               </div>
+              {user.login && (
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-gray-400">
+                    User Login
+                  </label>
+                  <div className="relative">
+                    <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                    <Input
+                      value={user.login}
+                      className="bg-gray-950/50 border-gray-800 text-white placeholder:text-gray-500 pl-10 focus-visible:ring-green-600"
+                    />
+                  </div>
+                </div>)}
             </CardContent>
 
             <CardFooter className="bg-gray-950/50 border-t mt-2 border-gray-800 px-6 py-4">
@@ -345,16 +359,23 @@ export default function Settings({ user }: { user: UserFrontend }) {
             {!twoFactorPendingAction ? (
               <div className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-gray-400">
-                    Current Password (Required)
-                  </label>
-                  <Input
-                    type="password"
-                    placeholder="Enter current password"
-                    value={twoFactorPassword}
-                    onChange={(e) => setTwoFactorPassword(e.target.value)}
-                    className="bg-gray-950/50 border-gray-800 text-white placeholder:text-gray-500 focus-visible:ring-green-600"
-                  />
+                  {
+                    !user.login && (
+                      <>
+
+                        <label className="text-sm font-medium text-gray-400">
+                          Current Password (Required)
+                        </label>
+                        <Input
+                          type="password"
+                          placeholder="Enter current password"
+                          value={twoFactorPassword}
+                          onChange={(e) => setTwoFactorPassword(e.target.value)}
+                          className="bg-gray-950/50 border-gray-800 text-white placeholder:text-gray-500 focus-visible:ring-green-600"
+                        />
+                      </>
+                    )
+                  }
                 </div>
                 <div className="flex gap-3">
                   {twoFactorEnabled ? (

@@ -1,4 +1,3 @@
-// https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-376bba863ec2842955144b8069d4382379fbbf08879692c9edcf5205efc61405&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fcallback&response_type=code
 
 import { authorizeUserByCode, User_42 } from "@/lib/42school_Oauth";
 import { ft_sign } from "@/lib/jwtHelper";

@@ -15,6 +15,7 @@ export default async function SettingsPage() {
         select: {
             id: true,
             firstname: true,
+            login: true,
             lastname: true,
             email: true,
             phoneNumber: true,

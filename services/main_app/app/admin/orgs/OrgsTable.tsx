@@ -159,7 +159,7 @@ export default function OrgsTable({ orgs }: Props) {
                       <TableCell className="px-6 py-4 text-right whitespace-nowrap">
                         <Link
                           href={{
-                            pathname: `/organizations/${org.id}`,
+                            pathname: `/admin/orgs/${org.id}`,
                             query: { from: "/admin/orgs" },
                           }}
                         >

@@ -6,33 +6,39 @@ import EditOrgForm from "./EditOrgForm";
 type Params = { params: Promise<{ id: string }> };
 
 export default async function EditOrgPage({ params }: Params) {
-    const session = await getSession();
-    if (!session || session.role !== 'ADMIN') {
-        redirect('/dashboard');
-    }
+  const session = await getSession();
+  if (!session || session.role !== "ADMIN") {
+    redirect("/dashboard");
+  }
 
-    const { id } = await params;
-    const orgId = parseInt(id, 10);
-    
-    if (isNaN(orgId)) {
-        redirect('/admin/orgs');
-    }
+  const { id } = await params;
+  const orgId = parseInt(id, 10);
 
-    const org = await prisma.organization.findUnique({
-        where: { id: orgId },
-        include: {
-            users: { select: { id: true, firstname: true, lastname: true, email: true } },
-            admins: { select: { id: true, firstname: true, lastname: true, email: true } },
-            meals: {
-                select: { id: true, name: true, startTime: true, endTime: true },
-                orderBy: { startTime: 'asc' },
-            },
-        },
-    });
+  if (isNaN(orgId)) {
+    redirect("/admin/orgs");
+  }
 
-    if (!org) {
-        redirect('/admin/orgs');
-    }
+  const org = await prisma.organization.findUnique({
+    where: { id: orgId },
+    include: {
+      users: {
+        select: { id: true, firstname: true, lastname: true, email: true },
+      },
+      admins: {
+        select: { id: true, firstname: true, lastname: true, email: true },
+      },
+      meals: {
+        select: { id: true, name: true, startTime: true, endTime: true },
+        orderBy: { startTime: "asc" },
+      },
+    },
+  });
 
-    return <EditOrgForm org={org} backHref="/admin/orgs" backLabel="Organizations" />;
+  if (!org) {
+    redirect("/admin/orgs");
+  }
+
+  const backHref = `/organizations/${org.id}?from=${encodeURIComponent("/admin/orgs")}`;
+
+  return <EditOrgForm org={org} backHref={backHref} backLabel={org.name} />;
 }

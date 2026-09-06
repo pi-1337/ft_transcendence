@@ -62,7 +62,7 @@ export default function OrgDetails({
             className="text-gray-400 hover:text-white transition-colors flex items-center gap-1"
           >
             <ArrowLeft className="w-4 h-4" />{" "}
-            {backHref === "/admin/orgs" ? "Organizations" : "Organizations"}
+            {backHref === "/admin/orgs" ? "Back To Organizations" : "Organizations"}
           </Link>
           <span className="text-gray-700">/</span>
           <span className="text-white">{org.name}</span>

@@ -168,7 +168,7 @@ export default function OrgsTable({ orgs }: Props) {
                             size="sm"
                             className="h-8 bg-transparent border-gray-700 text-gray-300 hover:text-white hover:bg-gray-800 gap-1.5"
                           >
-                            <Pencil className="w-3.5 h-3.5" /> Open
+                            Open
                           </Button>
                         </Link>
                       </TableCell>

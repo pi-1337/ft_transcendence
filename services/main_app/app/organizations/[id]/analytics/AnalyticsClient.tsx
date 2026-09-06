@@ -361,7 +361,7 @@ export default function StatisticsClient({
                             "en-GB",
                             { hour: "2-digit", minute: "2-digit" },
                           )}
-                          {" – "}
+                          {" - "}
                           {new Date(meal.endTime).toLocaleTimeString("en-GB", {
                             hour: "2-digit",
                             minute: "2-digit",

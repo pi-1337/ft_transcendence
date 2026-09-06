@@ -58,8 +58,8 @@ const formatTime = (val: string | Date) => {
 
 export default function EditOrgForm({
   org,
-  backHref = "/admin/orgs",
-  backLabel = "Organizations",
+  backHref = `/organizations/${org.id}?from=${encodeURIComponent("/admin/orgs")}`,
+  backLabel = org.name,
 }: EditOrgFormProps) {
   const [name, setName] = useState(org.name);
   const [type, setType] = useState(org.type);

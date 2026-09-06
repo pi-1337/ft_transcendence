@@ -24,9 +24,10 @@ export default async function OrgAdminEditPage({
   const { id: rawId } = await params;
   const orgId = parseInt(rawId, 10);
   const resolvedSearchParams = (await searchParams) ?? {};
-  const backHref = isValidBackHref(resolvedSearchParams.from)
-    ? resolvedSearchParams.from
-    : `/organizations/${orgId}`;
+  const sourceHref: string = isValidBackHref(resolvedSearchParams.from)
+    ? (resolvedSearchParams.from ?? "/organizations")
+    : "/organizations";
+  const backHref = `/organizations/${orgId}?from=${encodeURIComponent(sourceHref)}`;
 
   if (isNaN(orgId)) redirect("/organizations");
 

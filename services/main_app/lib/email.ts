@@ -39,7 +39,7 @@ export async function sendOtpEmail({ to, code, expiresInMinutes }: SendOtpMailPa
     const text = `Your verification code is ${code}. It expires in ${expiresInMinutes} minutes.`;
 
     if (!transporter) {
-        // console.log(`[2FA-DEV] OTP for ${to}: ${code}`);
+        console.log(`[2FA-DEV] OTP for ${to}: ${code}`);
         return;
     }
 
@@ -48,12 +48,12 @@ export async function sendOtpEmail({ to, code, expiresInMinutes }: SendOtpMailPa
             from,
             to,
             subject,
-            t   ext,
+            text,
         });
     } catch (error) {
         if (requireSmtp)
             throw error;
 
-        // console.log(`[2FA-DEV] SMTP send failed, fallback OTP for ${to}: ${code}`);
+        console.log(`[2FA-DEV] SMTP send failed, fallback OTP for ${to}: ${code}`);
     }
 }

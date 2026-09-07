@@ -4,11 +4,10 @@ info:
   version: 1.0.0
   description: Simple public API for organizations and badge scans.
 servers:
-  - url: http://localhost:3000
-
+  - url: /
+    description: Current server
 security:
   - BearerAuth: []
-
 components:
   securitySchemes:
     BearerAuth:
@@ -16,7 +15,6 @@ components:
       scheme: bearer
       bearerFormat: API Key
       description: Use Authorization header with format Bearer <SCANNER_API_KEY>
-
   schemas:
     ErrorResponse:
       type: object
@@ -25,7 +23,6 @@ components:
           type: string
       required:
         - error
-
     Meal:
       type: object
       properties:
@@ -44,7 +41,6 @@ components:
         - name
         - startTime
         - endTime
-
     Organization:
       type: object
       properties:
@@ -62,7 +58,11 @@ components:
         meals:
           type: array
           items:
-            $ref: '#/components/schemas/Meal'
+            $ref: "#/components/schemas/Meal"
+        readers:
+          type: array
+          items:
+            $ref: "#/components/schemas/RfidReader"
       required:
         - id
         - name
@@ -70,7 +70,7 @@ components:
         - service
         - createdAt
         - meals
-
+        - readers
     BadgeScan:
       type: object
       properties:
@@ -78,7 +78,10 @@ components:
           type: integer
         status:
           type: string
-          enum: [PENDING, ACCEPTED, REJECTED]
+          enum:
+            - PENDING
+            - ACCEPTED
+            - REJECTED
         badgeId:
           type: string
         rfidReaderID:
@@ -95,14 +98,27 @@ components:
         - rfidReaderID
         - mealId
         - createdAt
-
+    RfidReader:
+      type: object
+      properties:
+        id:
+          type: integer
+          minimum: 1
+          example: 4
+        location:
+          type: string
+          example: Main cafeteria
+      required:
+        - id
+        - location
 paths:
   /api/public/v1/organizations:
     get:
-      tags: [Organizations]
+      tags:
+        - Organizations
       summary: List active organizations
       responses:
-        '200':
+        "200":
           description: Success
           content:
             application/json:
@@ -112,23 +128,25 @@ paths:
                   organizations:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Organization'
-        '401':
+                      $ref: "#/components/schemas/Organization"
+                required:
+                  - organizations
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
           description: Server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
+                $ref: "#/components/schemas/ErrorResponse"
   /api/public/v1/scans:
     post:
-      tags: [Scans]
+      tags:
+        - Scans
       summary: Create a scan
       requestBody:
         required: true
@@ -140,12 +158,14 @@ paths:
                 badge_id:
                   type: string
                 reader_id:
-                  type: string
+                  type: integer
+                  minimum: 1
+                  example: 4
               required:
                 - badge_id
                 - reader_id
       responses:
-        '201':
+        "201":
           description: Created
           content:
             application/json:
@@ -156,40 +176,43 @@ paths:
                     type: boolean
                   id:
                     type: integer
-        '401':
+                required:
+                  - success
+                  - id
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
           description: Forbidden
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '409':
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
           description: Conflict
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
           description: Server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
+                $ref: "#/components/schemas/ErrorResponse"
   /api/public/v1/scans/{id}:
     get:
-      tags: [Scans]
+      tags:
+        - Scans
       summary: Get a scan by id
       parameters:
         - name: id
@@ -198,7 +221,7 @@ paths:
           schema:
             type: integer
       responses:
-        '200':
+        "200":
           description: Success
           content:
             application/json:
@@ -206,35 +229,37 @@ paths:
                 type: object
                 properties:
                   scan:
-                    $ref: '#/components/schemas/BadgeScan'
-        '400':
+                    $ref: "#/components/schemas/BadgeScan"
+                required:
+                  - scan
+        "400":
           description: Invalid id
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
           description: Server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
+                $ref: "#/components/schemas/ErrorResponse"
     delete:
-      tags: [Scans]
-      summary: Delete a pending scan
+      tags:
+        - Scans
+      summary: Delete a scan
       parameters:
         - name: id
           in: path
@@ -242,7 +267,7 @@ paths:
           schema:
             type: integer
       responses:
-        '200':
+        "200":
           description: Deleted
           content:
             application/json:
@@ -253,41 +278,38 @@ paths:
                     type: boolean
                   id:
                     type: integer
-        '400':
+                required:
+                  - success
+                  - id
+        "400":
           description: Invalid id
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '409':
-          description: Not pending
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
           description: Server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
+                $ref: "#/components/schemas/ErrorResponse"
   /api/public/v1/scans/{id}/decision:
     put:
-      tags: [Scans]
-      summary: Decide a pending scan
+      tags:
+        - Scans
+      summary: Set a scan decision
       parameters:
         - name: id
           in: path
@@ -303,11 +325,13 @@ paths:
               properties:
                 decision:
                   type: string
-                  enum: [ACCEPTED, REJECTED]
+                  enum:
+                    - ACCEPTED
+                    - REJECTED
               required:
                 - decision
       responses:
-        '200':
+        "200":
           description: Updated
           content:
             application/json:
@@ -318,40 +342,38 @@ paths:
                     type: boolean
                   decision:
                     type: string
-                    enum: [ACCEPTED, REJECTED]
+                    enum:
+                      - ACCEPTED
+                      - REJECTED
                   reason:
                     type: string
-        '400':
+                required:
+                  - success
+                  - decision
+        "400":
           description: Invalid request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
           description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '409':
-          description: Not pending
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
           description: Server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
+                $ref: "#/components/schemas/ErrorResponse"
 tags:
   - name: Organizations
   - name: Scans

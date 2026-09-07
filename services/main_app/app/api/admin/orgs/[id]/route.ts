@@ -9,12 +9,27 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         const session = await getSession();
 
         if (!session)
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        if (session.role !== 'ADMIN')
-            return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-
+            return NextResponse.json({ error: "Unauthorized" }/* IN_CASE_OF_BAD_IDEA , { status: 401 } IN_CASE_OF_BAD_IDEA */);
         const { id: rawId } = await params;
         const orgId = parseInt(rawId);
+        const isOrgAdmin = await prisma.organization.findFirst({
+            where: {
+                id: orgId,
+                admins: {
+                some: {
+                    id: session.id,
+                },
+                },
+            },
+            select: {
+                id: true,
+            },
+        });
+
+        if (session.role !== 'ADMIN' && !isOrgAdmin)
+            return NextResponse.json({ error: "Forbidden" }/* IN_CASE_OF_BAD_IDEA , { status: 403 } IN_CASE_OF_BAD_IDEA */);
+
+        
         if (isNaN(orgId))
             return NextResponse.json({ error: "Invalid organization ID" }, { status: 400 });
 

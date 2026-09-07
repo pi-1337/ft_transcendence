@@ -32,6 +32,13 @@ export async function GET(request: NextRequest)
                     },
                     orderBy: { location: 'asc' },
                 },
+                readers: {
+                    select: {
+                        id: true,
+                        location: true,
+                    },
+                    orderBy: { location: 'asc' },
+                },
             },
             orderBy: { name: 'asc' },
         });

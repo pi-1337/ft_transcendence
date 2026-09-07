@@ -1,2 +1,6 @@
 .vscode
 services/main_app/public/avatars
+
+badge_listener/.simulator.env
+badge_listener/.simulator-venv/
+badge_listener/__pycache__/

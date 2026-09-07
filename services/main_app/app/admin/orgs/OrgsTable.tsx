@@ -116,13 +116,10 @@ export default function OrgsTable({ orgs }: Props) {
 
                       <TableCell className="py-4 whitespace-nowrap">
                         <div className="text-gray-300">{org.type}</div>
-                        
                       </TableCell>
 
                       <TableCell className="py-4 whitespace-nowrap">
-                        <div className="text-gray-300">
-                          {org.service}
-                        </div>
+                        <div className="text-gray-300">{org.service}</div>
                       </TableCell>
 
                       <TableCell className="py-4 whitespace-nowrap">
@@ -155,7 +152,6 @@ export default function OrgsTable({ orgs }: Props) {
                           )}
                         </div>
                       </TableCell>
-
                       <TableCell className="px-6 py-4 text-right whitespace-nowrap">
                         <Link
                           href={{

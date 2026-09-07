@@ -35,9 +35,12 @@ export default async function ServerSide({ searchParams }: Params) {
     }
 
     const orgs = await prisma.organization.findMany({
-      where: {
-        users: { some: { id: session.id } },
-      },
+      where:
+        session.role === "ADMIN"
+          ? {}
+          : {
+              admins: { some: { id: session.id } },
+            },
       select: {
         id: true,
         name: true,
@@ -56,6 +59,8 @@ export default async function ServerSide({ searchParams }: Params) {
       },
     });
 
+    const canManageOrg = session.role === "ADMIN";
+
     const formattedOrgs = await Promise.all(
       orgs.map(async (o) => ({
         id: o.id,
@@ -73,7 +78,13 @@ export default async function ServerSide({ searchParams }: Params) {
       })),
     );
 
-    return <OrgDetails orgs={formattedOrgs} backHref={backHref} />;
+    return (
+      <OrgDetails
+        orgs={formattedOrgs}
+        backHref={backHref}
+        canManageOrg={canManageOrg}
+      />
+    );
   } catch (error: any) {
     if (error?.digest?.startsWith("NEXT_REDIRECT")) throw error;
     redirect("/dashboard");

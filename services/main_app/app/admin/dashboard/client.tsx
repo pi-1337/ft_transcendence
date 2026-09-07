@@ -115,6 +115,16 @@ export default function AdminDashboard({
                 </DropdownMenuLabel>
               </DropdownMenuGroup>
               <DropdownMenuSeparator className="bg-gray-800" />
+
+              <DropdownMenuItem
+                className="focus:bg-gray-800 focus:text-white cursor-pointer"
+                onClick={() => router.push("/settings")}
+              >
+                Settings
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator className="bg-gray-800" />
+
               <DropdownMenuItem
                 className="text-red-400 focus:bg-gray-800 focus:text-red-300 cursor-pointer"
                 onClick={handleLogout}

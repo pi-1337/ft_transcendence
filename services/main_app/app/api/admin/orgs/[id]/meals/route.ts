@@ -48,31 +48,33 @@ function formatMeal(meal: { id: number; name: string; startTime: Date; endTime: 
   };
 }
 
-async function authorizeAdmin() {
-  const session = await getSession();
-
-  if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-  if (session.role !== 'ADMIN') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
-
-  return null;
-}
-
 export async function POST(req: NextRequest, { params }: Params) {
   try {
-    const authError = await authorizeAdmin();
-    if (authError) {
-      return authError;
-    }
+    const session = await getSession();
 
-    const { id: rawId } = await params;
-    const orgId = parseOrgId(rawId);
-    if (!orgId) {
-      return NextResponse.json({ error: 'Invalid organization ID' }, { status: 400 });
-    }
+        if (!session)
+            return NextResponse.json({ error: "Unauthorized" } , { status: 401 });
+        const { id: rawId } = await params;
+        const orgId = parseInt(rawId);
+        const isOrgAdmin = await prisma.organization.findFirst({
+            where: {
+                id: orgId,
+                admins: {
+                some: {
+                    id: session.id,
+                },
+                },
+            },
+            select: {
+                id: true,
+            },
+        });
+
+        if (session.role !== 'ADMIN' && !isOrgAdmin)
+            return NextResponse.json({ error: "Forbidden" }, { status: 403});
+
+        if (isNaN(orgId))
+            return NextResponse.json({ error: "Invalid organization ID" }, { status: 400 });
 
     const { name, startTime, endTime } = await req.json();
 
@@ -119,16 +121,32 @@ export async function POST(req: NextRequest, { params }: Params) {
 
 export async function PATCH(req: NextRequest, { params }: Params) {
   try {
-    const authError = await authorizeAdmin();
-    if (authError) {
-      return authError;
-    }
+    const session = await getSession();
 
-    const { id: rawId } = await params;
-    const orgId = parseOrgId(rawId);
-    if (!orgId) {
-      return NextResponse.json({ error: 'Invalid organization ID' }, { status: 400 });
-    }
+        if (!session)
+            return NextResponse.json({ error: "Unauthorized" } , { status: 401 });
+        const { id: rawId } = await params;
+        const orgId = parseInt(rawId);
+        const isOrgAdmin = await prisma.organization.findFirst({
+            where: {
+                id: orgId,
+                admins: {
+                some: {
+                    id: session.id,
+                },
+                },
+            },
+            select: {
+                id: true,
+            },
+        });
+
+        if (session.role !== 'ADMIN' && !isOrgAdmin)
+            return NextResponse.json({ error: "Forbidden" }, { status: 403});
+
+        
+        if (isNaN(orgId))
+            return NextResponse.json({ error: "Invalid organization ID" }, { status: 400 });
 
     const { mealId, name, startTime, endTime } = await req.json();
     const parsedMealId = parseInt(String(mealId), 10);
@@ -181,16 +199,32 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 
 export async function DELETE(req: NextRequest, { params }: Params) {
   try {
-    const authError = await authorizeAdmin();
-    if (authError) {
-      return authError;
-    }
+    const session = await getSession();
 
-    const { id: rawId } = await params;
-    const orgId = parseOrgId(rawId);
-    if (!orgId) {
-      return NextResponse.json({ error: 'Invalid organization ID' }, { status: 400 });
-    }
+        if (!session)
+            return NextResponse.json({ error: "Unauthorized" } , { status: 401 });
+        const { id: rawId } = await params;
+        const orgId = parseInt(rawId);
+        const isOrgAdmin = await prisma.organization.findFirst({
+            where: {
+                id: orgId,
+                admins: {
+                some: {
+                    id: session.id,
+                },
+                },
+            },
+            select: {
+                id: true,
+            },
+        });
+
+        if (session.role !== 'ADMIN' && !isOrgAdmin)
+            return NextResponse.json({ error: "Forbidden" }, { status: 403});
+
+        
+        if (isNaN(orgId))
+            return NextResponse.json({ error: "Invalid organization ID" }, { status: 400 });
 
     const { mealId } = await req.json();
     const parsedMealId = parseInt(String(mealId), 10);

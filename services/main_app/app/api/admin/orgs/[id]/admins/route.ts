@@ -8,13 +8,28 @@ export async function POST(req: NextRequest, { params }: Params) {
     try {
         const session = await getSession();
 
-        if (!session)
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        if (session.role !== 'ADMIN')
-            return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-
+         if (!session)
+            return NextResponse.json({ error: "Unauthorized" } , { status: 401 });
         const { id: rawId } = await params;
         const orgId = parseInt(rawId);
+        const isOrgAdmin = await prisma.organization.findFirst({
+            where: {
+                id: orgId,
+                admins: {
+                some: {
+                    id: session.id,
+                },
+                },
+            },
+            select: {
+                id: true,
+            },
+        });
+
+        if (session.role !== 'ADMIN' && !isOrgAdmin)
+            return NextResponse.json({ error: "Forbidden" }, { status: 403});
+
+        
         if (isNaN(orgId))
             return NextResponse.json({ error: "Invalid organization ID" }, { status: 400 });
 
@@ -62,13 +77,28 @@ export async function DELETE(req: NextRequest, { params }: Params) {
     try {
         const session = await getSession();
 
-        if (!session)
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        if (session.role !== 'ADMIN')
-            return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-
+         if (!session)
+            return NextResponse.json({ error: "Unauthorized" } , { status: 401 });
         const { id: rawId } = await params;
         const orgId = parseInt(rawId);
+        const isOrgAdmin = await prisma.organization.findFirst({
+            where: {
+                id: orgId,
+                admins: {
+                some: {
+                    id: session.id,
+                },
+                },
+            },
+            select: {
+                id: true,
+            },
+        });
+
+        if (session.role !== 'ADMIN' && !isOrgAdmin)
+            return NextResponse.json({ error: "Forbidden" }, { status: 403});
+
+        
         if (isNaN(orgId))
             return NextResponse.json({ error: "Invalid organization ID" }, { status: 400 });
 

@@ -32,11 +32,13 @@ export default async function OrgAdminEditPage({
   if (isNaN(orgId)) redirect("/organizations");
 
   const org = await prisma.organization.findFirst({
-    where: {
-      id: orgId,
-      users: { some: { id: session.id } },
-      admins: { some: { id: session.id } },
-    },
+    where:
+      session.role === "ADMIN"
+        ? { id: orgId }
+        : {
+            id: orgId,
+            admins: { some: { id: session.id } },
+          },
     include: {
       users: {
         select: { id: true, firstname: true, lastname: true, email: true },

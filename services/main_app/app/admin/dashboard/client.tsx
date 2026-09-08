@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 type Props = {
+  avatar: string;
   firstname: string;
   lastname: string;
   email: string;
@@ -33,6 +34,7 @@ type Props = {
 };
 
 export default function AdminDashboard({
+  avatar,
   firstname,
   lastname,
   email,
@@ -93,6 +95,7 @@ export default function AdminDashboard({
           <DropdownMenu>
             <DropdownMenuTrigger className="focus:outline-none">
               <Avatar className="h-9 w-9 border border-gray-800 hover:border-gray-700 transition-colors">
+                <AvatarImage src={avatar || ""} alt={firstname} />
                 <AvatarFallback className="bg-gray-800 text-green-400 font-semibold">
                   {firstname?.charAt(0).toUpperCase()}
                 </AvatarFallback>
@@ -115,6 +118,16 @@ export default function AdminDashboard({
                 </DropdownMenuLabel>
               </DropdownMenuGroup>
               <DropdownMenuSeparator className="bg-gray-800" />
+
+              <DropdownMenuItem
+                className="focus:bg-gray-800 focus:text-white cursor-pointer"
+                onClick={() => router.push("/settings")}
+              >
+                Settings
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator className="bg-gray-800" />
+
               <DropdownMenuItem
                 className="text-red-400 focus:bg-gray-800 focus:text-red-300 cursor-pointer"
                 onClick={handleLogout}

@@ -182,22 +182,6 @@ export default function Dashboard({
               </Link>
             </div>
 
-            {/* <div className="flex items-center justify-between p-4 rounded-lg bg-gray-950/50 border border-gray-800 hover:border-gray-700 transition-colors">
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-white">
-                  Create a new badge
-                </span>
-                <span className="text-xs text-gray-400 mt-1">
-                  Design and issue a new badge for your organization
-                </span>
-              </div>
-              <Link href="/badge">
-                <Button className="bg-green-700 hover:bg-green-800 text-white h-8 w-20text-xs">
-                  Create
-                </Button>
-              </Link>
-            </div> */}
-
             <div className="flex items-center justify-between p-4 rounded-lg bg-gray-950/50 border border-gray-800 hover:border-gray-700 transition-colors">
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-white">

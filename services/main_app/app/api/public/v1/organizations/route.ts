@@ -31,7 +31,7 @@ export async function GET(request: NextRequest)
                         location: true,
                     },
                     orderBy: { location: 'asc' },
-                },
+                }
             },
             orderBy: { name: 'asc' },
         });

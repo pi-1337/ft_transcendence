@@ -64,7 +64,7 @@ export async function startTwoFactorChallenge(userId: number, destinationEmail: 
         },
     });
 
-    // console.log("code ", code,  "sent to ", destinationEmail)
+    console.log("code ", code,  "sent to ", destinationEmail) // TODO: remove this
 
     await sendOtpEmail({
         to: destinationEmail,

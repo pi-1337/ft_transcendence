@@ -31,9 +31,11 @@ type Org = {
 export default function OrgDetails({
   orgs,
   backHref = "/organizations",
+  canManageOrg = false,
 }: {
   orgs: Org[];
   backHref?: string;
+  canManageOrg?: boolean;
 }) {
   const params = useParams<{ id: string }>();
   const org = orgs.find((org) => org.id === parseInt(params.id));
@@ -43,12 +45,12 @@ export default function OrgDetails({
       <div className="min-h-screen bg-gray-950 text-white flex flex-col items-center justify-center p-4">
         <Building2 className="w-12 h-12 text-gray-800 mb-4" />
         <h1 className="text-2xl font-semibold mb-2">Organization not found</h1>
-        <Link
-          href="/organizations"
+        {/* <Link
+          href="/admin/orgs"
           className="text-green-500 hover:text-green-400 font-medium"
         >
           Back to Organizations
-        </Link>
+        </Link> */}
       </div>
     );
   }
@@ -62,13 +64,15 @@ export default function OrgDetails({
             className="text-gray-400 hover:text-white transition-colors flex items-center gap-1"
           >
             <ArrowLeft className="w-4 h-4" />{" "}
-            {backHref === "/admin/orgs" ? "Back To Organizations" : "Organizations"}
+            {backHref === "/admin/orgs"
+              ? "Back To Organizations"
+              : "Organizations"}
           </Link>
           <span className="text-gray-700">/</span>
           <span className="text-white">{org.name}</span>
         </div>
 
-        {org.isOrgAdmin && (
+        {(canManageOrg || org.isOrgAdmin) && (
           <div className="flex items-center gap-2 overflow-x-auto">
             <Link href={`/organizations/${org.id}/scans`}>
               <Button

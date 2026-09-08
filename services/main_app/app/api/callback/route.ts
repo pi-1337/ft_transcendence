@@ -3,7 +3,7 @@ import { authorizeUserByCode, User_42 } from "@/lib/42school_Oauth";
 import { ft_sign } from "@/lib/jwtHelper";
 import { prisma } from "@/lib/prisma";
 import { startTwoFactorChallenge } from "@/lib/twoFactor";
-import { User } from "@prisma/client";
+import { Role, User } from "@prisma/client";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -38,8 +38,8 @@ export async function GET(req: NextRequest) {
             });
         }
 
-
-        // TODO ISSA --> password required for user to do 2fa
+        const firstUser = await prisma.user.count({}) == 0;
+        const role: Role = firstUser ? "ADMIN" : "USER";
 
         // email && login       ---> login
         // !email && !login     ---> create
@@ -66,6 +66,7 @@ export async function GET(req: NextRequest) {
                     firstname: first_name,
                     lastname: last_name,
                     email,
+                    role,
                     login
                 }
             });

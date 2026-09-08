@@ -18,9 +18,9 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         if (isNaN(orgId))
             return NextResponse.json({ error: "Invalid organization ID" }, { status: 400 });
 
-        const { name, type, service, badgeTimes, active, callBackURL } = await req.json();
+        const { name, type, service, badgeTimes, active } = await req.json();
 
-        if (!name && !type && !service && badgeTimes === undefined && active === undefined && callBackURL === undefined)
+        if (!name && !type && !service && badgeTimes === undefined && active === undefined)
             return NextResponse.json({ error: "No fields provided" }, { status: 400 });
 
         const data: Record<string, unknown> = {};
@@ -38,7 +38,6 @@ export async function PATCH(req: NextRequest, { params }: Params) {
                 return NextResponse.json({ error: "active must be TRUE or FALSE" }, { status: 400 });
             data.active = active;
         }
-        if (callBackURL !== undefined) data.callBackURL = callBackURL || null;
 
         const org = await prisma.organization.update({
             where: { id: orgId },

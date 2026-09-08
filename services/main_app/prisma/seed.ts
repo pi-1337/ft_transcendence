@@ -137,7 +137,6 @@ async function main() {
         service: pick(orgServices),
         badgeTimes: randInt(1, 3),
         active: Math.random() < 0.85 ? Active.TRUE : Active.FALSE,
-        callBackURL: faker.helpers.maybe(() => faker.internet.url(), { probability: 0.4 }),
         createdAt: randomPastDate(300),
         users: { connect: members.map((u) => ({ id: u.id })) },
         admins: { connect: [{ id: admin.id }] },

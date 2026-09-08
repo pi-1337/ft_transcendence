@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/sessionManage";
+import { User } from "@prisma/client";
 
 const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const validatePhone = (phone: string) => /^\+[1-9]\d{7,14}$/.test(phone);
@@ -67,12 +68,14 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
         return NextResponse.json({ success: false, error: "You cannot delete your own account." }, { status: 400 });
 
     try {
+        console.error(targetId);
         await prisma.user.delete({ where: { id: targetId } });
+
         return NextResponse.json({ success: true }, { status: 200 });
     } catch (error: any) {
         if (error?.code === 'P2025')
             return NextResponse.json({ success: false, error: "User not found." }, { status: 404 });
-        // console.error(error);
+        console.error(error);
         return NextResponse.json({ success: false, error: "Something went wrong." }, { status: 500 });
     }
 }

@@ -26,7 +26,6 @@ type FieldErrors = {
   type?: string;
   service?: string;
   badgeTimes?: string;
-  callbackUrl?: string;
 };
 
 export default function CreateOrgForm() {
@@ -36,7 +35,6 @@ export default function CreateOrgForm() {
   const [service, setService] = useState("");
   const [badgeTimes, setBadgeTimes] = useState("");
   const [active, setActive] = useState<"TRUE" | "FALSE">("FALSE");
-  const [callbackUrl, setCallbackUrl] = useState("");
   const [errors, setErrors] = useState<FieldErrors>({});
   const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -52,10 +50,6 @@ export default function CreateOrgForm() {
     const bt = parseInt(badgeTimes);
     if (isNaN(bt) || bt < 1) {
       e.badgeTimes = "Must be a positive integer.";
-    }
-
-    if (callbackUrl && !/^https?:\/\/.+/.test(callbackUrl)) {
-      e.callbackUrl = "Must be a valid URL starting with http(s)://.";
     }
 
     if (Object.keys(e).length > 0) isValid = false;
@@ -80,7 +74,6 @@ export default function CreateOrgForm() {
           service: service.trim(),
           badgeTimes: parseInt(badgeTimes),
           active,
-          callBackURL: callbackUrl.trim() || null,
         }),
       });
 
@@ -243,24 +236,6 @@ export default function CreateOrgForm() {
                     </SelectContent>
                   </Select>
                 </div>
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-gray-400">
-                  Callback URL{" "}
-                  <span className="text-gray-600 font-normal">(optional)</span>
-                </label>
-                <Input
-                  type="url"
-                  placeholder="https://..."
-                  value={callbackUrl}
-                  onChange={(e) => setCallbackUrl(e.target.value)}
-                  className={`bg-gray-950/50 border-gray-800 text-white placeholder:text-gray-500 focus-visible:ring-green-600 ${errors.callbackUrl ? "border-red-500 focus-visible:ring-red-600" : ""}`}
-                />
-                {errors.callbackUrl && (
-                  <span className="text-red-400 text-xs font-medium">
-                    {errors.callbackUrl}
-                  </span>
-                )}
               </div>
             </CardContent>
 

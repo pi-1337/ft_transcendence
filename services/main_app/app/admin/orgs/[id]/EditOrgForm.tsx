@@ -39,7 +39,6 @@ type Org = {
   service: string;
   badgeTimes: number;
   active: "TRUE" | "FALSE";
-  callBackURL: string | null;
   users: User[];
   admins: User[];
   meals: Meal[];
@@ -66,7 +65,6 @@ export default function EditOrgForm({
   const [service, setService] = useState(org.service);
   const [badgeTimes, setBadgeTimes] = useState(String(org.badgeTimes));
   const [active, setActive] = useState<"TRUE" | "FALSE">(org.active);
-  const [callbackUrl, setCallbackUrl] = useState(org.callBackURL || "");
   const [members, setMembers] = useState<User[]>(org.users);
   const [memberEmail, setMemberEmail] = useState("");
   const [admins, setAdmins] = useState<User[]>(org.admins);
@@ -97,7 +95,6 @@ export default function EditOrgForm({
           service,
           badgeTimes,
           active,
-          callBackURL: callbackUrl || null,
         }),
       });
       const data = await res.json();
@@ -385,16 +382,6 @@ export default function EditOrgForm({
                     <SelectItem value="FALSE">Inactive</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-sm text-gray-400">Callback URL</label>
-                <Input
-                  type="url"
-                  value={callbackUrl}
-                  onChange={(e) => setCallbackUrl(e.target.value)}
-                  placeholder="https://..."
-                  className="bg-gray-950/50 border-gray-800 text-white focus-visible:ring-green-600"
-                />
               </div>
               <div className="col-span-1 md:col-span-2 flex justify-end mt-2">
                 <Button

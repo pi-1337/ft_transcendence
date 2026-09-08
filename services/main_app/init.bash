@@ -1,6 +1,7 @@
 #!/bin/sh
-set -e
 
-npx prisma db push
+npx prisma db push --accept-data-loss
 npx prisma generate
+npm run build
+
 exec npm start

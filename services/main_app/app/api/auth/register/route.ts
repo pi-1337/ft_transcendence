@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt"
-import { User } from "@prisma/client";
+import { Role, User } from "@prisma/client";
 
 const validateEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -55,14 +55,18 @@ export async function POST(req: NextRequest) {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-	    const avatar = `https://${process.env.NEXT_PUBLIC_AVATAR_LINK}/default-avatar.png`;
+	    const avatar = `${process.env.NEXT_PUBLIC_AVATAR_LINK}/default-avatar.png`;
+
+        const firstUser = await prisma.user.count({}) == 0;
+        const role: Role = firstUser ? "ADMIN" : "USER";
 
         const createdUser = await prisma.user.create({ data: {
             firstname,
             lastname,
             phoneNumber,
             email,
-	    avatar,
+            role,
+	        avatar,
             password: hashedPassword,
         } });
 

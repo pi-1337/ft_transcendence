@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 
 async function handleEdit(req: NextRequest) {
     try {
-        const { name, type, service, badgeTimes, active, callBackURL, orgId } = await req.json();
+        const { name, type, service, badgeTimes, active, orgId } = await req.json();
         const sessionData = await getSession();
 
         if (sessionData === null) {
@@ -48,7 +48,7 @@ async function handleEdit(req: NextRequest) {
                 { status: 403 });
         }
 
-        if (!name && !type && !service && badgeTimes === undefined && active === undefined && callBackURL === undefined) {
+        if (!name && !type && !service && badgeTimes === undefined && active === undefined) {
             return NextResponse.json({
                 success: false,
                 error: "No fields provided !!"
@@ -79,7 +79,6 @@ async function handleEdit(req: NextRequest) {
             }
             data.active = active;
         }
-        if (callBackURL !== undefined) data.callBackURL = callBackURL || null;
 
         const updatedOrg = await prisma.organization.update({
             where: {

@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
         if (session.role !== 'ADMIN')
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-        const { name, type, service, badgeTimes, active, callBackURL } = await req.json();
+        const { name, type, service, badgeTimes, active } = await req.json();
 
         if (!name || !type || !service || badgeTimes === undefined)
             return NextResponse.json({ error: "name, type, service and badgeTimes are required" }, { status: 400 });
@@ -30,7 +30,6 @@ export async function POST(req: NextRequest) {
                 service,
                 badgeTimes: bt,
                 active: active ?? 'FALSE',
-                callBackURL: callBackURL || null,
             },
         });
 

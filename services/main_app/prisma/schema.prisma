@@ -99,7 +99,7 @@ model Meal {
 	startTime		DateTime	@db.Time(0)
 	endTime			DateTime	@db.Time(0)
 
-	organization		Organization	@relation(fields: [organizationId], references: [id])
+	organization		Organization	@relation(fields: [organizationId], references: [id], onDelete: Cascade)
 	organizationId		Int
 
 	createdAt		DateTime	@default(now())
@@ -129,7 +129,7 @@ model Announcement {
 	organization		Organization	@relation(fields: [organizationId], references: [id], onDelete: Cascade)
 	organizationId		Int
 
-	createdBy			User			@relation("createdBy", fields: [userId], references: [id])
+	createdBy			User			@relation("createdBy", fields: [userId], references: [id], onDelete: Cascade)
 	userId				Int
 
 	createdAt			DateTime		@default(now())
@@ -167,25 +167,25 @@ model TwoFactorChallenge {
 // many to many relations
 // users and orgs
 model UsersOnOrganizations {
-	user	User?			@relation(fields: [userId], references: [id])
+	user	User?			@relation(fields: [userId], references: [id], onDelete: Cascade)
 	userId	Int
-	org		Organization	@relation(fields: [orgId], references: [id])
+	org		Organization	@relation(fields: [orgId], references: [id], onDelete: Cascade)
 	orgId	Int
 	@@id([userId, orgId]) // pair (id, id) is uniq in IR^2
 }
 
 model UsersOnNotifications {
-	user	User?			@relation(fields: [userId], references: [id])
+	user	User?			@relation(fields: [userId], references: [id], onDelete: Cascade)
 	userId	Int
-	notif	Notification	@relation(fields: [notifId], references: [id])
+	notif	Notification	@relation(fields: [notifId], references: [id], onDelete: Cascade)
 	notifId	Int
 	@@id([userId, notifId])
 }
 
 model UsersOnNotificationsRead {
-	user	User?			@relation(fields: [userId], references: [id])
+	user	User?			@relation(fields: [userId], references: [id], onDelete: Cascade)
 	userId	Int
-	notif	Notification	@relation(fields: [notifId], references: [id])
+	notif	Notification	@relation(fields: [notifId], references: [id], onDelete: Cascade)
 	notifId	Int
 	@@id([userId, notifId])
 }
@@ -193,7 +193,7 @@ model UsersOnNotificationsRead {
 model RfidReaders {
 	id Int @id @default(autoincrement())
 	location String
-	organization    Organization @relation(fields: [organizationId], references: [id])
+	organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
     organizationId  Int
 
 	badgeScan BadgeScan[]
@@ -215,7 +215,7 @@ model BadgeScan {
   rfidReader RfidReaders @relation(fields: [rfidReaderID], references: [id], onDelete: Cascade)
 
   mealId        Int
-  meal          Meal     @relation(fields: [mealId], references: [id])
+  meal          Meal     @relation(fields: [mealId], references: [id], onDelete: Cascade)
 
   status        RequestStatus @default(PENDING)
   createdAt     DateTime @default(now())

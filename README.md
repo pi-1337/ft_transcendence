@@ -163,45 +163,22 @@ TODO: list the main user-facing features here (e.g. badge scanning & service acc
 # Modules
  
 Here are the modules we were able to cover:
- 
-### A) Web
- 
-- **Major (+2)**: Use a framework for both the frontend and backend:
-	- *Next.js* was used as a full-stack application
-- **Major (+2)**: A public API:
-	- Our public API's documentation is accessible at https://localhost:3000/api/docs
-	- Here are some of the RESTful endpoints:
-		- ***/api/public/v1/organizations***
-		- ***/api/public/v1/scans***
-		- ***/api/public/v1/scans/{id}***
-		- ***/api/public/v1/scans/{id}/decision***
-- **Minor (+1)**: Use an ORM for the database:
-	- *Prisma ORM* was used with a simple MariaDB database
-- **Minor (+1)**: A complete notification system:
-	- Admins can create ***announcements***, modify or delete them.
-- **Minor (+1)**: SSR:
-	- *Next.js* uses SSR by default for improved performance and SEO.
-### B) User Management
- 
-- **Major**: Standard user management and authentication.
-	- Users can update their profile information.
-	- Users can upload an avatar (with a default avatar if none provided).
-	- Users can add other users as friends and see their online status. TODO
-	- Users have a profile page displaying their information
-- **Minor (+1)**: OAuth 2.0 42
-- **Major (+2)**: Advanced permissions system
-- **Major (+2)**: An organization system
-- **Minor (+1)**: Complete 2FA system for users
-### C) DevOps
- 
-- **Major**: Backend as microservices.
-	- Design loosely-coupled services with clear interfaces.
-	- Use REST APIs or message queues for communication.
-	- Each service should have a single responsibility.
-- **Minor**: Health check and status page system with automated backups and disaster recovery procedures.
-### D) Modules of choice
- 
-TODO
+
+### `Web`
+- **Major**: Use a framework for both the frontend and backend.
+- **Major**: A public API
+- **Minor**: Use an ORM for the database.
+- **Minor**: A complete notification system
+- **Minor**: Server-Side Rendering
+
+### `User Management`
+- **Major**: Advanced permissions system:
+- **Major**: An organization system:
+- **Minor**: Implement a complete 2FA (Two-Factor Authentication) system for the users.
+- **Minor**: User activity analytics and insights dashboard.
+
+### `Data and Analytics`
+- **Major**: Advanced analytics dashboard with data visualization.
  
 # Individual Contributions
  

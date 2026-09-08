@@ -75,7 +75,7 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
     } catch (error: any) {
         if (error?.code === 'P2025')
             return NextResponse.json({ success: false, error: "User not found." }, { status: 404 });
-        console.error(error);
+        // console.error(error);
         return NextResponse.json({ success: false, error: "Something went wrong." }, { status: 500 });
     }
 }

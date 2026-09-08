@@ -37,7 +37,7 @@ class ScannerError(Exception):
 class NextJsScanner:
     def __init__(self, config: Settings):
         self.config = config
-        self.client = httpx.AsyncClient(timeout=10.0)
+        self.client = httpx.AsyncClient(timeout=10.0, verify=False)
 
     @property
     def headers(self) -> dict[str, str]:
@@ -59,12 +59,12 @@ class NextJsScanner:
         except httpx.RequestError as error:
             raise ScannerError(
                 f"Could not connect to Next.js at {self.config.nextjs_base_url}"
-            ) from erro
+            ) from error
 
         try:
             payload = response.json()
         except ValueError as error:
-            raise ScannerError("Next.js returned non-JSON data", 502, response.text[:500]) from erro
+            raise ScannerError("Next.js returned non-JSON data", 502, response.text[:500]) from error
 
         # The current Next.js routes sometimes return errors with HTTP 200,
         # so inspect both the HTTP status and the JSON body.

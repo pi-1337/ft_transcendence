@@ -209,10 +209,10 @@ model BadgeScan {
   id            Int      @id @default(autoincrement())
 
   badgeId       String
-  badge Badge @relation(fields: [badgeId], references: [number])
+  badge Badge @relation(fields: [badgeId], references: [number], onDelete: Cascade)
 
   rfidReaderID       Int
-  rfidReader RfidReaders @relation(fields: [rfidReaderID], references: [id])
+  rfidReader RfidReaders @relation(fields: [rfidReaderID], references: [id], onDelete: Cascade)
 
   mealId        Int
   meal          Meal     @relation(fields: [mealId], references: [id])

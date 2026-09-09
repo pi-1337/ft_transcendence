@@ -4,10 +4,9 @@ RUN apt-get update -y && apt-get install -y netcat-traditional openssl && rm -rf
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY . .
 RUN npm install
 
-COPY . .
 RUN chmod +x init.bash
 
 EXPOSE 3000

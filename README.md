@@ -227,10 +227,14 @@ color palette, typography, and icons.
 Detailed breakdown of what each team member contributed technically :
  
 - **ynidkouc**:
+	- Bonus Part: Badge_listener
 	- Public API
+	- Documentation of public APIs
 	- Advanced Permissions System
 	- Two Factor Authentication
-	- TODO *More features which initial author doesn't know about*
+	- Improved notifications system
+	- Devops
+	- Database schema improvments based on whats needed
 - **kelmounj**:
 	- Front-end of the whole project
 	- User activity analytics
@@ -238,8 +242,12 @@ Detailed breakdown of what each team member contributed technically :
 	  color palette, typography, and icons.
 - **yzirri**:
 	- Bonus Part: Badge_listener
+	- Public API
 	- Devops
-	- TODO *More features which initial author doesn't know about*
+	- Badge scanning logic
+	- User activity analytics backend
+	- Bulk operations support with users import/export
+	- Database schema improvments based on whats needed
 - **ioulkhir**:
 	- Project's Initial Architecture
 	- Authentication System
@@ -250,6 +258,7 @@ Detailed breakdown of what each team member contributed technically :
 	- Avatar System
 	- Initial Notification System
 	- SSL/TLS Integration
+	- Devops
 
 # Bonus part
 

@@ -162,7 +162,7 @@ TODO: list the main user-facing features here (e.g. badge scanning & service acc
  
 # Modules
  
-Here are the modules we were able to cover:
+Here are the modules we were able to cover, we have a total of **20 points**:
 
 ### `Web`
 - **Major**: Use a framework for both the frontend and backend.
@@ -170,6 +170,11 @@ Here are the modules we were able to cover:
 - **Minor**: Use an ORM for the database.
 - **Minor**: A complete notification system
 - **Minor**: Server-Side Rendering
+- **Minor**: Custom-made design system with reusable components, including a proper
+color palette, typography, and icons.
+
+### `Accessibility and Internationalization`
+- **Minor**: Support for additional browsers.
 
 ### `User Management`
 - **Major**: Advanced permissions system:
@@ -177,8 +182,12 @@ Here are the modules we were able to cover:
 - **Minor**: Implement a complete 2FA (Two-Factor Authentication) system for the users.
 - **Minor**: User activity analytics and insights dashboard.
 
+### `Devops`
+- **Major**: Backend as microservices.
+
 ### `Data and Analytics`
 - **Major**: Advanced analytics dashboard with data visualization.
+- **Minor**: Data export and import functionality.
  
 # Individual Contributions
  
@@ -189,5 +198,15 @@ Detailed breakdown of what each team member contributed
 - **yzirri** — TODO
 - **ioulkhir** — TODO
 # Bonus part
- 
-TODO
+
+#### `What it is ?`
+``badge_listener`` is a standalone FastAPI service, deliberately separate from the main web app, that simulates physical RFID badge readers. It exposes a small [local web UI](http://localhost:8001) where a developer or evaluator can trigger simulated badge scans, which are then sent as authenticated HTTP requests to the main application's public API **/api/public/v1/scans**, exactly as a real RFID reader deployed at a physical service point would. It authenticates using the same ***SCANNER_API_KEY*** the real hardware integration would use, and it keeps an in-memory log of the last 100 simulated scan events so their outcomes (accepted, rejected, pending decision) can be inspected as they happen.
+
+#### `How it adds real value ?`
+
+It basically simulates how a real RFID reader would work without the hardware overhead, it saves a ton of time and succeeds in demonstrating the project's core purpose.
+
+#### `Why it deserves Major status ?`
+
+It's a fully separate, independently deployable service with its own runtime, dependency set, configuration, event log, and web UI. It is the only way our project's core concept (badge-based access tracking) can be exercised and evaluated at all, which makes it substantial to the project rather than an optional nice-to-have.
+

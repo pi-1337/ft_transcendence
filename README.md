@@ -233,7 +233,9 @@ Detailed breakdown of what each team member contributed technically :
 	- TODO *More features which initial author doesn't know about*
 - **kelmounj**:
 	- Front-end of the whole project
-	- TODO *More features which initial author doesn't know about*
+	- User activity analytics
+	- design system with reusable components, including a proper
+	  color palette, typography, and icons.
 - **yzirri**:
 	- Bonus Part: Badge_listener
 	- Devops

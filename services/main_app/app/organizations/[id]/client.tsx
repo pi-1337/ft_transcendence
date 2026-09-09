@@ -21,7 +21,7 @@ type Org = {
   type: string;
   service: string;
   badgeTimes: number;
-  active: string;
+  active: "TRUE" | "FALSE";
   createdAt: Date;
   members: number;
   badges: number;
@@ -39,6 +39,7 @@ export default function OrgDetails({
 }) {
   const params = useParams<{ id: string }>();
   const org = orgs.find((org) => org.id === parseInt(params.id));
+  const isActive = org?.active === "TRUE";
 
   if (!org) {
     return (
@@ -118,8 +119,10 @@ export default function OrgDetails({
             <h1 className="text-3xl font-bold text-white">{org.name}</h1>
             <p className="text-sm text-gray-400 mt-1 flex items-center gap-2">
               <span className="inline-flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                Active
+                <span
+                  className={`w-1.5 h-1.5 rounded-full ${isActive ? "bg-green-500" : "bg-gray-500"}`}
+                ></span>
+                {isActive ? "Active" : "Inactive"}
               </span>
               • Joined {new Date(org.createdAt).toLocaleDateString("en-GB")}
             </p>
@@ -169,9 +172,13 @@ export default function OrgDetails({
               </div>
               <div className="flex justify-between items-center p-6">
                 <span className="text-gray-400 font-medium">Status</span>
-                <span className="inline-flex items-center gap-1.5 text-sm bg-green-950/40 text-green-400 border border-green-800/50 rounded-full px-3 py-1 font-medium">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                  Active
+                <span
+                  className={`inline-flex items-center gap-1.5 text-sm rounded-full px-3 py-1 font-medium border ${isActive ? "bg-green-950/40 text-green-400 border-green-800/50" : "bg-gray-900 text-gray-400 border-gray-800"}`}
+                >
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full ${isActive ? "bg-green-500" : "bg-gray-500"}`}
+                  ></span>
+                  {isActive ? "Active" : "Inactive"}
                 </span>
               </div>
               <div className="flex justify-between items-center p-6">

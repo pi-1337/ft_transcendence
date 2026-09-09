@@ -99,9 +99,13 @@ export default function Organizations({ orgs }: { orgs: OrgsFrontend[] }) {
                         {org.badgeTimes}
                       </TableCell>
                       <TableCell className="py-4">
-                        <span className="inline-flex items-center text-xs bg-green-950/40 text-green-400 border border-green-800/50 rounded-full px-2.5 py-1 font-medium">
-                          <span className="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5"></span>
-                          Active
+                        <span
+                          className={`inline-flex items-center text-xs rounded-full px-2.5 py-1 font-medium border ${org.active === "TRUE" ? "bg-green-950/40 text-green-400 border-green-800/50" : "bg-gray-900 text-gray-400 border-gray-800"}`}
+                        >
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full mr-1.5 ${org.active === "TRUE" ? "bg-green-500" : "bg-gray-500"}`}
+                          ></span>
+                          {org.active === "TRUE" ? "Active" : "Inactive"}
                         </span>
                       </TableCell>
                       <TableCell className="py-4 px-6 text-right">

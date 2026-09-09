@@ -11,7 +11,7 @@ export default async function AdminUsersPage() {
     if (session.role !== 'ADMIN')
         redirect('/dashboard');
 
-    const users = await prisma.user.findMany({
+    const rows = await prisma.user.findMany({
         select: {
             id: true,
             firstname: true,
@@ -19,9 +19,13 @@ export default async function AdminUsersPage() {
             email: true,
             role: true,
             createdAt: true,
+            phoneNumber: true,
+            orgs: { select: { id: true }, take: 1 },
         },
         orderBy: { createdAt: 'desc' },
     });
+
+    const users = rows.map(({ orgs, ...user }) => ({ ...user, orgId: orgs[0]?.id ?? null }));
 
     return <UsersTable users={users} currentAdminId={session.id} />;
 }

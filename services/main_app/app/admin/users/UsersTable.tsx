@@ -1,11 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import {
   Users,
   Plus,
+  Upload,
+  Download,
   Pencil,
   Trash2,
   Shield,
@@ -28,7 +30,9 @@ type User = {
   firstname: string;
   lastname: string;
   email: string;
+  phoneNumber: string | null;
   role: string;
+  orgId: number | null;
   createdAt: Date;
 };
 
@@ -37,14 +41,25 @@ type Props = {
   currentAdminId: number;
 };
 
-export default function UsersTable({
-  users: initialUsers,
-  currentAdminId,
-}: Props) {
+
+const EXPORT_FORMATS = ["csv", "json", "xml"] as const;
+type ExportFormat = (typeof EXPORT_FORMATS)[number];
+
+const EXPORT_FIELDS = [
+  "firstname",
+  "lastname",
+  "email",
+  "phoneNumber",
+  "role",
+  "orgId",
+] as const;
+
+
+export default function UsersTable({ users, currentAdminId }: Props) {
   const router = useRouter();
-  const [users, setUsers] = useState(initialUsers);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [error, setError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDelete = async (userId: number) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
@@ -62,7 +77,7 @@ export default function UsersTable({
         setError(data.error || "Failed to delete user.");
         return;
       }
-      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+      router.refresh();
     } catch (err) {
       setError("Network error. Please try again.");
     } finally {
@@ -70,25 +85,147 @@ export default function UsersTable({
     }
   };
 
+  const handleFilePicked = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    setError("");
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("/api/user/import", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        setError(data.error || `Import failed (${res.status}).`);
+        return;
+      }
+
+      if (data.failed?.length) {
+        setError(
+          `${data.summary.created} created, ${data.summary.failed} failed — ` +
+            data.failed
+              .map((f: { item: number; email: string; error: string }) =>
+                `#${f.item} ${f.email}: ${f.error}`,
+              )
+              .join("; "),
+        );
+      }
+      router.refresh();
+    } catch {
+      setError("Network error. Please try again.");
+    }
+  };
+
+  const handleExport = (format: ExportFormat) => {
+    const rows = users.map((u) => ({
+      firstname: u.firstname,
+      lastname: u.lastname,
+      email: u.email,
+      phoneNumber: u.phoneNumber ?? "",
+      role: u.role,
+      orgId: u.orgId ?? "",
+    }));
+
+    const csvCell = (v: unknown) => {
+      const s = String(v ?? "");
+      return `"${(/^[=+\-@]/.test(s) ? `'${s}` : s).replace(/"/g, '""')}"`;
+    };
+
+    const xmlEscape = (v: unknown) =>
+      String(v ?? "").replace(
+        /[<>&'"]/g,
+        (c) =>
+          ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '"': "&quot;" })[c]!,
+      );
+
+    let body: string;
+    let mime: string;
+
+    if (format === "csv") {
+      mime = "text/csv;charset=utf-8";
+      body = [
+        EXPORT_FIELDS.join(","),
+        ...rows.map((r) => EXPORT_FIELDS.map((k) => csvCell(r[k])).join(",")),
+      ].join("\n");
+    } else if (format === "xml") {
+      mime = "application/xml;charset=utf-8";
+      body =
+        `<?xml version="1.0" encoding="UTF-8"?>\n<users>\n` +
+        rows
+          .map(
+            (r) =>
+              `  <user>\n` +
+              EXPORT_FIELDS.map((k) => `    <${k}>${xmlEscape(r[k])}</${k}>`).join("\n") +
+              `\n  </user>`,
+          )
+          .join("\n") +
+        `\n</users>`;
+    } else {
+      mime = "application/json;charset=utf-8";
+      body = JSON.stringify(rows, null, 2);
+    }
+
+    const url = URL.createObjectURL(new Blob([body], { type: mime }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `users-${new Date().toISOString().slice(0, 10)}.${format}`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="min-h-screen bg-gray-950 text-white pb-12">
-      <header className="border-b border-gray-800 bg-gray-950 px-8 py-4 flex items-center justify-between sticky top-0 z-10">
-        <div className="flex items-center gap-2 text-sm font-medium">
-          <Link
-            href="/admin/dashboard"
-            className="text-gray-400 hover:text-white transition-colors flex items-center gap-1"
-          >
-            <ArrowLeft className="w-4 h-4" /> Admin Panel
-          </Link>
-          <span className="text-gray-700">/</span>
-          <span className="text-white">Users</span>
+    <header className="border-b border-gray-800 bg-gray-950 px-8 py-4 flex items-center justify-between sticky top-0 z-10">
+      <div className="flex items-center gap-2 text-sm font-medium">
+        <Link
+          href="/admin/dashboard"
+          className="text-gray-400 hover:text-white transition-colors flex items-center gap-1"
+        >
+          <ArrowLeft className="w-4 h-4" /> Admin Panel
+        </Link>
+        <span className="text-gray-700">/</span>
+        <span className="text-white">Users</span>
+      </div>
+
+      <div className="flex items-center gap-2">
+        
+        <div className="flex items-center h-9 rounded-md border border-gray-700 overflow-hidden">
+          <span className="flex items-center gap-1.5 h-full px-3 text-xs font-medium text-gray-500 bg-gray-900/60 border-r border-gray-700">
+            <Download className="w-3.5 h-3.5" /> Export
+          </span>
+          {EXPORT_FORMATS.map((format) => (
+            <button
+              key={format}
+              type="button"
+              onClick={() => handleExport(format)}
+              className="flex items-center h-full px-3 text-xs font-semibold uppercase tracking-wide text-gray-300 border-r border-gray-700 last:border-r-0 hover:bg-gray-800 hover:text-white transition-colors"
+            >
+              {format}
+            </button>
+          ))}
         </div>
+
+      <Button type="button" variant="outline"
+        onClick={() => fileInputRef.current?.click()}
+        className="bg-transparent border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white h-9 px-4 gap-2">
+        <Upload className="w-4 h-4" /> Bulk add
+      </Button>
+
+      <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={handleFilePicked} />
+
         <Link href="/admin/users/create">
           <Button className="bg-green-700 hover:bg-green-800 text-white h-9 px-4 gap-2">
             <Plus className="w-4 h-4" /> Add user
           </Button>
         </Link>
-      </header>
+      </div>
+    </header>
 
       <main className="max-w-6xl mx-auto px-6 mt-10">
         <div className="flex items-start gap-3 mb-8">

@@ -3,8 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/sessionManage";
 import bcrypt from "bcrypt";
 
-const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-const validatePhone = (phone: string) => /^\+[1-9]\d{7,14}$/.test(phone);
+export const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+export const validatePhone = (phone: string) => /^\+[1-9]\d{7,14}$/.test(phone);
+
 
 export async function POST(req: NextRequest) {
     const session = await getSession();

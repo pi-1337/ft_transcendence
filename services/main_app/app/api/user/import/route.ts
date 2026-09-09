@@ -7,6 +7,7 @@ import { Prisma } from '@prisma/client';
 
 const MAX_FILE_BYTES = 1024 * 1024;
 const MAX_ROWS = 200;
+const PASS_LEN = 4;
 
 const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const validatePhone = (phone: string) => /^\+[1-9]\d{7,14}$/.test(phone);
@@ -19,6 +20,7 @@ type ValidRow = {
   phoneNumber: string | null;
   role: 'USER' | 'ADMIN';
   orgId: number;
+  password: string;
 };
 
 function generateBadgeNumber(): string {
@@ -112,8 +114,11 @@ export async function POST(req: NextRequest)
         rows.forEach((r, i) => {
             const item = i + 1;
             const email = (r.email ?? '').toLowerCase();
+            const pass = r.pass;
             const reject = (error: string) => failed.push({ item, email: r.email ?? '', error });
 
+            if (!pass) return reject('password is required');
+            if (pass.length < PASS_LEN) return reject(`password must be at least ${PASS_LEN} characters`);
             if (!r.firstname) return reject('firstname is required');
             if (!r.lastname) return reject('lastname is required');
             if (!validateEmail(email)) return reject('Invalid email format');
@@ -134,6 +139,7 @@ export async function POST(req: NextRequest)
                 phoneNumber: r.phonenumber || null,
                 role: r.role === 'ADMIN' ? 'ADMIN' : 'USER',
                 orgId,
+                password: pass,
             });
         });
 
@@ -161,7 +167,7 @@ export async function POST(req: NextRequest)
         const created: { item: number; email: string; badgeNumber: string; tempPassword: string }[] = [];
 
         for (const row of ready) {
-            const tempPassword = randomBytes(12).toString('base64url');
+            const tempPassword = row.password;
             try {
                 const passwordHash = await bcrypt.hash(tempPassword, 10);
 

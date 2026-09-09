@@ -32,7 +32,7 @@ export default function TwoFactorClient() {
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (code.length < 4) {
+    if (code.length < 6) {
       setError("Please enter a valid code.");
       return;
     }

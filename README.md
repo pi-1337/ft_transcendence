@@ -158,7 +158,7 @@ Below is a visual representation of the database schema, it contains detailed in
  
 # Features List
  
-TODO: list the main user-facing features here (e.g. badge scanning & service access control, organization & user management, announcements/notifications, 2FA login, avatar uploads, admin dashboards, usage analytics, etc.)
+
  
 # Modules
  
@@ -191,12 +191,30 @@ color palette, typography, and icons.
  
 # Individual Contributions
  
-Detailed breakdown of what each team member contributed
+Detailed breakdown of what each team member contributed technically :
  
-- **ynidkouc** — TODO
-- **kelmounj** — TODO
-- **yzirri** — TODO
-- **ioulkhir** — TODO
+- **ynidkouc**:
+	- Public API
+	- Advanced Permissions System
+	- Two Factor Authentication
+	- TODO *More features which initial author doesn't know about*
+- **kelmounj**:
+	- Front-end of the whole project
+	- TODO *More features which initial author doesn't know about*
+- **yzirri**:
+	- Bonus Part: Badge_listener
+	- Devops
+	- TODO *More features which initial author doesn't know about*
+- **ioulkhir**:
+	- Project's Initial Architecture
+	- Authentication System
+		- Notifications can created 
+	- OAuth 42
+	- Database Initial Schema: tables and relations
+	- Avatar System
+	- Initial Notification System
+	- SSL/TLS Integration
+
 # Bonus part
 
 #### `What it is ?`

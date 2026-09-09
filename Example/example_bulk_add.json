@@ -19,6 +19,7 @@
     "firstname": "Youssef",
     "lastname": "Youssef",
     "email": "youssef.Youssef@example.com",
+    "phoneNumber": "+212611223345",
     "orgId": 2
   }
   ,
@@ -26,6 +27,7 @@
     "firstname": "yassine",
     "lastname": "yassine",
     "email": "yassine.yassine@example.com",
+    "phoneNumber": "+212611223340",
     "orgId": 1
   }
 ]

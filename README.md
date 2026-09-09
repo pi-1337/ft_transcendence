@@ -158,7 +158,40 @@ Below is a visual representation of the database schema, it contains detailed in
  
 # Features List
  
-
+- **Badge scanning & access decisions**:
+	RFID badge scans are submitted through the public API (`/api/public/v1/scans`), evaluated against the user's organization membership and the scanned service/meal, and returned as an access decision (granted / denied / pending) which admins can also review and override manually (`/api/scans/decide`).
+- **Organization system**:
+	Create, edit, and manage organizations; assign organization-level admins and members; each organization manages its own services, meals, and RFID readers.
+- **RFID reader management**:
+	Admins can register, edit, and manage the badge readers tied to an organization (`app/admin/rfcReaders`), including which service/location each reader is associated with.
+- **Usage records & history**:
+	Every badge scan is logged and browsable per record, with a detail view for each individual scan event (`app/records`, `app/records/[id]`).
+- **Organization analytics dashboard**:
+	Each organization has its own analytics page with interactive charts (via Chart.js) visualizing usage/scan data over time.
+- **User authentication & registration**:
+	Email/password signup and login, with password hashing (bcrypt) and JWT-based sessions.
+- **OAuth 2.0 login via 42**:
+	Users can sign in through the 42 school's OAuth provider as an alternative to email/password.
+- **Two-Factor Authentication (2FA)**:
+	Full OTP-based 2FA flow (start, verify, resend, enable/disable) with configurable code length, expiry, max attempts, and resend cooldown, delivered by email via SMTP.
+- **User profile & settings**:
+	Users can view and update their profile information and upload a custom avatar, with a default avatar applied if none is set.
+- **Admin dashboard**:
+	Central admin area to manage users, organizations, RFID readers, and announcements.
+- **Advanced permissions / role system**:
+	Role-based access control distinguishing regular users from admins, with organization-scoped admin rights layered on top.
+- **Notifications & announcements**:
+	Admins can create, edit, and delete announcements; users receive and can mark them read/unread from a dedicated notifications page.
+- **Public REST API**:
+	A documented, API-key-secured public API (`/api/public/v1/*`, docs at `/api/docs`) exposing organizations and scan endpoints for external integrations, such as the badge listener simulator.
+- **Badge listener / RFID simulator**:
+	A standalone service that simulates physical badge readers scanning against the live system, used to demonstrate and test the badge-scanning flow without physical hardware (see [Bonus part](#bonus-part)).
+- **Legal pages**:
+	Dedicated Privacy Policy and Terms of Service pages.
+- **HTTPS everywhere**:
+	All traffic is served over TLS through the Nginx reverse proxy.
+- **Containerized deployment**:
+	The entire stack (database, main app, reverse proxy, avatar server) runs via a single `docker compose up`.
  
 # Modules
  
@@ -208,8 +241,9 @@ Detailed breakdown of what each team member contributed technically :
 - **ioulkhir**:
 	- Project's Initial Architecture
 	- Authentication System
-		- Notifications can created 
+		- Notifications can be created, modified and deleted 
 	- OAuth 42
+		- 42 students can sign in using 42 OAuth
 	- Database Initial Schema: tables and relations
 	- Avatar System
 	- Initial Notification System

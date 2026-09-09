@@ -1,0 +1,31 @@
+[
+  {
+    "firstname": "Yassine",
+    "lastname": "Zirri",
+    "email": "zoom@example.com",
+    "phoneNumber": "+212600112233",
+    "role": "USER",
+    "orgId": 1
+  },
+  {
+    "firstname": "Sara",
+    "lastname": "Sara",
+    "email": "sara.Sara@example.com",
+    "phoneNumber": "+212611223344",
+    "role": "ADMIN",
+    "orgId": 1
+  },
+  {
+    "firstname": "Youssef",
+    "lastname": "Youssef",
+    "email": "youssef.Youssef@example.com",
+    "orgId": 2
+  }
+  ,
+  {
+    "firstname": "yassine",
+    "lastname": "yassine",
+    "email": "yassine.yassine@example.com",
+    "orgId": 1
+  }
+]

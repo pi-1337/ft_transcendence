@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
                 { status: 400 });
         }
 
-        if (password.length() < 4) {
+        if (password.length < 4) {
             return NextResponse.json({
                 success: false,
                 error: "Password too short !!"

@@ -13,9 +13,16 @@ import {
   Shield,
   UserIcon,
   ArrowLeft,
+  ChevronDown,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -41,7 +48,6 @@ type Props = {
   currentAdminId: number;
 };
 
-
 const EXPORT_FORMATS = ["csv", "json", "xml"] as const;
 type ExportFormat = (typeof EXPORT_FORMATS)[number];
 
@@ -54,7 +60,6 @@ const EXPORT_FIELDS = [
   "orgId",
 ] as const;
 
-
 export default function UsersTable({ users, currentAdminId }: Props) {
   const router = useRouter();
   const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -66,7 +71,7 @@ export default function UsersTable({ users, currentAdminId }: Props) {
 
     setDeletingId(userId);
     setError("");
-    
+
     try {
       const res = await fetch(`/api/admin/users/${userId}`, {
         method: "DELETE",
@@ -110,8 +115,9 @@ export default function UsersTable({ users, currentAdminId }: Props) {
         setError(
           `${data.summary.created} created, ${data.summary.failed} failed — ` +
             data.failed
-              .map((f: { item: number; email: string; error: string }) =>
-                `#${f.item} ${f.email}: ${f.error}`,
+              .map(
+                (f: { item: number; email: string; error: string }) =>
+                  `#${f.item} ${f.email}: ${f.error}`,
               )
               .join("; "),
         );
@@ -141,7 +147,13 @@ export default function UsersTable({ users, currentAdminId }: Props) {
       String(v ?? "").replace(
         /[<>&'"]/g,
         (c) =>
-          ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '"': "&quot;" })[c]!,
+          ({
+            "<": "&lt;",
+            ">": "&gt;",
+            "&": "&amp;",
+            "'": "&apos;",
+            '"': "&quot;",
+          })[c]!,
       );
 
     let body: string;
@@ -161,7 +173,9 @@ export default function UsersTable({ users, currentAdminId }: Props) {
           .map(
             (r) =>
               `  <user>\n` +
-              EXPORT_FIELDS.map((k) => `    <${k}>${xmlEscape(r[k])}</${k}>`).join("\n") +
+              EXPORT_FIELDS.map(
+                (k) => `    <${k}>${xmlEscape(r[k])}</${k}>`,
+              ).join("\n") +
               `\n  </user>`,
           )
           .join("\n") +
@@ -181,51 +195,63 @@ export default function UsersTable({ users, currentAdminId }: Props) {
 
   return (
     <div className="min-h-screen bg-gray-950 text-white pb-12">
-    <header className="border-b border-gray-800 bg-gray-950 px-8 py-4 flex items-center justify-between sticky top-0 z-10">
-      <div className="flex items-center gap-2 text-sm font-medium">
-        <Link
-          href="/admin/dashboard"
-          className="text-gray-400 hover:text-white transition-colors flex items-center gap-1"
-        >
-          <ArrowLeft className="w-4 h-4" /> Admin Panel
-        </Link>
-        <span className="text-gray-700">/</span>
-        <span className="text-white">Users</span>
-      </div>
-
-      <div className="flex items-center gap-2">
-        
-        <div className="flex items-center h-9 rounded-md border border-gray-700 overflow-hidden">
-          <span className="flex items-center gap-1.5 h-full px-3 text-xs font-medium text-gray-500 bg-gray-900/60 border-r border-gray-700">
-            <Download className="w-3.5 h-3.5" /> Export
-          </span>
-          {EXPORT_FORMATS.map((format) => (
-            <button
-              key={format}
-              type="button"
-              onClick={() => handleExport(format)}
-              className="flex items-center h-full px-3 text-xs font-semibold uppercase tracking-wide text-gray-300 border-r border-gray-700 last:border-r-0 hover:bg-gray-800 hover:text-white transition-colors"
-            >
-              {format}
-            </button>
-          ))}
+      <header className="border-b border-gray-800 bg-gray-950 px-6 sm:px-8 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 sticky top-0 z-10">
+        <div className="flex items-center gap-2 text-sm font-medium">
+          <Link
+            href="/admin/dashboard"
+            className="text-gray-400 hover:text-white transition-colors flex items-center gap-1"
+          >
+            <ArrowLeft className="w-4 h-4" /> Admin Panel
+          </Link>
+          <span className="text-gray-700">/</span>
+          <span className="text-white">Users</span>
         </div>
 
-      <Button type="button" variant="outline"
-        onClick={() => fileInputRef.current?.click()}
-        className="bg-transparent border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white h-9 px-4 gap-2">
-        <Upload className="w-4 h-4" /> Bulk add
-      </Button>
-
-      <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={handleFilePicked} />
-
-        <Link href="/admin/users/create">
-          <Button className="bg-green-700 hover:bg-green-800 text-white h-9 px-4 gap-2">
-            <Plus className="w-4 h-4" /> Add user
+        <div className="flex flex-wrap items-center gap-3">
+          <DropdownMenu>
+            <DropdownMenuTrigger className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium border border-gray-700 bg-transparent text-gray-300 hover:bg-gray-800 hover:text-white h-9 px-3 gap-2 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-300">
+              <Download className="w-4 h-4" /> Export{" "}
+              <ChevronDown className="w-3 h-3 opacity-50" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="start"
+              sideOffset={8}
+              className="bg-gray-900 border-gray-800 text-gray-200 w-32 shadow-xl"
+            >
+              {EXPORT_FORMATS.map((format) => (
+                <DropdownMenuItem
+                  key={format}
+                  onClick={() => handleExport(format)}
+                  className="focus:bg-gray-800 focus:text-white cursor-pointer uppercase text-xs font-semibold tracking-wider"
+                >
+                  {format}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => fileInputRef.current?.click()}
+            className="bg-gray-950/50 border-gray-700 text-green-400 hover:bg-green-950/30 hover:text-green-300 hover:border-green-800 h-9 px-4 gap-2 transition-colors"
+          >
+            <Upload className="w-4 h-4" /> Bulk add
           </Button>
-        </Link>
-      </div>
-    </header>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".json"
+            className="hidden"
+            onChange={handleFilePicked}
+          />
+
+          <Link href="/admin/users/create">
+            <Button className="bg-green-700 hover:bg-green-800 text-white h-9 px-4 gap-2">
+              <Plus className="w-4 h-4" /> Add user
+            </Button>
+          </Link>
+        </div>
+      </header>
 
       <main className="max-w-6xl mx-auto px-6 mt-10">
         <div className="flex items-start gap-3 mb-8">
@@ -288,7 +314,7 @@ export default function UsersTable({ users, currentAdminId }: Props) {
                         <div className="font-medium text-white flex items-center gap-2">
                           {user.firstname} {user.lastname}
                           {user.id === currentAdminId && (
-                            <span className="text-[10px] uppercase tracking-wider bg-gray-800 text-gray-400 px-1.5 py-0.5 rounded">
+                            <span className="text-[10px] uppercase tracking-wider bg-gray-800 text-gray-400 px-1.5 py-0.5 rounded font-bold">
                               You
                             </span>
                           )}
@@ -299,11 +325,11 @@ export default function UsersTable({ users, currentAdminId }: Props) {
                       </TableCell>
                       <TableCell className="py-4">
                         {user.role === "ADMIN" ? (
-                          <span className="inline-flex items-center gap-1 text-xs bg-green-950/40 text-green-400 border border-green-800/50 rounded-full px-2.5 py-1 font-medium">
+                          <span className="inline-flex items-center gap-1.5 text-xs bg-green-950/40 text-green-400 border border-green-800/50 rounded-full px-2.5 py-1 font-semibold">
                             <Shield className="w-3 h-3" /> ADMIN
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 text-xs bg-gray-900 text-gray-400 border border-gray-800 rounded-full px-2.5 py-1 font-medium">
+                          <span className="inline-flex items-center gap-1.5 text-xs bg-gray-900 text-gray-400 border border-gray-800 rounded-full px-2.5 py-1 font-semibold">
                             <UserIcon className="w-3 h-3" /> USER
                           </span>
                         )}

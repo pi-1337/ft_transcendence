@@ -177,13 +177,6 @@ export default function Settings({ user }: { user: UserFrontend }) {
     <div className="min-h-screen bg-gray-950 text-white pb-12">
       <header className="border-b border-gray-800 bg-gray-950 px-8 py-4 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-2 text-sm font-medium">
-          {/* <Link
-            href="/dashboard"
-            className="text-gray-400 hover:text-white transition-colors flex items-center gap-1"
-          >
-            <ArrowLeft className="w-4 h-4" /> Dashboard
-          </Link>
-          <span className="text-gray-700">/</span> */}
           <span className="text-white">Settings</span>
         </div>
       </header>

@@ -12,7 +12,7 @@ export default function PrivacyPolicy() {
               Privacy Policy
             </CardTitle>
             <p className="text-gray-400 text-sm mt-2">
-              Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+              Last updated: August 9, 2026
             </p>
           </CardHeader>
           <CardContent className="text-gray-300 space-y-6 text-sm leading-relaxed">

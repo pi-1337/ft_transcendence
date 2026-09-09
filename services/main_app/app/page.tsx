@@ -1,5 +1,3 @@
-"use server";
-
 import { getSession } from "@/lib/sessionManage";
 import { redirect } from "next/navigation";
 import LandingPageClient from "@/components/LandingPageClient";

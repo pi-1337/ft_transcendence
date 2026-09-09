@@ -236,10 +236,11 @@ Detailed breakdown of what each team member contributed technically :
 	- Devops
 	- Database schema improvments based on whats needed
 - **kelmounj**:
-	- Front-end of the whole project
-	- User activity analytics
+	- Front-end of the whole project.
+	- User activity analytics.
 	- design system with reusable components, including a proper
 	  color palette, typography, and icons.
+	- ccessible Privacy Policy and Terms of Service pages.
 - **yzirri**:
 	- Bonus Part: Badge_listener
 	- Public API
